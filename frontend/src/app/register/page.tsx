@@ -1,6 +1,7 @@
 import ButtonForm from "@/components/buttonForm"
 import Input from "@/components/input"
 import { Building2, Mail, Lock, Building, Phone, Check, User } from "lucide-react"
+import Link from "next/link"
 
 export default function Register() {
     return (
@@ -93,9 +94,12 @@ export default function Register() {
                         </div>
                         <ButtonForm text="Entrar" type="submit" />
                     </form>
-                    <p className="text-center text-sm text-slate-600">
-                        Ja tem uma conta? <span className="text-[#2082B1] font-bold cursor-pointer hover:underline">Fazer Login</span>
-                    </p>
+                    <Link href="/login">
+                        <p className="text-center text-sm text-slate-600">
+                            Ja tem uma conta? <span className="text-[#2082B1] font-bold cursor-pointer hover:underline">Fazer Login</span>
+                        </p>
+                    </Link>
+
                 </div>
             </section>
 
