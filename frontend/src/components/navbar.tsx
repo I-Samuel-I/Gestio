@@ -8,8 +8,8 @@ import {
     FileText,
     Settings,
     Building2,
-    LogOut
 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Navbar() {
@@ -17,7 +17,7 @@ export default function Navbar() {
     const [activeItem, setActiveItem] = useState<string>("Produtos");
 
     return (
-        <nav className="flex flex-col w-64 h-screen bg-white border-r border-gray-200 p-4 justify-between">
+        <nav className="hidden md:flex  flex-col w-50 lg:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
             <div>
                 {/* Logo Section */}
                 <div className="flex items-center gap-3 px-2 mb-8">
@@ -31,11 +31,14 @@ export default function Navbar() {
                         Cadastros
                     </h2>
                     <ul className="space-y-1">
-                        <NavItem icon={<Package size={20} />}
-                            label="Produtos"
-                            active={activeItem === "Produtos"}
-                            onClick={() => setActiveItem("Produtos")}
-                        />
+                        <Link href="/products">
+                            <NavItem icon={<Package size={20} />}
+                                label="Produtos"
+                                active={activeItem === "Produtos"}
+                                onClick={() => setActiveItem("Produtos")}
+                            />
+                        </Link>
+
                         <NavItem icon={<Users size={20} />}
                             label="Clientes"
                             active={activeItem === "Clientes"}
@@ -89,12 +92,6 @@ export default function Navbar() {
                         <h3 className="text-sm font-semibold text-gray-800 truncate">Admin</h3>
                         <p className="text-xs text-gray-500 truncate">admin@empresa.com</p>
                     </div>
-
-                    <span className=" text-[#0DA2E7] flex items-center hover:text-[#DC2626] hover:cursor-pointer"
-                    >
-                        <LogOut />
-                    </span>
-
                 </div>
             </div>
         </nav>
