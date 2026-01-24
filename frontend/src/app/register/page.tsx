@@ -3,6 +3,7 @@ import Input from "@/components/input"
 import { Building2, Mail, Lock, Building, Phone, Check, User } from "lucide-react"
 import Link from "next/link"
 
+
 export default function Register() {
     return (
         <main className="min-h-screen w-full flex flex-col lg:flex-row font-sans">
@@ -99,11 +100,8 @@ export default function Register() {
                             Ja tem uma conta? <span className="text-[#2082B1] font-bold cursor-pointer hover:underline">Fazer Login</span>
                         </p>
                     </Link>
-
                 </div>
             </section>
-
-
         </main>
     )
 }

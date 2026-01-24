@@ -61,6 +61,8 @@ export default function CreateButton(props: CreateModalProps) {
                     <X size={26} />
                 </button>
             </header>
+            
+            {/* Page products */}
             {type === "product" && (
                 <>
                     <div className="grid grid-cols-2 gap-5">
@@ -106,6 +108,8 @@ export default function CreateButton(props: CreateModalProps) {
 
                 </div>
             )}
+           
+            {/* Buttons */}
             <div className="flex justify-end gap-3 mt-10">
                 <button
                     onClick={onClose}

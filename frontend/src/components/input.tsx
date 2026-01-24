@@ -11,7 +11,7 @@ export default function Input({ label, error, icon: Icon, ...props }: InputProps
       <div className="relative flex items-center group">
         {Icon && (
           <div className="absolute left-3 text-slate-400 group-focus-within:text-[#2082B1] transition-colors">
-            <Icon size={18}/>
+            <Icon size={18} />
           </div>
         )}
         <input
