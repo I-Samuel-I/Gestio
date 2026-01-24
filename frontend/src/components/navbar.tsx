@@ -21,7 +21,7 @@ export default function Navbar() {
             <div>
                 {/* Logo Section */}
                 <div className="flex items-center gap-3 px-2 mb-8">
-                    <Building2 size={28} color="#0DA2E7" strokeWidth={2.5} />
+                    <Building2 size={28} color="#2082B1" strokeWidth={2.5} />
                     <h1 className="text-xl font-bold text-gray-800">GestIO</h1>
                 </div>
 

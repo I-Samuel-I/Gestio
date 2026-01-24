@@ -1,11 +1,19 @@
+"use client";
+
 import Header from "@/components/header";
 import Navbar from "@/components/navbar";
-import { Filter, Search, Plus, Box } from "lucide-react";
+import { Filter, Search, Plus, Box, BoxIcon } from "lucide-react";
 import { products } from "@/mock/products";
 import Input from "@/components/input";
+import { useState } from "react";
+import Modal from "@/components/modal";
+import CreateButton from "@/components/createButton";
 
 
 export default function Products() {
+
+  const [open, setOpen] = useState(false);
+
   return (
     <main className="flex min-h-screen bg-slate-50">
       <Navbar />
@@ -20,10 +28,20 @@ export default function Products() {
               <h1 className="text-2xl font-bold text-slate-800">Produtos</h1>
               <p className="text-slate-500">Gerencie seu catálogo de produtos</p>
             </div>
-            <button className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer text-white font-bold p-3 rounded-lg transition-colors">
+            <button onClick={() => setOpen(true)}
+              className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer text-white font-bold p-3 rounded-lg transition-colors">
               <Plus className="w-5 h-5" />
               Novo Produto
             </button>
+            <Modal isOpen={open} onClose={() => setOpen(false)}>
+              <CreateButton
+              icon={<BoxIcon size={45} color="#2082B1"/>}
+                type="product"
+                title="Novo Produto"
+                subTitle="Adicione um novo produto ao catálogo"
+                onClose={() => setOpen(false)}
+              />
+            </Modal>
 
           </section>
 
@@ -44,7 +62,7 @@ export default function Products() {
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <div key={product.id} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-              
+
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <Box className="w-6 h-6 text-blue-600" />
