@@ -16,7 +16,7 @@ export default function Input({ label, error, icon: Icon, ...props }: InputProps
         )}
         <input
           {...props}
-          className={`w-full py-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all
+          className={`w-full  py-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all
             focus:border-[#2082B1] focus:ring-2 focus:ring-[#2082B1]/10
             ${Icon ? 'pl-10' : 'pl-4'} pr-4 text-slate-900 placeholder:text-slate-400`}
         />

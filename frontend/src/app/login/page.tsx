@@ -12,7 +12,7 @@ export default function Login() {
                     <header className="space-y-2">
                         <div className="flex items-center gap-2 text-[#2082B1]">
                             <Building2 size={32} className="bg-[#2082B1] text-white p-1.5 rounded-lg" />
-                            <h1 className="text-2xl font-bold text-slate-800">GestIO</h1>
+                            <h1 className="text-2xl font-bold text-slate-900">GestIO</h1>
                         </div>
 
                         <div className="pt-6">
@@ -36,14 +36,14 @@ export default function Login() {
                         <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center gap-2">
                                 <input type="checkbox" id="remember-me" className="rounded border-gray-300 text-[#2082B1] focus:ring-[#2082B1]" />
-                                <label htmlFor="remember-me" className="text-slate-600 cursor-pointer">Lembrar de mim</label>
+                                <label htmlFor="remember-me" className="text-slate-500 cursor-pointer">Lembrar de mim</label>
                             </div>
                             <p className="text-[#2082B1] font-semibold hover:underline cursor-pointer">Esqueceu a senha?</p>
                         </div>
                         <ButtonForm text="Entrar" type="submit" />
                     </form>
                     <Link href="/register">
-                        <p className="text-center text-sm text-slate-600">
+                        <p className="text-center text-sm text-slate-500">
                             Não tem uma conta? <span className="text-[#2082B1] font-bold cursor-pointer hover:underline">Criar conta</span>
                         </p>
                     </Link>

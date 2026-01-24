@@ -17,7 +17,7 @@ export default function Navbar() {
     const [activeItem, setActiveItem] = useState<string>("Produtos");
 
     return (
-        <nav className="hidden md:flex  flex-col w-50 lg:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
+        <nav className="hidden md:flex md:fixed  flex-col w-50 lg:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
             <div>
                 {/* Logo Section */}
                 <div className="flex items-center gap-3 px-2 mb-8">
@@ -25,7 +25,6 @@ export default function Navbar() {
                     <h1 className="text-xl font-bold text-gray-800">GestIO</h1>
                 </div>
 
-                {/* Cadastros */}
                 <div className="mb-6">
                     <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                         Cadastros
@@ -52,7 +51,7 @@ export default function Navbar() {
                     </ul>
                 </div>
 
-                {/* Operações */}
+             
                 <div>
                     <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                         Operações
@@ -98,7 +97,6 @@ export default function Navbar() {
     );
 }
 
-// Sub-componente para os itens da lista
 function NavItem({ icon, label, active, onClick }) {
     return (
         <li>
