@@ -1,10 +1,34 @@
+"use client";
 import ButtonForm from "@/components/buttonForm"
 import Input from "@/components/input"
+import { registerUser } from "@/services/auth";
 import { Building2, Mail, Lock, Building, Phone, Check, User } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 export default function Register() {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await registerUser(email, password, name, phone, companyName);
+
+            router.push("/products");
+
+        } catch (error) {
+            alert(error);
+        }
+    }
+
     return (
         <main className="min-h-screen w-full flex flex-col lg:flex-row font-sans">
             <section className="hidden lg:flex flex-1 bg-gradient-to-br from-[#2082B1] to-[#3890B9] text-white flex-col justify-center items-center p-12 text-center">
@@ -52,7 +76,7 @@ export default function Register() {
                             <p className="text-slate-500 mt-2">Preencha os dados abaixo para começar</p>
                         </div>
                     </header>
-                    <form className="space-y-5">
+                    <form className="space-y-5" onSubmit={handleSubmit}>
 
                         <div className="flex gap-5">
                             <Input
@@ -60,12 +84,16 @@ export default function Register() {
                                 type="text"
                                 placeholder="Seu nome"
                                 icon={User}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                             <Input
                                 label="Telefone"
                                 type="number"
                                 placeholder="(00) 00000-0000"
                                 icon={Phone}
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
                             />
                         </div>
                         <Input
@@ -73,18 +101,24 @@ export default function Register() {
                             type="text"
                             placeholder="Sua Empresa"
                             icon={Building}
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
                         />
                         <Input
                             label="E-mail"
                             type="email"
                             placeholder="seu@email.com"
                             icon={Mail}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <Input
                             label="Senha"
                             type="password"
                             placeholder="Mínimo 8 caracteres"
                             icon={Lock}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <div className="flex items-center text-sm gap-2">
                             <input type="checkbox" id="terms" />

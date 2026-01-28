@@ -26,14 +26,14 @@ export async function loginUser(email: string, password: string) {
 }
 
 // API REGISTER USER
-export async function registerUser(email: string, password: string) {
+export async function registerUser(email: string, password: string, name:string, phone:string, companyName:string) {
   try {
     const response = await fetch("http://localhost:3000/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, name, phone, companyName }),
     });
     if (!response.ok) {
       throw new Error("Error: " + response.statusText);
