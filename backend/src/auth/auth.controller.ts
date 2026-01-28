@@ -9,7 +9,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
     @Post('register')
-    register(@Body() registerDto: RegisterDto) { return this.authService.register(registerDto.email, registerDto.password); }
+    register(@Body() registerDto: RegisterDto) { return this.authService.register(
+        registerDto.email, registerDto.password, registerDto.companyName, registerDto.name, registerDto.phone); }
 
     @Post('login')
     async login(@Body() loginDto: LoginDto){
