@@ -1,12 +1,35 @@
+"use client";
 import ButtonForm from "@/components/buttonForm"
 import Counter from "@/components/counterAnimate"
 import Input from "@/components/input"
+import { loginUser } from "@/services/auth";
 import { Building2, Mail, Lock } from "lucide-react"
 
 import Link from "next/link"
-
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Login() {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const router = useRouter();
+
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            // CALL LOGIN API
+            await loginUser(email, password);
+
+            // REDIRECT TO PRODUCTS PAGE
+            router.push("/products");
+        } catch (error) {
+            alert(error);
+        }
+    }
+
     return (
         <main className="min-h-screen w-full flex flex-col lg:flex-row font-sans">
 
@@ -19,22 +42,26 @@ export default function Login() {
                         </div>
 
                         <div className="pt-6">
-                            <h2 className="text-3xl font-bold text-slate-900">Bem-vindo de volta</h2>
+                            <h2 className="text-3xl font-bold text-slate-900">Bem-viando de volta</h2>
                             <p className="text-slate-500 mt-2">Entre com suas credenciais para acessar sua conta</p>
                         </div>
                     </header>
-                    <form className="space-y-5">
+                    <form className="space-y-5" onSubmit={handleSubmit}>
                         <Input
                             label="E-mail"
                             type="email"
                             placeholder="seu@email.com"
                             icon={Mail}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <Input
                             label="Senha"
                             type="password"
                             placeholder="•••••••••••"
                             icon={Lock}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center gap-2">

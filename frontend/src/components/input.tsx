@@ -1,7 +1,9 @@
+import { LucideIcon } from "lucide-react";
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon?: LucideIcon;
 }
 
 export default function Input({ label, error, icon: Icon, ...props }: InputProps) {

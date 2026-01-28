@@ -8,9 +8,18 @@ import {
     FileText,
     Settings,
     Building2,
+    LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+
+
+type NavItemProps = {
+    icon: LucideIcon;
+    label: string;
+    active?: boolean;
+    onClick?: () => void;
+}
 
 export default function Navbar() {
 
@@ -31,19 +40,22 @@ export default function Navbar() {
                     </h2>
                     <ul className="space-y-1">
                         <Link href="/products">
-                            <NavItem icon={<Package size={20} />}
+                            <NavItem
+                                icon={Package}
                                 label="Produtos"
                                 active={activeItem === "Produtos"}
                                 onClick={() => setActiveItem("Produtos")}
                             />
                         </Link>
 
-                        <NavItem icon={<Users size={20} />}
+                        <NavItem
+                            icon={Users}
                             label="Clientes"
                             active={activeItem === "Clientes"}
                             onClick={() => setActiveItem("Clientes")}
                         />
-                        <NavItem icon={<Users size={20} />}
+                        <NavItem
+                            icon={Users}
                             label="Usuários"
                             active={activeItem === "Usuários"}
                             onClick={() => setActiveItem("Usuários")}
@@ -51,29 +63,32 @@ export default function Navbar() {
                     </ul>
                 </div>
 
-             
+
                 <div>
                     <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                         Operações
                     </h2>
                     <ul className="space-y-1">
                         <NavItem
-                            icon={<LayoutDashboard size={20} />}
+                            icon={LayoutDashboard}
                             label="Dashboard"
                             active={activeItem === "Dashboard"}
                             onClick={() => setActiveItem("Dashboard")}
                         />
-                        <NavItem icon={<CircleDollarSign size={20} />}
+                        <NavItem
+                            icon={CircleDollarSign}
                             label="Financeiro"
                             active={activeItem === "Financeiro"}
                             onClick={() => setActiveItem("Financeiro")}
                         />
-                        <NavItem icon={<FileText size={20} />}
+                        <NavItem
+                            icon={FileText}
                             label="Relatório"
                             active={activeItem === "Relatório"}
                             onClick={() => setActiveItem("Relatório")}
                         />
-                        <NavItem icon={<Settings size={20} />}
+                        <NavItem 
+                            icon={Settings}
                             label="Configurações"
                             active={activeItem === "Configurações"}
                             onClick={() => setActiveItem("Configurações")}
@@ -97,7 +112,7 @@ export default function Navbar() {
     );
 }
 
-function NavItem({ icon, label, active, onClick }) {
+function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
     return (
         <li>
             <button onClick={onClick}
@@ -107,9 +122,7 @@ function NavItem({ icon, label, active, onClick }) {
                         : 'text-black hover:bg-gray-100'}`
                 }
             >
-                <span className={active ? 'text-white' : 'text-black'}>
-                    {icon}
-                </span>
+                <Icon size={20} className={active ? "text-white" : "text-black"} />
                 <span className="text-sm font-semibold">{label}</span>
             </button>
         </li>

@@ -8,7 +8,6 @@ type BaseCreateProps = {
     title: string;
     subTitle: string;
     icon?: React.ReactNode;
-    status: string;
     onClose: () => void;
 };
 

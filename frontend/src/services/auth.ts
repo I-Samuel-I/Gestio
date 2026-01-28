@@ -1,13 +1,66 @@
+// API LOGIN USER
 export async function loginUser(email: string, password: string) {
-  const res = await fetch('http://localhost:3000/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  })
+  try {
+    // HAD CALL TO BACKEND LOGIN API
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const data = await res.json()
+    // VERIFY RESPONSE FOR SERVER ERRORS
+    if (!response.ok) {
+      throw new Error("Error: " + response.statusText);
+    }
 
-  if (!res.ok) throw new Error(data.message || 'Erro no login')
+    // IF OK, RETURN DATA
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    // GENERIC ERROR CATCH
+    console.error("Error during user registration:", error);
+    throw error;
+  }
+}
 
-  return data.access_token
+// API REGISTER USER
+export async function registerUser(email: string, password: string) {
+  try {
+    const response = await fetch("http://localhost:3000/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
+      throw new Error("Error: " + response.statusText);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error during user registration:", error);
+    throw error;
+  }
+}
+
+// API AUTH USER
+export async function authUser(token: string) {
+  try {
+    const response = await fetch("http://localhost:3000/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error: " + response.statusText);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error during user authentication:", error);
+  }
 }
