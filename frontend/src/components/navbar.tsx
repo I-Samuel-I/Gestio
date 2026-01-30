@@ -47,13 +47,13 @@ export default function Navbar() {
                                 onClick={() => setActiveItem("Produtos")}
                             />
                         </Link>
-
-                        <NavItem
-                            icon={Users}
-                            label="Clientes"
-                            active={activeItem === "Clientes"}
-                            onClick={() => setActiveItem("Clientes")}
-                        />
+                        <Link href="/clients">
+                            <NavItem
+                                icon={Users}
+                                label="Clientes"
+                                active={activeItem === "Clientes"}
+                                onClick={() => setActiveItem("Clientes")}
+                            /></Link>
                         <NavItem
                             icon={Users}
                             label="Usuários"
@@ -87,7 +87,7 @@ export default function Navbar() {
                             active={activeItem === "Relatório"}
                             onClick={() => setActiveItem("Relatório")}
                         />
-                        <NavItem 
+                        <NavItem
                             icon={Settings}
                             label="Configurações"
                             active={activeItem === "Configurações"}

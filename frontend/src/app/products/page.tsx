@@ -29,7 +29,9 @@ export default function Products() {
               <p className="text-slate-500">Gerencie seu catálogo de produtos</p>
             </div>
             <button onClick={() => setOpen(true)}
-              className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer text-white font-bold p-3 rounded-lg transition-colors">
+              className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit 
+              items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer 
+              text-white font-bold p-3 rounded-lg transition-colors">
               <Plus className="w-5 h-5" />
               Novo Produto
             </button>
