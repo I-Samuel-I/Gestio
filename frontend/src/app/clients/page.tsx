@@ -27,8 +27,8 @@ export default function Clients() {
                             <h1 className="text-2xl font-bold text-slate-800">Cliente</h1>
                             <p className="text-slate-500">Gerencie sua base de clientes.</p>
                         </div>
-                        <button onClick={() => setOpen(true)} className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit 
-                        items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer 
+                        <button onClick={() => setOpen(true)}
+                            className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer 
                         text-white font-bold p-3 rounded-lg transition-colors">
                             <Plus className="w-5 h-5" />
                             Novo Cliente
@@ -58,14 +58,27 @@ export default function Clients() {
                     </section>
                     {/* Table  Clients */}
                     <section>
-                        {clients.map((client) =>(
+                        {clients.map((client) => (
                             <div key={client.id}>
-                                {client.nome}
-                                {client.email}
-                                {client.celular}
-                                {client.localizacao}
-                                {client.status}
-                                {client.totalCompras}
+
+                                <table className="w-full text-left border-collapse mt-5 bg-white rounded-lg shadow-sm">
+
+                                    <tr className="border">
+                                        <th>Nome</th>
+                                        <th>Contato</th>
+                                        <th>Localização</th>
+                                        <th>Status</th>
+                                        <th>Total Compras</th>
+                                    </tr>
+                                    <tr className="border">
+                                        <td>{client.nome}</td>
+                                        <td>{client.email} <br />{client.celular}</td>
+                                        <td>{client.localizacao}</td>
+                                        <td>{client.status}</td>
+                                        <td>{client.totalCompras}</td>
+                                    </tr>
+                                </table>
+
                             </div>
                         ))}
                     </section>

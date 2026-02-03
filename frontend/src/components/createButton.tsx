@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Input from "./input";
 import { X } from "lucide-react";
+import ClientForm from "./clientForm";
+import ProductForm from "./productForm";
 
 type BaseCreateProps = {
     title: string;
@@ -19,29 +19,6 @@ type CreateModalProps =
 
 export default function CreateButton(props: CreateModalProps) {
     const { title, subTitle, icon, type, onClose } = props;
-    const [product, setProduct] = useState({
-        name: "",
-        category: "",
-        price: 0,
-        stock: 0,
-        status: ""
-    })
-    const [client, setClient] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        cpf: "",
-        address: "",
-        city: "",
-        state: "",
-    });
-    const [user, setUser] = useState({
-        name: "",
-        password: "",
-        confirmPassword: "",
-        role: "",
-    });
-
 
     return (
         <div className="p-5 relative">
@@ -61,96 +38,12 @@ export default function CreateButton(props: CreateModalProps) {
                 </button>
             </header>
 
-            {/* Page products */}
             {type === "product" && (
-                <>
-                    <div className="grid grid-cols-2 gap-5">
-                        <Input
-                            label="Nome do Produto"
-                            placeholder="Ex: Produto Premium A"
-                            value={product.name}
-                            onChange={(e) =>
-                                setProduct({ ...product, name: e.target.value })
-                            }
-                        />
-
-                        <Input
-                            label="Categoria"
-                            type="select"
-                            placeholder="Selecione"
-                            value={product.category}
-                        />
-
-                        <Input
-                            label="Preço (R$)"
-                            type="number"
-                            value={product.price}
-                        />
-
-                        <Input
-                            label="Estoque"
-                            type="number"
-                            value={product.stock}
-                        />
-                    </div>
+                <><ProductForm />
                 </>
             )}
-
-            {props.type === "client" && (
-                <div>
-                    <div className="grid grid-cols-2 gap-5">
-                        <Input
-                            label="Nome Completo"
-                            placeholder="Ex: Maria Silva"
-                            value={client.name}
-                            onChange={(e) =>
-                                setClient({ ...client, name: e.target.value })
-                            }
-                        />
-
-                        <Input
-                            label="Email"
-                            type="text"
-                            placeholder="email@exemplo.com"
-                            value={client.email}
-                            onChange={(e) => setClient({ ...client, email: e.target.value })}
-                        />
-
-                        <Input
-                            label="Telefone"
-                            type="number"
-                            placeholder="(11) 9 9999-9999"
-                            value={client.phone}
-                            onChange={(e) => setClient({ ...client, phone: e.target.value })}
-                        />
-
-                        <Input
-                            label="Endereço"
-                            type="number"
-                            value={client.address}
-                            onChange={(e) => setClient({ ...client, address: e.target.value })}
-                        />
-                        <Input
-                            label="Cidade"
-                            type="text"
-                            value={client.city}
-                            onChange={(e) => setClient({ ...client, city: e.target.value })}
-                        />
-                        <Input
-                            label="Estado"
-                            type="text"
-                            value={client.state}
-                            onChange={(e) => setClient({ ...client, state: e.target.value })}
-                        />
-                        <Input
-                            label="Status"
-                            type="select"
-                            placeholder="Selecione"
-                        />
-                    </div>
-                </div>
-            )}
-            {props.type === "user" && (
+            {type === "client" && (<ClientForm />)}
+            {type === "user" && (
 
                 <div>
 
