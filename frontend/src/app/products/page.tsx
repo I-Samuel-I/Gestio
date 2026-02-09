@@ -13,13 +13,17 @@ import CreateButton from "@/components/createButton";
 export default function Products() {
 
   const [open, setOpen] = useState(false);
+  const [navMobile, setNavMobile] = useState(false);
 
   return (
     <main className="flex min-h-screen bg-slate-50">
-      <Navbar />
+      <Navbar 
+      mobileOpen = {navMobile}
+      onClose ={() => setNavMobile(false)}
+      />
 
       <div className="flex flex-col flex-1 md:ml-50 lg:ml-70">
-        <Header title="Produtos" />
+        <Header title="Produtos" onMenuClick={()=> setNavMobile(true)} />
 
         <div className="p-8 space-y-6">
           {/* Hero section */}
