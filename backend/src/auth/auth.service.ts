@@ -2,8 +2,9 @@ import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import { User, UserRole, UserStatus } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,15 +14,23 @@ export class AuthService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    async register(email: string, password: string) {
+    async register(data:CreateUserDto) {
 
-        const userExists = await this.userRepository.findOne({ where: { email } });
+        const userExists = await this.userRepository.findOne({ where: { email: data.email} });
 
         if (userExists) throw new BadRequestException('User already exists.');
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        const newUser = this.userRepository.create({ email, password: hashedPassword, role: 'user' });
+        const newUser = this.userRepository.create({ 
+            name: data.name,
+            email: data.email, 
+            password: hashedPassword, 
+            phone: data.phone,
+            company: data.company,
+            role: UserRole.SELLER,
+            status: UserStatus.PENDING
+        });
         await this.userRepository.save(newUser);
 
         return { message: 'User registered successfully.' };
