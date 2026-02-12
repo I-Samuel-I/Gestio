@@ -1,9 +1,9 @@
-import { Controller,Get, Post, Patch, Param, Body, UseGuards, ParseIntPipe} from '@nestjs/common';
+import { Controller,Get, Patch, Param, Body, UseGuards, ParseIntPipe, Request, Delete} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
@@ -12,23 +12,25 @@ export class UsersController {
 
     constructor(private usersService: UsersService) {}
 
-    @Post()
-    @Roles('admin')
-    create(@Body() data:CreateUserDto) { return this.usersService.create(data) }
+    @Get('me')
+    getProfile(@Request() req:any){ return this.usersService.findById(req.user.userId); }
 
-    @Patch(':id')
-    @Roles('admin')
-    update(@Param('id', ParseIntPipe) id:number, @Body() data:UpdateUserDto) { return this.usersService.update(id, data) }
-
-    @Roles('admin', 'user')
+    @UseGuards(AuthGuard('jwt'))
     @Get()
-    findAll() { return this.usersService.findAll();}
+    findAll() { return this.usersService.findAll(); }
 
-    @Roles('admin', 'user')
     @Get(':id')
-    findById(@Param('id', ParseIntPipe) id: number) { return this.usersService.findById(id);}
+    findOne(@Param('id', ParseIntPipe) id:number){ return this.usersService.findById(id); }
 
-    @Patch(':id/deactivate')
-    @Roles('admin')
-    deactivate(@Param('id', ParseIntPipe) id:number) { return this.usersService.deactivate(id)}
+    @Roles(UserRole.ADMIN)
+    @Patch(':id')
+    update(
+        @Param('id', ParseIntPipe) id:number,
+        @Body() data: UpdateUserDto,
+
+    ){ return this.usersService.update(id, data)}
+
+    @Roles(UserRole.ADMIN)
+    @Delete(':id')
+    deactivate(@Param('id', ParseIntPipe) id:number){ return this.usersService.deactivate(id); }
 }
