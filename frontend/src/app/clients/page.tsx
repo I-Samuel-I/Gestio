@@ -36,6 +36,7 @@ export default function Clients() {
         <Header title="Clientes" />
 
         <div className="p-6 md:p-8 space-y-6">
+
           {/* Hero */}
           <section className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
@@ -132,9 +133,8 @@ export default function Clients() {
 
                       <td className="p-4">
                         <span
-                          className={`px-2 py-1 rounded text-sm font-medium ${
-                            statusColor[client.status as Status]
-                          }`}
+                          className={`px-2 py-1 rounded text-sm font-medium ${statusColor[client.status as Status]
+                            }`}
                         >
                           {client.status}
                         </span>
@@ -157,6 +157,7 @@ export default function Clients() {
                 key={client.id}
                 className="bg-white rounded-xl shadow-sm p-4 space-y-3"
               >
+                {/* Main Data */}
                 <div>
                   <p className="font-semibold text-slate-800">
                     {client.nome}
@@ -165,7 +166,7 @@ export default function Clients() {
                     ID: {client.id}
                   </p>
                 </div>
-
+                {/* Info Clients */}
                 <div className="space-y-1 text-sm">
                   <span className="flex items-center gap-2">
                     <Mail size={14} />
@@ -177,20 +178,23 @@ export default function Clients() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin size={14} />
-                  {client.localizacao}
+                {/* Location */}
+                <div>
+                  <span className="flex items-center gap-2 text-sm">
+                    <MapPin size={14} />
+                    {client.localizacao}
+                  </span>
                 </div>
 
+                {/* Status */}
                 <div className="flex items-center justify-between">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      statusColor[client.status as Status]
-                    }`}
+                    className={`px-2 py-1 rounded text-xs font-medium ${statusColor[client.status as Status]
+                      }`}
                   >
                     {client.status}
                   </span>
-
+                  
                   <span className="font-semibold">
                     R$ {client.totalCompras}
                   </span>

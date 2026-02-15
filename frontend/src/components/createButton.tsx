@@ -1,8 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
+import { User, X } from "lucide-react";
 import ClientForm from "./clientForm";
 import ProductForm from "./productForm";
+import UserForm from "./userForm";
 
 type BaseCreateProps = {
     title: string;
@@ -38,17 +39,9 @@ export default function CreateButton(props: CreateModalProps) {
                 </button>
             </header>
 
-            {type === "product" && (
-                <><ProductForm />
-                </>
-            )}
-            {type === "client" && (<ClientForm />)}
-            {type === "user" && (
-
-                <div>
-
-                </div>
-            )}
+            {type === "product" && (<ProductForm/>)}
+            {type === "client" && (<ClientForm/>)}
+            {type === "user" && (<UserForm/>)}
 
             {/* Buttons */}
             <div className="flex justify-end gap-3 mt-10">

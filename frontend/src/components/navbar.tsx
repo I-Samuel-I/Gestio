@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type MobileProps = {
   mobileOpen: boolean;
@@ -26,16 +26,45 @@ type NavItemProps = {
   onClick?: () => void;
 };
 
+type ActiveItem =
+  | ""
+  | "Produtos"
+  | "Clientes"
+  | "Usuários"
+  | "Dashboard"
+  | "Financeiro"
+  | "Relatório"
+  | "Configurações";
+
 export default function Navbar({ mobileOpen, onClose }: MobileProps) {
+  const [activeItem, setActiveItem] = useState<ActiveItem>("");
   const pathname = usePathname();
-  const activeItem =
-    pathname === "/products"
-      ? "Produtos"
-      : pathname === "/clients"
-        ? "Clientes"
-        : pathname === "/config"
-          ? "Configurações"
-          : "";
+
+  useEffect(() => {
+    if (pathname.startsWith("/products")) {
+      setActiveItem("Produtos");
+    } else if (pathname.startsWith("/clients")) {
+      setActiveItem("Clientes");
+    }
+    else if (pathname.startsWith("/users")) {
+      setActiveItem("Usuários");
+    }
+    else if (pathname.startsWith("/dashboard")) {
+      setActiveItem("Dashboard");
+    }
+    else if (pathname.startsWith("/financeiro")) {
+      setActiveItem("Financeiro");
+    }
+    else if (pathname.startsWith("/relatorio")) {
+      setActiveItem("Relatório");
+    }
+    else if (pathname.startsWith("/config")) {
+      setActiveItem("Configurações");
+    }
+    else {
+      setActiveItem("");
+    }
+  }, [pathname]);
 
   return (
     <>
@@ -75,12 +104,16 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   onClick={() => setActiveItem("Clientes")}
                 />
               </Link>
-              <NavItem
-                icon={Users}
-                label="Usuários"
-                active={activeItem === "Usuários"}
-                onClick={() => setActiveItem("Usuários")}
-              />
+              <Link href="/users">
+                <NavItem
+                  icon={Users}
+                  label="Usuários"
+                  active={activeItem === "Usuários"}
+                  onClick={() => setActiveItem("Usuários")}
+                />
+              </Link>
+
+
             </ul>
           </div>
 
@@ -89,24 +122,30 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
               Operações
             </h2>
             <ul className="space-y-1">
-              <NavItem
-                icon={LayoutDashboard}
-                label="Dashboard"
-                active={activeItem === "Dashboard"}
-                onClick={() => setActiveItem("Dashboard")}
-              />
-              <NavItem
-                icon={CircleDollarSign}
-                label="Financeiro"
-                active={activeItem === "Financeiro"}
-                onClick={() => setActiveItem("Financeiro")}
-              />
-              <NavItem
-                icon={FileText}
-                label="Relatório"
-                active={activeItem === "Relatório"}
-                onClick={() => setActiveItem("Relatório")}
-              />
+              <Link href="/dashboard">
+                <NavItem
+                  icon={LayoutDashboard}
+                  label="Dashboard"
+                  active={activeItem === "Dashboard"}
+                  onClick={() => setActiveItem("Dashboard")}
+                />
+              </Link>
+              <Link href="/financial">
+                <NavItem
+                  icon={CircleDollarSign}
+                  label="Financeiro"
+                  active={activeItem === "Financeiro"}
+                  onClick={() => setActiveItem("Financeiro")}
+                />
+              </Link>
+              <Link href="/report">
+                <NavItem
+                  icon={FileText}
+                  label="Relatório"
+                  active={activeItem === "Relatório"}
+                  onClick={() => setActiveItem("Relatório")}
+                />
+              </Link>
               <Link href="/config">
                 <NavItem
                   icon={Settings}
@@ -145,11 +184,10 @@ function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
       <button
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:cursor-pointer
-                    ${
-                      active
-                        ? "bg-[#0DA2E7] text-white"
-                        : "text-black hover:bg-gray-100"
-                    }`}
+                    ${active
+            ? "bg-[#0DA2E7] text-white"
+            : "text-black hover:bg-gray-100"
+          }`}
       >
         <Icon size={20} className={active ? "text-white" : "text-black"} />
         <span className="text-sm font-semibold">{label}</span>
