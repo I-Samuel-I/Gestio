@@ -4,8 +4,8 @@ import { ProductCategory } from "../enums/product-category.enum";
 @Entity('products')
 export class Product{
 
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     name: string;
