@@ -1,27 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-
-export enum UserRole {
-    
-    ADMIN = 'admin',
-    SUPERVISOR = 'supervisor',
-    SELLER = 'seller',
-    SUPPORT = 'support',
-    FINANCIAL = 'financial',
-}
-
-export enum UserStatus {
-
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-    PENDING = 'pending'
-
-}
+import { Customer } from 'src/customers/entities/customer.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, JoinColumn } from 'typeorm';
+import { UserRole } from '../enums/user-role.enum';
+import { UserStatus } from '../enums/user-status.enum';
 
 @Entity('users')
 export class User {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     name: string;
@@ -29,7 +15,7 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @Column({
@@ -57,5 +43,9 @@ export class User {
 
     @CreateDateColumn()
     createdAt: Date;
+
+    @OneToMany(() => Customer, customer => customer.user)
+    customers: Customer[];
+    
 }
 
