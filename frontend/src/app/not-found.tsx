@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen flex">
+    <main className="min-h-screen flex bg-slate-50">
       <Navbar />
 
       <div className="flex flex-col flex-1 md:ml-50 lg:ml-70">

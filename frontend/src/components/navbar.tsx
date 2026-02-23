@@ -52,7 +52,7 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
     else if (pathname.startsWith("/dashboard")) {
       setActiveItem("Dashboard");
     }
-    else if (pathname.startsWith("/financeiro")) {
+    else if (pathname.startsWith("/finance")) {
       setActiveItem("Financeiro");
     }
     else if (pathname.startsWith("/relatorio")) {
@@ -130,7 +130,7 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   onClick={() => setActiveItem("Dashboard")}
                 />
               </Link>
-              <Link href="/financial">
+              <Link href="/finance">
                 <NavItem
                   icon={CircleDollarSign}
                   label="Financeiro"
