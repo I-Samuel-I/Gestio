@@ -8,8 +8,29 @@ import Navbar from "@/components/navbar";
 import PieGraph from "@/components/pieChart";
 import StatCard from "@/components/statCard";
 import { finances } from "@/mock/finance";
-import { BoxIcon, Plus, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, BoxIcon, Plus, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useState } from "react";
+
+type TransactionType = "income" | "expense";
+
+function TransactionMeta(type: TransactionType) {
+    if (type === "income") {
+        return {
+            sign: "+",
+            icon: ArrowUpRight,
+            color: "#21C462",
+            bgColor: "#E8F9EE",
+        }
+    }
+    else {
+        return {
+            sign: "-",
+            icon: ArrowDownRight,
+            color: "#DC2874",
+            bgColor: "#FBE9E9",
+        }
+    }
+}
 
 export default function Finance() {
 
@@ -41,9 +62,9 @@ export default function Finance() {
                             <Modal isOpen={open} onClose={() => setOpen(false)}>
                                 <CreateButton
                                     icon={<BoxIcon size={45} color="#2082B1" />}
-                                    type="product"
-                                    title="Novo Produto"
-                                    subTitle="Adicione um novo produto ao catálogo"
+                                    type="finance"
+                                    title="Nova Transação"
+                                    subTitle="Adicione uma nova transação financeira"
                                     onClose={() => setOpen(false)}
                                 />
                             </Modal>
@@ -92,12 +113,40 @@ export default function Finance() {
                             </StatCard>
                         </div>
                     </section>
+                    {/*  Graphs */}
                     <section>
-                        <div className="flex gap-5">
+                        <div className="flex flex-col gap-5 lg:flex-row">
                             <LineGraph />
                             <PieGraph />
                         </div>
+                    </section>
+                    <section>
+                        <StatCard>
+                            <h3 className="text-xl font-bold text-slate-800">Transações recentes</h3>
+                            <p className="text-slate-500 font-light">Últimas movimentações financeiras</p>
+                            {finances.transactions.map((transactions) => {
+                                const meta = TransactionMeta(transactions.type as TransactionType)
+                                const Icon = meta.icon
 
+                                return (
+                                    <div key={transactions.id} className="flex justify-between mt-10">
+                                        <div className="flex items-center gap-5">
+
+                                            <div className="p-2.5 rounded-lg " style={{ backgroundColor: meta.bgColor }}>
+                                                <Icon size={20} color={meta.color} />
+                                            </div>
+                                            <div className="flex flex-col" 
+                                            >
+                                                <p>{transactions.title}</p>
+                                                <p className="text-sm text-slate-500">{new Date(transactions.date).toLocaleDateString("pt-br")}</p>
+                                            </div>
+                                        </div>
+                                        <p style={{ color: meta.color}} className="font-medium">{transactions.type === "income" ? "+" : "-"}
+                                            R${transactions.value.toLocaleString("pt-br")}</p>
+                                    </div>
+                                )
+                            })}
+                        </StatCard>
                     </section>
                 </div>
             </div>

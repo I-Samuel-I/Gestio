@@ -75,7 +75,7 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
         />
       )}
 
-      <nav className="hidden md:flex fixed flex-col md:w-50 lg:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
+      <nav className="hidden md:flex fixed flex-col md:w-50 lg:w-60 xl:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
         <div>
           {/* Logo Section */}
           <div className="flex items-center gap-3 px-2 mb-8">

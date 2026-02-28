@@ -12,23 +12,13 @@ export default function PieGraph() {
 
     return (
         <div
-            style={{
-                backgroundColor: "white",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                padding: "20px",
-                width: "50%",
-                borderRadius: "12px",
-                border: "1px solid #f1f5f9",
-                boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-            }}
+            className="bg-white  flex justify-center flex-col p-5 w-full  lg:w-2/3 xl:w-1/2 rounded-xl border border-slate-100 shadow-sm"
         >
             <h3 className="text-xl font-bold text-slate-800">Receita por categoria</h3>
             <p className="text-slate-500 font-light">Distribuição por mês</p>
 
             <div style={{ width: "100%", height: 280, marginTop: 50, }}>
-                <ResponsiveContainer>
+                <ResponsiveContainer> 
                     <PieChart>
                         <Pie
                             data={data}
@@ -38,7 +28,7 @@ export default function PieGraph() {
                             cy="50%"
                             innerRadius={70}
                             outerRadius={95}
-                            label={({ name,percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                            label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                             paddingAngle={3}
                         >
                             {data.map((_, index) => (
@@ -49,10 +39,10 @@ export default function PieGraph() {
                             contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
                         />
                         <Legend
-                        layout="horizontal"
-                        verticalAlign="bottom"
-                        iconType="circle"
-                        iconSize={10}
+                            layout="horizontal"
+                            verticalAlign="bottom"
+                            iconType="circle"
+                            iconSize={10}
                         />
                     </PieChart>
                 </ResponsiveContainer>
