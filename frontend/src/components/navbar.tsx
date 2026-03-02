@@ -112,8 +112,6 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   onClick={() => setActiveItem("Usuários")}
                 />
               </Link>
-
-
             </ul>
           </div>
 
@@ -185,7 +183,7 @@ function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:cursor-pointer
                     ${active
-            ? "bg-[#0DA2E7] text-white"
+            ? "bg-[#2082B1] text-white"
             : "text-black hover:bg-gray-100"
           }`}
       >

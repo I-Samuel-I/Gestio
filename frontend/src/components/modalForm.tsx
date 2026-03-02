@@ -20,7 +20,7 @@ type CreateModalProps =
     | (BaseCreateProps & { type: "user" })
     | (BaseCreateProps & { type: "finance" });
 
-export default function CreateButton(props: CreateModalProps) {
+export default function ModalForm(props: CreateModalProps) {
     const { title, subTitle, icon, type, onClose } = props;
 
     return (

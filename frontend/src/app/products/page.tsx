@@ -7,7 +7,9 @@ import { products } from "@/mock/products";
 import Input from "@/components/input";
 import { useState } from "react";
 import Modal from "@/components/modal";
-import CreateButton from "@/components/createButton";
+import ModalForm from "@/components/modalForm";
+import ButtonForm from "@/components/buttonForm";
+import CreateButtonForm from "@/components/createButtonForm";
 
 
 export default function Products() {
@@ -17,13 +19,13 @@ export default function Products() {
 
   return (
     <main className="flex min-h-screen bg-slate-50">
-      <Navbar 
-      mobileOpen = {navMobile}
-      onClose ={() => setNavMobile(false)}
+      <Navbar
+        mobileOpen={navMobile}
+        onClose={() => setNavMobile(false)}
       />
 
       <div className="flex flex-col flex-1 md:ml-50 lg:ml-70">
-        <Header title="Produtos" onMenuClick={()=> setNavMobile(true)} />
+        <Header title="Produtos" onMenuClick={() => setNavMobile(true)} />
 
         <div className="p-8 space-y-6">
           {/* Hero section */}
@@ -32,17 +34,10 @@ export default function Products() {
               <h1 className="text-2xl font-bold text-slate-800">Produtos</h1>
               <p className="text-slate-500">Gerencie seu catálogo de produtos</p>
             </div>
-            <button onClick={() => setOpen(true)}
-              
-              className="flex w-full mt-5 justify-center sm:mt-0 sm:w-fit 
-              items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer 
-              text-white font-bold p-3 rounded-lg transition-colors">
-              <Plus className="w-5 h-5" />
-              Novo Produto
-            </button>
+            <CreateButtonForm onClick={() => setOpen(true)} text="Novo Produto" />
             <Modal isOpen={open} onClose={() => setOpen(false)}>
-              <CreateButton
-              icon={<BoxIcon size={45} color="#2082B1"/>}
+              <ModalForm
+                icon={<BoxIcon size={45} color="#2082B1" />}
                 type="product"
                 title="Novo Produto"
                 subTitle="Adicione um novo produto ao catálogo"

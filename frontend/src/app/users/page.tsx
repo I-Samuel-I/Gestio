@@ -1,6 +1,6 @@
 "use client";
 
-import CreateButton from "@/components/createButton";
+import ModalForm from "@/components/modalForm";
 import Header from "@/components/header";
 import Input from "@/components/input";
 import Modal from "@/components/modal";
@@ -8,6 +8,7 @@ import Navbar from "@/components/navbar";
 import { users } from "@/mock/user";
 import { Filter, Mail, Plus, Search, Shield, User } from "lucide-react";
 import { useState } from "react";
+import CreateButtonForm from "@/components/createButtonForm";
 
 
 type Roles = "Supervisor" | "Financeiro" | "Gerente" | "Vendas" | "Suporte"
@@ -44,16 +45,9 @@ export default function Users() {
                                 Gerencie seus usuários.
                             </p>
                         </div>
-                        <button
-                            onClick={() => setOpen(true)}
-                            className="flex w-full sm:w-fit items-center justify-center gap-2 bg-[#2082B1]
-                    hover:bg-[#1a6a8f] text-white font-bold p-3 rounded-lg transition"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Novo Usuário
-                        </button>
+                        <CreateButtonForm onClick={() => setOpen(true)} text="Novo Usuário" />
                         <Modal isOpen={open} onClose={() => setOpen(false)}>
-                            <CreateButton
+                            <ModalForm
                                 icon={<User size={45} color="#2082B1" />}
                                 type="user"
                                 title="Novo Usuário"

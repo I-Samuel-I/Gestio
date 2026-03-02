@@ -1,6 +1,6 @@
 "use client"
 
-import CreateButton from "@/components/createButton";
+import ModalForm from "@/components/modalForm";
 import Header from "@/components/header";
 import LineGraph from "@/components/lineChart";
 import Modal from "@/components/modal";
@@ -10,6 +10,7 @@ import StatCard from "@/components/statCard";
 import { finances } from "@/mock/finance";
 import { ArrowDownRight, ArrowUpRight, BoxIcon, Plus, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useState } from "react";
+import CreateButtonForm from "@/components/createButtonForm";
 
 type TransactionType = "income" | "expense";
 
@@ -52,15 +53,9 @@ export default function Finance() {
                                 <h1 className="text-2xl font-bold text-slate-800">Financeiro</h1>
                                 <p className="text-slate-500">Controle de entrdas e saídas</p>
                             </div>
-                            <button onClick={() => setOpen(true)}
-                                className="flex  w-full mt-5 justify-center sm:mt-0 sm:w-fit 
-                            items-center gap-2 bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer 
-                          text-white  p-3 rounded-lg transition-colors">
-                                <Plus className="w-5 h-5" />
-                                Nova Transação
-                            </button>
+                          <CreateButtonForm onClick={() => setOpen(true)} text="Nova Transação" />
                             <Modal isOpen={open} onClose={() => setOpen(false)}>
-                                <CreateButton
+                                <ModalForm
                                     icon={<BoxIcon size={45} color="#2082B1" />}
                                     type="finance"
                                     title="Nova Transação"

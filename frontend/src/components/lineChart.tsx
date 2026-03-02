@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import StatCard from "./statCard";
 
 type FinanceData = {
   date: string;
@@ -66,17 +67,7 @@ export default function LineGraph() {
   const data = buildGraphFinance();
 
   return (
-    <div
-      style={{
-        backgroundColor: "white",
-        padding: "20px",
-        width: "100%",
-        borderRadius: "12px",
-        border: "1px solid #f1f5f9",
-        boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-        transition: "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1)",
-      }}
-    >
+   <StatCard>
       <h3  className="text-xl font-bold text-slate-800">
         Fluxo de Caixa
       </h3>
@@ -94,7 +85,7 @@ export default function LineGraph() {
               tickLine={false}
               tick={{ fill: "#64748b", fontSize: 12 }}
             />
-            <YAxis
+            <YAxis 
               width={72}
               tickMargin={10}
               tickFormatter={(v) => formatCompactBRL(v).replace("R$", "R$")} 
@@ -144,6 +135,6 @@ export default function LineGraph() {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </StatCard>
   );
 }
