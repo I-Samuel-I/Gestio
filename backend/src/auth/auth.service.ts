@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import { User, UserRole, UserStatus } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 // Only numbers
@@ -28,7 +28,6 @@ export class AuthService {
     name: string,
     phone: string,
   ) {
-    
     const normalizedPhone = normalizePhone(phone);
     const userExists = await this.userRepository.findOne({ where: { email } });
     if (userExists) throw new BadRequestException('User already exists.');
@@ -38,9 +37,11 @@ export class AuthService {
     const newUser = this.userRepository.create({
       email,
       password: hashedPassword,
-      role: 'user',
+      role: UserRole.SELLER,
+      status: UserStatus.PENDING,
       phone: normalizedPhone,
       companyName,
+      company: companyName,
       name,
     });
     await this.userRepository.save(newUser);
