@@ -73,9 +73,9 @@ export default function LineGraph() {
       </h3>
       <p className="text-slate-500 font-light" >Entradas e saídas do mês</p>
 
-      <div style={{ width: "100%", height: 340, marginTop: "20px" }}>
+      <div style={{ width: "100%", height: 340, marginTop: "20px" }} className="chart-no-select">
         <ResponsiveContainer>
-          <ComposedChart data={data} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
+          <ComposedChart data={data} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}> 
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#dbe3ed" />
 
             <XAxis
@@ -99,7 +99,7 @@ export default function LineGraph() {
               contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
             />
             <defs>
-              <linearGradient id="inflowGradient" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="inflowGradient" x1="0" y1="0" x2="0" y2="1" >
                 <stop offset="5%" stopColor="#21C45D" stopOpacity={1} />
                 <stop offset="95%" stopColor="#21C45D" stopOpacity={0.30} />
               </linearGradient>
