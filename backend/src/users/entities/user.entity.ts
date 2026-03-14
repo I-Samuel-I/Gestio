@@ -1,5 +1,6 @@
 import { Customer } from 'src/customers/entities/customer.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import { Order } from 'src/orders/entities/order.entity';
 import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
 
@@ -46,6 +47,10 @@ export class User {
 
     @OneToMany(() => Customer, customer => customer.user)
     customers: Customer[];
+
+    @OneToMany(() => Order, order => order.creator)
+    orders: Order[];
+
     
 }
 

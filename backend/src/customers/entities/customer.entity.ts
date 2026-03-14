@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { CustomerDocument } from "../enums/customer-document.enum";
 import { BrazilianStates } from "../enums/brazilian-state.enum";
 import { CustomerStatus } from "../enums/customer-status.enum";
 import { User } from "src/users/entities/user.entity";
+import { Order } from "src/orders/entities/order.entity";
 
 @Entity('customers')
 export class Customer{
@@ -58,6 +59,9 @@ export class Customer{
     @ManyToOne(() => User, user => user.customers)
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    @OneToMany(() => Order, order => order.customer)
+    orders: Order[];
 
     @CreateDateColumn()
     created_at: Date;
