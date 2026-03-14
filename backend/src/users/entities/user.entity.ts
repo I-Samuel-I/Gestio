@@ -32,11 +32,6 @@ export class User {
     @Column()
     password: string;
 
-    @Column()
-    name:string;
-
-    @Column()
-    phone: string;
 
     @Column()
     companyName: string;

@@ -1,5 +1,3 @@
-import { title } from "process";
-
 
 export const dashboard = {
     header:{
@@ -38,6 +36,33 @@ export const dashboard = {
             month: "Junho",
             income: 30000,
             expense: 15000,
+        },
+    ],
+
+    topProducts: [
+        {
+            Product: "Camiseta Azul",
+            Sales: 150,
+            Stock: 30,
+            SoldStock: 20,
+        },
+        {
+            Product: "Calça Jeans",
+            Sales: 120,
+            Stock: 20,
+            SoldStock: 7,
+        },
+        {
+            Product: "Tênis Esportivo",
+            Sales: 100,
+            Stock: 25,
+            SoldStock: 25,    
+        },
+        {
+            Product: "Jaqueta de Couro",
+            Sales: 80,
+            Stock: 10,
+            SoldStock: 2,
         },
     ],
 

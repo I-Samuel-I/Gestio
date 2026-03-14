@@ -4,7 +4,7 @@ import ModalForm from "@/components/modalForm";
 import Header from "@/components/header";
 import LineGraph from "@/components/lineChart";
 import Modal from "@/components/modal";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import PieGraph from "@/components/pieChart";
 import StatCard from "@/components/statCard";
 import { finances } from "@/mock/finance";
@@ -150,15 +150,12 @@ export default function Finance() {
                         <div className=" md:hidden">
                             <h3 className="text-xl font-bold text-slate-800">Transações recentes</h3>
                             <p className="text-slate-500 font-light">Últimas movimentações financeiras</p>
-
                             {finances.transactions.map((transactions) => {
                                 const meta = TransactionMeta(transactions.type as TransactionType)
                                 const Icon = meta.icon
 
                                 return (
                                     <div key={transactions.id} className="mt-4 " >
-
-
                                         <StatCard >
                                             <div className="flex items-center gap-5">
                                                 <div className="p-2.5 rounded-lg" style={{ backgroundColor: meta.bgColor }}>

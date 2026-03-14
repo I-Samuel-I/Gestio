@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import Input from "@/components/input";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import ToogleButton from "@/components/toogleButton";
 import { Bell, Building, Clock, Globe, Palette } from "lucide-react";
 

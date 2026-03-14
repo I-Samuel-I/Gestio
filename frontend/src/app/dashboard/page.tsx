@@ -2,7 +2,7 @@
 
 import AreaGraph from "@/components/areaChart";
 import Header from "@/components/header";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import StatCard from "@/components/statCard";
 import { dashboard } from "@/mock/dashboard";
 import dayjs from "dayjs";
@@ -60,7 +60,6 @@ export default function Dashboard() {
 
     }
 
-
     return (
         <main className="flex min-h-screen bg-slate-50">
             <Navbar />
@@ -69,8 +68,8 @@ export default function Dashboard() {
 
                 {/* Hero Section */}
                 <div className="p-8 space-y-6">
-                    <section>
-                        <div className="flex justify-between gap-7 mt-5">
+                    <section >
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-5">
                             <StatCard>
                                 <div className="flex justify-between items-center">
                                     <span >
@@ -122,40 +121,77 @@ export default function Dashboard() {
                             <StatCard>
                                 <h3 className="text-xl font-bold text-slate-800">Produtos Mais Vendidos</h3>
                                 <p className="text-slate-500 font-light">Ranking baseado nas transações</p>
+                                
                             </StatCard>
                         </div>
 
                     </section>
 
                     <section>
-                        <StatCard>
+                        {/* DESKTOP/TABLET */}
+                        <div className="hidden md:block">
+
+
+                            <StatCard>
+                                <h3 className="text-xl font-bold text-slate-800">Atividades Recentes</h3>
+                                <p className="text-slate-500 font-light">Últimas atualizações no sistema</p>
+                                {dashboard.recentActivities.map((activie) => {
+                                    const meta = ActivityMeta(activie.category as ActivityCategory)
+                                    const Icon = meta.icon
+
+                                    return (
+                                        <div key={activie.id} className="flex justify-between mt-10">
+                                            <div className="flex items-center gap-5">
+
+                                                <div className="p-2.5 rounded-lg " style={{ backgroundColor: meta.bgColor }}>
+                                                    <Icon size={20} color={meta.color} />
+                                                </div>
+                                                <div className="flex flex-col"
+                                                >
+                                                    <p>{activie.title}</p>
+                                                    <p className="text-sm text-slate-500">{activie.description}</p>
+                                                </div>
+                                            </div>
+                                            <p className="text-xs text-slate-500">{formatDate(activie.date)}</p>
+                                        </div>
+                                    )
+                                })}
+                            </StatCard>
+                        </div>
+                        {/* MOBILE */}
+                        <div className="block md:hidden">
+
                             <h3 className="text-xl font-bold text-slate-800">Atividades Recentes</h3>
                             <p className="text-slate-500 font-light">Últimas atualizações no sistema</p>
+                            <div className="flex flex-col gap-5 mt-5">
+
+                            
                             {dashboard.recentActivities.map((activie) => {
                                 const meta = ActivityMeta(activie.category as ActivityCategory)
                                 const Icon = meta.icon
 
                                 return (
-                                    <div key={activie.id} className="flex justify-between mt-10">
+                                    <StatCard key={activie.id} >
                                         <div className="flex items-center gap-5">
 
                                             <div className="p-2.5 rounded-lg " style={{ backgroundColor: meta.bgColor }}>
-                                                <Icon size={20} color={meta.color} />
+                                                <Icon size={24} color={meta.color} />
                                             </div>
                                             <div className="flex flex-col"
                                             >
-                                                <p>{activie.title}</p>
-                                                <p className="text-sm text-slate-500">{activie.description}</p>
+                                                <p className="text-sm">{activie.title}</p>
+                                                <p className="text-xs mt-1 text-slate-500">{activie.description}</p>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-slate-500">{formatDate(activie.date)}</p>
-                                    </div>
+                                        <p className="text-xs text-slate-500 mt-2">{formatDate(activie.date)}</p>
+                                    </StatCard>
                                 )
                             })}
-                        </StatCard>
+                            </div>
+                        </div>
                     </section>
                 </div>
-            </div>
-        </main>
+            </div >
+        </main >
     )
 }

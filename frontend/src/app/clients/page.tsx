@@ -4,7 +4,7 @@ import ModalForm from "@/components/modalForm";
 import Header from "@/components/header";
 import Input from "@/components/input";
 import Modal from "@/components/modal";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import { clients } from "@/mock/client";
 import {
   Filter,

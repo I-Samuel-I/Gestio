@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "@/components/header";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import { Filter, Search, Plus, Box, BoxIcon } from "lucide-react";
 import { products } from "@/mock/products";
 import Input from "@/components/input";

@@ -1,5 +1,5 @@
 import Header from "@/components/header";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
