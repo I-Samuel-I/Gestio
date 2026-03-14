@@ -38,13 +38,19 @@ export class AuthService {
         return { message: 'User registered successfully.' };
     }
 
-    async validateUser(email: string, password: string): Promise<User> {
+    async validateUser(email: string, password: string) {
 
-        const user = await this.userRepository.findOne({ where: { email } });
-        if (!user) throw new UnauthorizedException('Invalid credentials.');
+        const user = await this.userRepository
+            .createQueryBuilder('user')
+            .addSelect('user.password')
+            .where('user.email = :email', { email })
+            .getOne();
 
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) throw new UnauthorizedException('Invalid credentials.');
+        if (!user) { throw new UnauthorizedException('Invalid credentials.'); }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
 
         return user;
     }
