@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -23,11 +23,23 @@ export class CustomersController {
         @CurrentUser() user: User,
     ){ return this.customersService.findAll(user.id) }
 
+    @Get(':id')
+    findOne(
+        @Param('id') id: string, 
+        @CurrentUser() user: User
+    ) { return this.customersService.findOne(id, user.id); }
+
     @Patch(':id')
     update(
         @Param('id') id: string,
-        @Body() data: UpdateCustomerDto,
+        @Body() updateCustomerDto: UpdateCustomerDto,
         @CurrentUser() user: User
-    ){ return this.customersService.update(id, data, user.id)}
+    ){ return this.customersService.update(id, updateCustomerDto, user.id)}
+
+    @Delete(':id')
+    remove(
+        @Param('id') id: string, 
+        @CurrentUser() user: User
+    ){ return this.customersService.remove(id, user.id); }
 
 }

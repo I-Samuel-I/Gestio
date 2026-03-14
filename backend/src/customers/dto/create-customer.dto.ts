@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsPositive, IsString, Length, Matches, MaxLength, Min, MinLength, ValidateIf } from "class-validator";
 import { CustomerDocument } from "../enums/customer-document.enum";
 import { BrazilianStates } from "../enums/brazilian-state.enum";
 import { CustomerStatus } from "../enums/customer-status.enum";
@@ -6,7 +6,7 @@ import { CustomerStatus } from "../enums/customer-status.enum";
 export class CreateCustomerDto{
 
     @IsString()
-    @MinLength(3, { message: 'Name must have at least 2 characters' })
+    @MinLength(3, { message: 'Name must have at least 3 characters' })
     name: string;
 
     @IsEnum(CustomerDocument, {
@@ -21,7 +21,7 @@ export class CreateCustomerDto{
 
     @ValidateIf(o => o.document_type === CustomerDocument.CNPJ)
     @Matches(/^\d{14}$/, {
-        message: 'CNPJ must contain 14 digits',
+        message: 'CNPJ must contain 14 digits'
     })
 
     @IsNotEmpty()
@@ -30,9 +30,8 @@ export class CreateCustomerDto{
     @IsEmail()
     email: string;
 
-    @Matches(/^\d{10, 11}$/, {
-        message: 'Phone must contain 10 or 11 digits'
-    })
+    @Length(10, 11)
+    @IsNumberString()
     phone: string;
 
     @IsEnum(BrazilianStates, {
@@ -56,7 +55,7 @@ export class CreateCustomerDto{
     status: CustomerStatus;
 
     @IsNumber()
-    @IsPositive()
+    @Min(0, {message: 'Total purchases cannot be negative.'})
     total_purchases: number;
 
 }

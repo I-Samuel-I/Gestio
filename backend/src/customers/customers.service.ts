@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { CurrentUser } from 'src/auth/roles.decorator';
 
 @Injectable()
 export class CustomersService {
@@ -14,20 +15,21 @@ export class CustomersService {
         private readonly customersRepository: Repository<Customer>,
     ){}
 
-    async create(createCustomerDto:CreateCustomerDto, user:User){
+    async create(createCustomerDto:CreateCustomerDto, @CurrentUser() user: User){
 
         const customer = this.customersRepository.create({
             ...createCustomerDto,
             user: user
         });
 
-        return await this.customersRepository.save(customer);
+        return this.customersRepository.save(customer);
     }
 
     async findAll(userId: string){
 
         return await this.customersRepository.find({
             where: { user: {id: userId} },
+            relations: ['user'],
             order: { created_at: 'DESC' }
         });
     }
@@ -38,7 +40,7 @@ export class CustomersService {
             where: { id, user: { id:userId } }
         })
 
-        if (!customer){ throw new NotFoundException }
+        if (!customer){ throw new NotFoundException('Customer not found.')}
         
         return customer;
 
@@ -59,6 +61,8 @@ export class CustomersService {
         const customer = await this.findOne(id, userId);
 
         await this.customersRepository.remove(customer);
+
+        return { message: 'Customer deleted successfully.' }
 
     }
 
