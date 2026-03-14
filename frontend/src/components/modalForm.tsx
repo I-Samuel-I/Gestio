@@ -3,6 +3,8 @@
 import { X } from "lucide-react";
 import ClientForm from "./clientForm";
 import ProductForm from "./productForm";
+import UserForm from "./userForm";
+import FinanceForm from "./financeForm";
 
 type BaseCreateProps = {
     title: string;
@@ -15,9 +17,10 @@ type BaseCreateProps = {
 type CreateModalProps =
     | (BaseCreateProps & { type: "product" })
     | (BaseCreateProps & { type: "client" })
-    | (BaseCreateProps & { type: "user" });
+    | (BaseCreateProps & { type: "user" })
+    | (BaseCreateProps & { type: "finance" });
 
-export default function CreateButton(props: CreateModalProps) {
+export default function ModalForm(props: CreateModalProps) {
     const { title, subTitle, icon, type, onClose } = props;
 
     return (
@@ -38,17 +41,10 @@ export default function CreateButton(props: CreateModalProps) {
                 </button>
             </header>
 
-            {type === "product" && (
-                <><ProductForm />
-                </>
-            )}
+            {type === "product" && (<ProductForm />)}
             {type === "client" && (<ClientForm />)}
-            {type === "user" && (
-
-                <div>
-
-                </div>
-            )}
+            {type === "user" && (<UserForm />)}
+            {type === "finance" && (<FinanceForm />)}
 
             {/* Buttons */}
             <div className="flex justify-end gap-3 mt-10">

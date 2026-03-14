@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole, UserStatus } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -24,7 +24,10 @@ export class UsersService {
         const user = this.userRepo.create({
             email: data.email,
             password: hashedPassword,
-            role: data.role,
+            role: UserRole.SELLER,
+            phone: data.phone,
+            company: data.company,
+            status: UserStatus.INACTIVE
         });
 
         return this.userRepo.save(user);
@@ -33,7 +36,15 @@ export class UsersService {
 
     findAll() { return this.userRepo.find({ where: { isActive: true } }); }
 
-    findById(id: number) { return this.userRepo.findOneBy({ id });}
+    async findById(id: number) { 
+        
+        const user = await this.userRepo.findOneBy({id});
+
+        if (!user){ throw new NotFoundException('User not found') }
+
+        return user;
+    
+    }
 
     async update(id: number, data: UpdateUserDto) { 
         

@@ -1,21 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5F5F5;
+  --background: #f5f5f5;
   --text-default: black;
-  --hover-bg: #0DA2E7;
-  --hover-bg-opacity:#E7F6FE;
-  --secondary-text:#62748e;
-  --text-title:#1d293d;
-  --focus-input:#2082B1;
-  --border:#ffffff33;
+  --hover-bg: #0da2e7;
+  --hover-bg-opacity: #e7f6fe;
+  --secondary-text: #62748e;
+  --text-title: #1d293d;
+  --focus-input: #2082b1;
+  --border: #ffffff33;
   --border-input: #e2e8f0;
-  --text-blue: #2082B1;
-  --bg-gradient-2: #3890B9;
-  --bg-gradient-1: #2082B1;
-
+  --text-blue: #2082b1;
+  --bg-gradient-2: #3890b9;
+  --bg-gradient-1: #2082b1;
 }
 
+@keyframes floatUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
 
 @keyframes fadeIn {
   from {
@@ -31,8 +39,6 @@
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
 }
-
-
 
 @theme inline {
   --color-foreground: var(--foreground);
@@ -50,6 +56,19 @@
 
 body {
   color: black;
-  background-color:#F5F5F5 ;
-  font-family: var(--font-poppins),sans-serif;
+  background-color: #f5f5f5;
+  font-family: var(--font-poppins), sans-serif;
+
+  .recharts-surface:focus,
+  .recharts-surface:focus-visible {
+    outline: none !important;
+  }
+
+  .chart-no-select,
+  .chart-no-select * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 }

@@ -1,21 +1,21 @@
 "use client";
 
-import CreateButton from "@/components/createButton";
+import ModalForm from "@/components/modalForm";
 import Header from "@/components/header";
 import Input from "@/components/input";
 import Modal from "@/components/modal";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/sidebar";
 import { clients } from "@/mock/client";
 import {
   Filter,
   Mail,
   MapPin,
   Phone,
-  Plus,
   Search,
   User,
 } from "lucide-react";
 import { useState } from "react";
+import CreateButtonForm from "@/components/createButtonForm";
 
 export default function Clients() {
   const [open, setOpen] = useState(false);
@@ -36,6 +36,7 @@ export default function Clients() {
         <Header title="Clientes" />
 
         <div className="p-6 md:p-8 space-y-6">
+
           {/* Hero */}
           <section className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
@@ -44,18 +45,9 @@ export default function Clients() {
                 Gerencie sua base de clientes.
               </p>
             </div>
-
-            <button
-              onClick={() => setOpen(true)}
-              className="flex w-full sm:w-fit items-center justify-center gap-2 bg-[#2082B1]
-              hover:bg-[#1a6a8f] text-white font-bold p-3 rounded-lg transition"
-            >
-              <Plus className="w-5 h-5" />
-              Novo Cliente
-            </button>
-
+            <CreateButtonForm onClick={() => setOpen(true)} text="Novo Cliente" />
             <Modal isOpen={open} onClose={() => setOpen(false)}>
-              <CreateButton
+              <ModalForm
                 icon={<User size={45} color="#2082B1" />}
                 type="client"
                 title="Novo Cliente"
@@ -132,9 +124,8 @@ export default function Clients() {
 
                       <td className="p-4">
                         <span
-                          className={`px-2 py-1 rounded text-sm font-medium ${
-                            statusColor[client.status as Status]
-                          }`}
+                          className={`px-2 py-1 rounded text-sm font-medium ${statusColor[client.status as Status]
+                            }`}
                         >
                           {client.status}
                         </span>
@@ -157,6 +148,7 @@ export default function Clients() {
                 key={client.id}
                 className="bg-white rounded-xl shadow-sm p-4 space-y-3"
               >
+                {/* Main Data */}
                 <div>
                   <p className="font-semibold text-slate-800">
                     {client.nome}
@@ -165,7 +157,7 @@ export default function Clients() {
                     ID: {client.id}
                   </p>
                 </div>
-
+                {/* Info Clients */}
                 <div className="space-y-1 text-sm">
                   <span className="flex items-center gap-2">
                     <Mail size={14} />
@@ -177,16 +169,19 @@ export default function Clients() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin size={14} />
-                  {client.localizacao}
+                {/* Location */}
+                <div>
+                  <span className="flex items-center gap-2 text-sm">
+                    <MapPin size={14} />
+                    {client.localizacao}
+                  </span>
                 </div>
 
+                {/* Status */}
                 <div className="flex items-center justify-between">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      statusColor[client.status as Status]
-                    }`}
+                    className={`px-2 py-1 rounded text-xs font-medium ${statusColor[client.status as Status]
+                      }`}
                   >
                     {client.status}
                   </span>

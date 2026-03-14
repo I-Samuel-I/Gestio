@@ -1,6 +1,8 @@
 "use client";
 import { Bell, LogOut, Menu, Search } from "lucide-react";
 import { useState } from "react";
+import Navbar from "./sidebar";
+import NavBar from "./navbar";
 
 type HeaderProps = {
   title: string;
@@ -23,7 +25,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
           />
         </div>
         <button className=" md:hidden" onClick={onMenuClick} >
-          <Menu className="text-slate-500 hover:text-[#0DA2E7] hover:bg-[#E7F6FE] rounded-full transition-colors hover:cursor-pointer w-6 h-6" />
+          <NavBar/>
         </button>
         <button className="relative p-2 text-slate-500 hover:text-[#0DA2E7] hover:bg-[#E7F6FE] rounded-full transition-colors hover:cursor-pointer">
           <Bell className="w-6 h-6" />
