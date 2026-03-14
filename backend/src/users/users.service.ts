@@ -1,10 +1,11 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole, UserStatus } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from './enums/user-role.enum';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -22,12 +23,12 @@ export class UsersService {
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
         const user = this.userRepo.create({
+            name: data.name,
             email: data.email,
             password: hashedPassword,
             role: UserRole.SELLER,
             phone: data.phone,
             company: data.company,
-            status: UserStatus.INACTIVE
         });
 
         return this.userRepo.save(user);
@@ -36,7 +37,7 @@ export class UsersService {
 
     findAll() { return this.userRepo.find({ where: { isActive: true } }); }
 
-    async findById(id: number) { 
+    async findById(id: string) { 
         
         const user = await this.userRepo.findOneBy({id});
 
@@ -46,12 +47,25 @@ export class UsersService {
     
     }
 
-    async update(id: number, data: UpdateUserDto) { 
+    async update(id: string, data: UpdateUserDto) { 
         
+        const user = await this.findById(id);
+
         if (data.password) { data.password = await bcrypt.hash(data.password, 10); }
-        return this.userRepo.update(id, data);
+
+        Object.assign(user, data);
+
+        return this.userRepo.save(user);
     }
 
-    deactivate(id: number) { return this.userRepo.update(id, { isActive: false });}
+    async deactivate(id: string) { 
+
+        const user = await this.findById(id);
+
+        user.isActive = false;
+        
+        return this.userRepo.save(user);
+    
+    }
 }
 

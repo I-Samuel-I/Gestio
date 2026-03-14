@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from '../users/entities/user.entity';
+import { UserRole } from 'src/users/enums/user-role.enum';
 
 interface JwtPayload {
     sub: number;
