@@ -13,7 +13,7 @@ export class Product{
     @Column('decimal', { precision: 10, scale: 2 })
     price: number;
 
-    @Column()
+    @Column('int')
     stock: number;
 
     @Column({ default:true })
@@ -30,5 +30,5 @@ export class Product{
     created_at: Date;
 
     @UpdateDateColumn()
-    update_at: Date;
+    updated_at: Date;
 }

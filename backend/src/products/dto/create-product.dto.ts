@@ -1,5 +1,6 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsPositive, IsString, Min } from "class-validator";
 import { ProductCategory } from "../enums/product-category.enum";
+import { Type } from "class-transformer";
 
 export class CreateProductDto{
 
@@ -7,16 +8,18 @@ export class CreateProductDto{
     @IsNotEmpty()
     name: string;
 
+    @Type(() => Number)
     @IsNumber()
     @IsPositive()
     price: number;
 
+    @Type(() => Number)
     @IsNumber()
     @Min(0)
     stock: number;
 
     @IsBoolean()
-    available: boolean;
+    available?: boolean;
 
     @IsEnum(ProductCategory)
     category: ProductCategory;

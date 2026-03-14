@@ -16,13 +16,13 @@ export class ProductsService {
     async create(createProductdto: CreateProductDto){
 
         const product = this.productsRepository.create(createProductdto);
-        return await this.productsRepository.save(product);
+        return this.productsRepository.save(product);
 
     }
 
     async findAll(){
 
-        return await this.productsRepository.find({ order: { created_at: 'DESC' }})
+        return this.productsRepository.find({ order: { created_at: 'DESC' }})
 
     }
 
@@ -51,6 +51,8 @@ export class ProductsService {
 
         const product = await this.findOne(id);
         await this.productsRepository.remove(product);
+
+        return { message: 'Product deleted successfully.' };
 
     }
 
