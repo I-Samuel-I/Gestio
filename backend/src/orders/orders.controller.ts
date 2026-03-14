@@ -4,12 +4,13 @@ import { CurrentUser } from 'src/auth/roles.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { OrdersService } from './orders.service';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('orders')
 export class OrdersController {
 
-    constructor(private readonly ordersService: OrdersController){}
+    constructor(private readonly ordersService: OrdersService){}
 
     @Post()
     create(@Body() createOrderDto: CreateOrderDto, @CurrentUser() user: User) { return this.ordersService.create(createOrderDto, user); }

@@ -6,6 +6,7 @@ import { Customer } from 'src/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { CurrentUser } from 'src/auth/roles.decorator';
 
 @Injectable()
 export class OrdersService {
@@ -42,24 +43,26 @@ export class OrdersService {
 
     }
 
-    async create(createOrderDto: CreateOrderDto, user: User){
+    async create(createOrderDto: CreateOrderDto, currentUser: any) {
 
-        const customer = await this.customerRepository.findOne({ where: { id: createOrderDto.customer_id } });
+        const customer = await this.customerRepository.findOne({ where: { id: createOrderDto.customer_id }, });
 
-
-        if(!customer){ throw new NotFoundException('Customer not found.') }
+        if (!customer) throw new NotFoundException('Customer not found.');
 
         const order = this.orderRepository.create({
-
             ...createOrderDto,
             number: await this.orderNumberFormatter(),
-            creator_id: user.id,
-            customer: customer ?? null
-
+            creator: { id: currentUser.userId } as User, 
+            customer,
         });
 
-        return await this.orderRepository.save(order);
+        const savedOrder = await this.orderRepository.save(order);
 
+        return {
+            ...savedOrder,
+            customer: savedOrder.customer.id,
+            creator: savedOrder.creator.id, 
+        };
     }
     
     async findAll(){
@@ -103,6 +106,8 @@ export class OrdersService {
         const order = await this.findOne(id);
 
         await this.orderRepository.remove(order);
+
+        return { message: 'Order deleted successfully.' };
 
     }
 
