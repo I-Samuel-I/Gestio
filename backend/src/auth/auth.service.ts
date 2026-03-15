@@ -6,8 +6,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole, UserStatus } from '../users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UserRole } from 'src/users/enums/user-role.enum';
+import { UserStatus } from 'src/users/enums/user-status.enum';
+
 
 // Only numbers
 function normalizePhone(phone: string): string {
@@ -48,19 +52,27 @@ export class AuthService {
 
     return { message: 'User registered successfully.' };
   }
+    async validateUser(email: string, password: string) {
 
-  async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) throw new UnauthorizedException('Invalid credentials.');
+        const user = await this.userRepository
+            .createQueryBuilder('user')
+            .addSelect('user.password')
+            .where('user.email = :email', { email })
+            .getOne();
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new UnauthorizedException('Invalid credentials.');
+        if (!user) { throw new UnauthorizedException('Invalid credentials.'); }
 
-    return user;
-  }
+        const isMatch = await bcrypt.compare(password, user.password);
 
-  login(user: User) {
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    return { access_token: this.jwtService.sign(payload) };
-  }
+        if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
+
+        return user;
+    }
+
+    login(user: User) {
+
+        const payload = { sub: user.id, email: user.email, role: user.role, };
+        return { access_token: this.jwtService.sign(payload) };
+    }
+
 }
