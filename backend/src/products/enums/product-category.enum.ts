@@ -1,9 +1,7 @@
 export enum ProductCategory {
-
     KIT = 'kit',
-    ELETRONIC = 'eletronic',
+    ELECTRONIC = 'electronic',
     SERVICE = 'service',
     ACCESSORY = 'accessory',
     OTHER = 'other'
-
 }

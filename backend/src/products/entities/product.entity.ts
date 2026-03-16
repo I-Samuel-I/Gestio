@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ProductCategory } from "../enums/product-category.enum";
+import { User } from "src/users/entities/user.entity";
 
 @Entity('products')
 export class Product{
@@ -10,7 +11,10 @@ export class Product{
     @Column()
     name: string;
 
-    @Column('decimal', { precision: 10, scale: 2 })
+    @Column('decimal', { precision: 10, scale: 2, transformer: {
+        to: (value: number) => value,
+        from: (value: string) => parseFloat(value)
+    }})
     price: number;
 
     @Column('int')
@@ -19,11 +23,17 @@ export class Product{
     @Column({ default:true })
     available: boolean;
 
-    @Column({
-        type: 'enum',
-        enum: ProductCategory,
-        default: ProductCategory.OTHER
-    })
+    @Column()
+    company: string;
+
+    @ManyToOne(() => User, user => user.transactions)
+    @JoinColumn({ name: 'user_id' })
+    user: User;
+
+    @Column()
+    userId: string;
+
+    @Column({ type: 'enum', enum: ProductCategory, default: ProductCategory.OTHER })
     category: ProductCategory
 
     @CreateDateColumn()
