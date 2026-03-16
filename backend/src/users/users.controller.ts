@@ -16,21 +16,38 @@ export class UsersController {
     @Get('me')
     getProfile(@CurrentUser() user:User){ return user; }
 
-    @Get()
-    findAll() { return this.usersService.findAll(); }
+    @Get(':id')
+    findAll(
+        @Param('id') id: string,
+        @CurrentUser() user: User
+    ) { 
+        return this.usersService.findAll(user); 
+    }
 
     @Get(':id')
-    findOne(@Param('id') id: string){ return this.usersService.findById(id); }
+    findOne(
+        @Param('id') id: string,
+        @CurrentUser() user: User
+    ) { 
+        return this.usersService.findById(id, user); 
+    }
 
     @Roles(UserRole.ADMIN)
     @Patch(':id')
-    update(
-        @Param('id') id: string,
+    update( 
+        @Param('id') id: string, 
         @Body() data: UpdateUserDto,
-
-    ){ return this.usersService.update(id, data)}
+        @CurrentUser() user:User
+    ) { 
+        return this.usersService.update(id, data, user)
+    }
 
     @Roles(UserRole.ADMIN)
     @Delete(':id')
-    deactivate(@Param('id') id: string){ return this.usersService.deactivate(id); }
+    deactivate(
+        @Param('id') id: string,
+        @CurrentUser() user: User
+    ) { 
+        return this.usersService.deactivate(id, user); 
+    }
 }

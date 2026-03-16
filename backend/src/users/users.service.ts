@@ -23,33 +23,38 @@ export class UsersService {
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
         const user = this.userRepo.create({
-            name: data.name,
-            email: data.email,
+            ...data,
             password: hashedPassword,
             role: UserRole.SELLER,
-            phone: data.phone,
-            company: data.company,
         });
 
         return this.userRepo.save(user);
-
     }
 
-    findAll() { return this.userRepo.find({ where: { isActive: true } }); }
+    findAll(currentUser: User) { 
+        return this.userRepo.find({
+            where: { 
+                company: currentUser.company,
+                isActive: true 
+            }, 
+            order: {createdAt: 'DESC'}
+        }); 
+    }
 
-    async findById(id: string) { 
+    async findById(id: string, currentUser: User) { 
         
-        const user = await this.userRepo.findOneBy({id});
+        const user = await this.userRepo.findOne({
+            where:{ id, company:currentUser.company }
+        }); 
 
-        if (!user){ throw new NotFoundException('User not found') }
+        if (!user){ throw new NotFoundException('User not found in your company.') }
 
         return user;
-    
     }
 
-    async update(id: string, data: UpdateUserDto) { 
+    async update(id: string, data: UpdateUserDto, currentUser: User) { 
         
-        const user = await this.findById(id);
+        const user = await this.findById(id, currentUser);
 
         if (data.password) { data.password = await bcrypt.hash(data.password, 10); }
 
@@ -58,14 +63,12 @@ export class UsersService {
         return this.userRepo.save(user);
     }
 
-    async deactivate(id: string) { 
+    async deactivate(id: string, currentUser: User) { 
 
-        const user = await this.findById(id);
+        const user = await this.findById(id, currentUser);
 
         user.isActive = false;
         
         return this.userRepo.save(user);
-    
     }
 }
-
