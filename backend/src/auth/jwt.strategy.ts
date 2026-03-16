@@ -5,16 +5,16 @@ import { ConfigService } from '@nestjs/config';
 import { UserRole } from 'src/users/enums/user-role.enum';
 
 interface JwtPayload {
-    sub: number;
+    sub: string;
     email: string;
     role: UserRole;
+    company: string;
 }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(configService: ConfigService) {
         super({
-
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: configService.getOrThrow<string>('JWT_SECRET'),
@@ -23,8 +23,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: any) {
         return {
-            userId: payload.sub,
+            id: payload.sub,
             email: payload.email,
+            company: payload.company,
             role: payload.role,
         };
     }

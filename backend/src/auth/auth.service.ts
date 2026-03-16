@@ -28,8 +28,8 @@ export class AuthService {
             name: data.name,
             email: data.email, 
             password: hashedPassword, 
-            phone: data.phone,
-            company: data.company,
+            phone: data.phone,  
+            company: data.company?.trim().toUpperCase(),
             role: UserRole.SELLER,
             status: UserStatus.PENDING
         });
@@ -57,7 +57,11 @@ export class AuthService {
 
     login(user: User) {
 
-        const payload = { sub: user.id, email: user.email, role: user.role, };
+        const payload = { 
+            sub: user.id, 
+            email: user.email, 
+            company: user.company,
+            role: user.role, };
         return { access_token: this.jwtService.sign(payload) };
     }
 }
