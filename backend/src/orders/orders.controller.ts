@@ -13,21 +13,40 @@ export class OrdersController {
     constructor(private readonly ordersService: OrdersService){}
 
     @Post()
-    create(@Body() createOrderDto: CreateOrderDto, @CurrentUser() user: User) { return this.ordersService.create(createOrderDto, user); }
+    create(
+        @Body() createOrderDto: CreateOrderDto, 
+        @CurrentUser() user: User
+    ) { 
+        return this.ordersService.create(createOrderDto, user); 
+    }
 
     @Get()
-    findAll() { return this.ordersService.findAll(); }
+    findAll(@CurrentUser() user: User) { 
+        return this.ordersService.findAll(user); 
+    }
 
     @Get(':id')
-    findOne(@Param('id') id: string) { return this.ordersService.findOne(id); }
+    findOne(
+        @Param('id') id: string,
+        @CurrentUser() user: User
+    ) { 
+        return this.ordersService.findOne(id, user); 
+    }
 
     @Patch(':id')
     update(
-    @Param('id') id: string,
-        @Body() updateOrderDto: UpdateOrderDto
-    ) { return this.ordersService.update(id, updateOrderDto);} 
+        @Param('id') id: string,
+        @Body() updateOrderDto: UpdateOrderDto,
+        @CurrentUser() user: User
+    ) { 
+        return this.ordersService.update(id, updateOrderDto, user);
+    } 
 
     @Delete(':id')
-    remove(@Param('id') id: string) { return this.ordersService.remove(id); }
-
+    remove(
+        @Param('id') id: string,
+        @CurrentUser() user: User
+    ) { 
+        return this.ordersService.remove(id, user); 
+    }
 }

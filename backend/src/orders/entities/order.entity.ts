@@ -19,29 +19,35 @@ export class Order {
     @Column()
     description: string;
 
+    @Column()
+    company: string;
+
     @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.OPEN })
     status: OrderStatus;
 
     @Column({ type: "timestamp", nullable: true })
-    installed_at: Date;
+    installedAt: Date;
 
     @Column({ type: 'enum', enum: OrderType, default: OrderType.CUSTOMER })
     type: OrderType;
-
-    @Column()
-    is_internal: boolean;
 
     @ManyToOne(() => User, (user) => user.orders, { nullable: false })
     @JoinColumn({ name: 'creator_id' })
     creator: User;
 
+    @Column({ name: 'creator_id' })
+    creatorId: string;
+
     @ManyToOne(() => Customer, (customer) => customer.orders, { nullable: true })
     @JoinColumn({ name: 'customer_id' })
     customer: Customer;
 
+    @Column({ name: 'customer_id', nullable: true })
+    customerId: string;
+
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updated_at: Date;
+    updatedAt: Date;
 }

@@ -10,9 +10,6 @@ export class CreateOrderDto{
     @MinLength(5)
     description: string;
 
-    @IsBoolean()
-    is_internal: boolean;
-
     @IsUUID()
-    customer_id: string;
+    customerId: string;
 }

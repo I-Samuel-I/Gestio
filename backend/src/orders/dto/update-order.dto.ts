@@ -1,5 +1,6 @@
-import { IsBoolean, IsDateString, IsEnum, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsEnum, IsOptional, IsString } from "class-validator";
 import { OrderStatus } from "../enums/order-status.enum";
+import { Type } from "class-transformer";
 
 export class UpdateOrderDto{
 
@@ -12,11 +13,7 @@ export class UpdateOrderDto{
     status?: OrderStatus;
 
     @IsOptional()
-    @IsDateString()
-    installed_at?: Date;
-
-    @IsOptional()
-    @IsBoolean()
-    is_internal?: boolean;
-
+    @Type(() => Date)
+    @IsDate()
+    installedAt?: Date;
 }
