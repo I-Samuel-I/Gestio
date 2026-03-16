@@ -13,33 +13,40 @@ export class CustomersController {
     constructor(private readonly customersService: CustomersService){}
 
     @Post()
-    async create(
+    create(
         @Body() createCustomerDto: CreateCustomerDto,
         @CurrentUser() user: User
-    ){ return this.customersService.create(createCustomerDto, user)}
+    ) { 
+        return this.customersService.create(createCustomerDto, user)
+    }
 
     @Get()
-    async findAll(
-        @CurrentUser() user: User,
-    ){ return this.customersService.findAll(user.id) }
+    findAll( @CurrentUser() user: User) { 
+        return this.customersService.findAll(user) 
+    }
 
     @Get(':id')
     findOne(
         @Param('id') id: string, 
         @CurrentUser() user: User
-    ) { return this.customersService.findOne(id, user.id); }
+    ) { 
+        return this.customersService.findOne(id, user); 
+    }
 
     @Patch(':id')
     update(
         @Param('id') id: string,
         @Body() updateCustomerDto: UpdateCustomerDto,
         @CurrentUser() user: User
-    ){ return this.customersService.update(id, updateCustomerDto, user.id)}
+    ) { 
+        return this.customersService.update(id, updateCustomerDto, user)
+    }
 
     @Delete(':id')
     remove(
         @Param('id') id: string, 
-        @CurrentUser() user: User
-    ){ return this.customersService.remove(id, user.id); }
-
+        @CurrentUser() user: User   
+    ) { 
+        return this.customersService.remove(id, user); 
+    }
 }

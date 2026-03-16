@@ -14,10 +14,7 @@ export class Customer{
     @Column()
     name: string;
 
-    @Column({
-        type: 'enum',
-        enum: CustomerDocument
-    })
+    @Column({ type: 'enum', enum: CustomerDocument })
     document_type: CustomerDocument;
 
     @Column({ unique:true })
@@ -29,10 +26,7 @@ export class Customer{
     @Column()
     phone: string;
 
-    @Column({
-        type: 'enum',
-        enum: BrazilianStates
-    })
+    @Column({ type: 'enum', enum: BrazilianStates })
     state: BrazilianStates;
 
     @Column()
@@ -41,34 +35,28 @@ export class Customer{
     @Column()
     address: string;
 
-    @Column({
-        type: 'enum',
-        enum: CustomerStatus,
-        default: CustomerStatus.INACTIVE
-    })
+    @Column()
+    company: string;
+
+    @Column({ type: 'enum', enum: CustomerStatus, default: CustomerStatus.INACTIVE })
     status: CustomerStatus;
 
-    @Column({
-        type: 'decimal',
-        precision: 10,
-        scale: 2,
-        default: 0
-    })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     total_purchases: number;
 
     @ManyToOne(() => User, user => user.customers)
     @JoinColumn({ name: 'user_id' })
     user: User;
 
+    @Column({ name: 'user_id' }) 
+    userId: string;
+
     @OneToMany(() => Order, order => order.customer)
     orders: Order[];
 
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updated_at: Date;
-
-    
-
+    updatedAt: Date;
 }

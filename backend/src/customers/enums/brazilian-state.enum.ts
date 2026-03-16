@@ -1,5 +1,4 @@
 export enum BrazilianStates{
-
     AC = 'AC',
     AL = 'AL',
     AP = 'AP',
@@ -27,5 +26,4 @@ export enum BrazilianStates{
     SP = 'SP',
     SE = 'SE',
     TO = 'TO',
-
 }
