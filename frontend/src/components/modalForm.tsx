@@ -11,6 +11,7 @@ type BaseCreateProps = {
     subTitle: string;
     icon?: React.ReactNode;
     onClose: () => void;
+    onCreated: ()=> void;
 };
 
 
@@ -21,7 +22,7 @@ type CreateModalProps =
     | (BaseCreateProps & { type: "finance" });
 
 export default function ModalForm(props: CreateModalProps) {
-    const { title, subTitle, icon, type, onClose } = props;
+    const { title, subTitle, icon, type, onClose, onCreated } = props;
 
     return (
         <div className="p-5 relative">
@@ -41,13 +42,13 @@ export default function ModalForm(props: CreateModalProps) {
                 </button>
             </header>
 
-            {type === "product" && (<ProductForm />)}
+            {type === "product" && (<ProductForm onClose={onClose} onCreated={onCreated}/>)}
             {type === "client" && (<ClientForm />)}
             {type === "user" && (<UserForm />)}
             {type === "finance" && (<FinanceForm />)}
 
             {/* Buttons */}
-            <div className="flex justify-end gap-3 mt-10">
+            {/* <div className="flex justify-end gap-3 mt-10">
                 <button
                     onClick={onClose}
                     className="px-6 py-2 rounded-lg border hover:cursor-pointer border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
@@ -59,7 +60,7 @@ export default function ModalForm(props: CreateModalProps) {
                 >
                     Adicionar
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 }

@@ -17,6 +17,8 @@ export async function loginUser(email: string, password: string) {
 
     // IF OK, RETURN DATA
     const data = await response.json();
+
+    localStorage.setItem("token", data.access_token); // SAVE TOKEN IN LOCAL STORAGE
     return data;
   } catch (error) {
     // GENERIC ERROR CATCH
@@ -26,7 +28,13 @@ export async function loginUser(email: string, password: string) {
 }
 
 // API REGISTER USER
-export async function registerUser(email: string, password: string, name:string, phone:string, companyName:string) {
+export async function registerUser(
+  email: string,
+  password: string,
+  name: string,
+  phone: string,
+  companyName: string,
+) {
   try {
     const response = await fetch("http://localhost:3000/auth/register", {
       method: "POST",
