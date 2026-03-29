@@ -22,6 +22,8 @@ export class AuthService {
 
         if (userExists) throw new BadRequestException('User already exists.');
 
+        const companyHasUsers = await this.userRepository.findOne({ where: { company: data.company?.trim().toUpperCase() }});
+
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
         const newUser = this.userRepository.create({ 
@@ -30,7 +32,7 @@ export class AuthService {
             password: hashedPassword, 
             phone: data.phone,  
             company: data.company?.trim().toUpperCase(),
-            role: UserRole.SELLER,
+            role: companyHasUsers ? UserRole.SELLER : UserRole.MANAGER,
             status: UserStatus.PENDING
         });
         await this.userRepository.save(newUser);
@@ -51,6 +53,9 @@ export class AuthService {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
+
+        user.lastLogin = new Date();
+        await this.userRepository.save(user);
 
         return user;
     }
