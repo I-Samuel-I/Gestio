@@ -8,6 +8,8 @@ import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -15,18 +17,18 @@ import { ReportsModule } from './reports/reports.module';
     TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
     inject: [ConfigService],
-    useFactory: (config: ConfigService) => {
-        return {
-        type: 'postgres',
-        host: config.get('DB_HOST'),
-        port: Number(config.get('DB_PORT')),
-        username: config.get('DB_USERNAME'),
-        password: config.get('DB_PASSWORD'),
-        database: config.get('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true,
-        };
-    },
+        useFactory: (config: ConfigService) => {
+            return {
+            type: 'postgres',
+            host: config.get('DB_HOST'),
+            port: Number(config.get('DB_PORT')),
+            username: config.get('DB_USERNAME'),
+            password: config.get('DB_PASSWORD'),
+            database: config.get('DB_NAME'),
+            autoLoadEntities: true,
+            synchronize: true,
+            };
+        },
     }),
     AuthModule,
     UsersModule,
@@ -35,6 +37,8 @@ import { ReportsModule } from './reports/reports.module';
     OrdersModule,
     TransactionsModule,
     ReportsModule,
+    ActivitiesModule,
+    CompaniesModule,
   ],
 })
 export class AppModule {}
