@@ -1,0 +1,42 @@
+export const users = [
+  {
+    id: "#U001",
+    name: "João da Silva",
+    email: "joao.silva@empresa.com",
+    role: "Supervisor",
+    status: "Ativo",
+    last_access: "Há 5 min",
+  },
+  {
+    id: "#U002",
+    name: "Maria Oliveira",
+    email: "maria.oliveira@empresa.com",
+    role: "Financeiro",
+    status: "Ativo",
+    last_access: "Há 1 hora",
+  },
+  {
+    id: "#U003",
+    name: "Carlos Pereira",
+    email: "carlos.pereira@empresa.com",
+    role: "Vendas",
+    status: "Inativo",
+    last_access: "Há 1 dia",
+  },
+  {
+    id: "#U004",
+    name: "Maria Joaquina",
+    email: "maria.joaquina@empresa.com",
+    role: "Suporte",
+    status: "Inativo",
+    last_access: "Há 1 semana",
+  },
+  {
+    id: "#U005",
+    name: "Maria Joaquina",
+    email: "maria.joaquina@empresa.com",
+    role: "Gerente",
+    status: "Ativo",
+    last_access: "Há 1 mês",
+  },
+];
