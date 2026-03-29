@@ -1,4 +1,4 @@
 export enum OrderType{
-    INTERNAL = 'internal',
-    CUSTOMER = 'customer'
+    INTERNAL = 'interno',
+    CUSTOMER = 'cliente'
 }

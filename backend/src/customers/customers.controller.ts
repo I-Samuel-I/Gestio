@@ -3,8 +3,9 @@ import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from 'src/auth/roles.decorator';
+import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { UserRole } from 'src/users/enums/user-role.enum';
 
 @Controller('customers')
 @UseGuards(AuthGuard('jwt'))
@@ -13,6 +14,7 @@ export class CustomersController {
     constructor(private readonly customersService: CustomersService){}
 
     @Post()
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
     create(
         @Body() createCustomerDto: CreateCustomerDto,
         @CurrentUser() user: User
@@ -34,6 +36,7 @@ export class CustomersController {
     }
 
     @Patch(':id')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
     update(
         @Param('id') id: string,
         @Body() updateCustomerDto: UpdateCustomerDto,
@@ -43,6 +46,7 @@ export class CustomersController {
     }
 
     @Delete(':id')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR)
     remove(
         @Param('id') id: string, 
         @CurrentUser() user: User   

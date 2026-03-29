@@ -6,7 +6,7 @@ import { Customer } from 'src/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrderType } from './enums/order-type.enum';
+import { ActivitiesService } from 'src/activities/activities.service';
 
 @Injectable()
 export class OrdersService {
@@ -15,7 +15,8 @@ export class OrdersService {
         @InjectRepository(Order)
         private readonly orderRepository: Repository<Order>,
         @InjectRepository(Customer)
-        private readonly customerRepository: Repository<Customer>
+        private readonly customerRepository: Repository<Customer>,
+        private readonly activitiesService: ActivitiesService,
     ){}
 
     private async orderNumberFormatter(company:string): Promise<string>{
@@ -43,14 +44,15 @@ export class OrdersService {
 
         if (!customer) throw new NotFoundException('Customer not found in your company.');
 
-        const order = this.orderRepository.create({
+        const order = this.orderRepository.save({
             ...createOrderDto,
             number: await this.orderNumberFormatter(user.company),
             creatorId: user.id,
             customerId: customer.id,
         });
 
-        return this.orderRepository.save(order);
+        await this.activitiesService.createLog(user, 'order', 'sale', order);
+        return order;    
     }
     
     async findAll(user:User){
@@ -80,14 +82,20 @@ export class OrdersService {
 
         Object.assign(order, updateOrderDto);
 
-        return await this.orderRepository.save(order);
+        const updatedOrder = await this.orderRepository.save(order);
+
+        await this.activitiesService.createLog(user, 'order', 'update', updatedOrder);
+
+        return updatedOrder;
     }
 
     async remove(id: string, user:User){
 
         const order = await this.findOne(id, user);
 
-        await this.orderRepository.remove(order);
+        await this.orderRepository.delete(id);
+
+        await this.activitiesService.createLog(user, 'order', 'delete', order);
 
         return { message: 'Order deleted successfully.' };
     }

@@ -3,8 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { CurrentUser } from 'src/auth/roles.decorator';
+import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { UserRole } from 'src/users/enums/user-role.enum';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('products')
@@ -13,6 +14,7 @@ export class ProductsController {
     constructor(private readonly productsService: ProductsService){}
 
     @Post()
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR)
     async create(
         @Body() createProductDto: CreateProductDto,
         @CurrentUser() user: User
@@ -34,6 +36,7 @@ export class ProductsController {
     }
         
     @Patch(':id')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR)
     async update(
         @Param('id') id: string,
         @Body() updateProductDto: UpdateProductDto,
@@ -41,6 +44,7 @@ export class ProductsController {
     ){ return this.productsService.update(id, updateProductDto, user) }
 
     @Delete(':id')
+    @Roles(UserRole.MANAGER)
     async remove(
         @Param('id') id: string,
         @CurrentUser() user:User

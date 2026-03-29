@@ -52,6 +52,9 @@ export class User {
     orders: Order[];
 
     @OneToMany(() => Transaction, transaction => transaction.user)
-    transactions: Transaction[];   
+    transactions: Transaction[];
+
+    @Column({ type: 'timestamp', nullable: true })
+    lastLogin: Date;
 }
 

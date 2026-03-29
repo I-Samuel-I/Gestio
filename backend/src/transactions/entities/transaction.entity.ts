@@ -2,9 +2,10 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 import { TransactionType } from "../enums/transaction-type.enum";
 import { TransactionCategory } from "../enums/transaction-category.enum";
 import { User } from "src/users/entities/user.entity";
+import { Product } from "src/products/entities/product.entity";
 
 @Entity('transactions')
-export class Transaction {
+export class Transaction{
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -17,6 +18,9 @@ export class Transaction {
         from: (v: string) => parseFloat(v),
     }})
     amount: number;
+
+    @Column()
+    quantity: number;
 
     @Column({ type: 'date' })
     date: Date;
@@ -36,11 +40,17 @@ export class Transaction {
 
     @Column({ name: 'user_id' })
     userId: string;
+
+    @ManyToOne(() => Product, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'product_id' })
+    product: Product;
+
+    @Column({ name: 'product_id', nullable: true })
+    productId: string;
     
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
-
 }

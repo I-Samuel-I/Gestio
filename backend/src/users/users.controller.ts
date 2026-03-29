@@ -16,11 +16,8 @@ export class UsersController {
     @Get('me')
     getProfile(@CurrentUser() user:User){ return user; }
 
-    @Get(':id')
-    findAll(
-        @Param('id') id: string,
-        @CurrentUser() user: User
-    ) { 
+    @Get()
+    findAll(@CurrentUser() user: User) { 
         return this.usersService.findAll(user); 
     }
 
@@ -32,7 +29,7 @@ export class UsersController {
         return this.usersService.findById(id, user); 
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR)
     @Patch(':id')
     update( 
         @Param('id') id: string, 
@@ -42,7 +39,7 @@ export class UsersController {
         return this.usersService.update(id, data, user)
     }
 
-    @Roles(UserRole.ADMIN)
+    @Roles(UserRole.MANAGER)
     @Delete(':id')
     deactivate(
         @Param('id') id: string,

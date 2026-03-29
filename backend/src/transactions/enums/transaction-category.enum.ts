@@ -1,9 +1,9 @@
 export enum TransactionCategory {
-    SALES = 'sales',
-    SERVICES = 'services',
-    SUPPLIERS = 'suppliers',
-    OPERATIONAL = 'operational',
-    SALARIES = 'salaries',
+    SALES = 'vendas',
+    SERVICES = 'serviços',
+    SUPPLIERS = 'fornecedores',
+    OPERATIONAL = 'operacional',
+    SALARIES = 'salários',
     MARKETING = 'marketing',
-    OTHERS = 'others'
+    OTHERS = 'outros'
 }
