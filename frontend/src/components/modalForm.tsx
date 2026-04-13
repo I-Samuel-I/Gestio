@@ -1,9 +1,12 @@
 "use client";
 
+import type { Client } from "@/services/clients";
+import type { Product } from "@/services/products";
+import type { User } from "@/services/users";
 import { X } from "lucide-react";
-import ClientForm from "./clientForm";
+import ClientsForm from "./clientsForm";
 import ProductForm from "./productForm";
-import UserForm from "./userForm";
+import UsersForm from "./usersForm";
 import FinanceForm from "./financeForm";
 
 type BaseCreateProps = {
@@ -11,14 +14,25 @@ type BaseCreateProps = {
     subTitle: string;
     icon?: React.ReactNode;
     onClose: () => void;
-    onCreated: ()=> void;
+    onCreated?: () => void;
 };
 
-
 type CreateModalProps =
-    | (BaseCreateProps & { type: "product" })
-    | (BaseCreateProps & { type: "client" })
-    | (BaseCreateProps & { type: "user" })
+    | (BaseCreateProps & {
+        type: "product";
+        product?: Product | null;
+        submitText?: string;
+    })
+    | (BaseCreateProps & {
+        type: "client";
+        client?: Client | null;
+        submitText?: string;
+    })
+    | (BaseCreateProps & {
+        type: "user";
+        user?: User | null;
+        submitText?: string;
+    })
     | (BaseCreateProps & { type: "finance" });
 
 export default function ModalForm(props: CreateModalProps) {
@@ -42,25 +56,31 @@ export default function ModalForm(props: CreateModalProps) {
                 </button>
             </header>
 
-            {type === "product" && (<ProductForm onClose={onClose} onCreated={onCreated}/>)}
-            {type === "client" && (<ClientForm />)}
-            {type === "user" && (<UserForm />)}
+            {type === "product" && (
+                <ProductForm
+                    onClose={onClose}
+                    onCreated={onCreated}
+                    initialProduct={props.product}
+                    submitText={props.submitText}
+                />
+            )}
+            {type === "client" && (
+                <ClientsForm
+                    onClose={onClose}
+                    onCreated={onCreated}
+                    initialClient={props.client}
+                    submitText={props.submitText}
+                />
+            )}
+            {type === "user" && (
+                <UsersForm
+                    onClose={onClose}
+                    onCreated={onCreated}
+                    initialUser={props.user}
+                    submitText={props.submitText}
+                />
+            )}
             {type === "finance" && (<FinanceForm />)}
-
-            {/* Buttons */}
-            {/* <div className="flex justify-end gap-3 mt-10">
-                <button
-                    onClick={onClose}
-                    className="px-6 py-2 rounded-lg border hover:cursor-pointer border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
-                >
-                    Cancelar
-                </button>
-                <button
-                    className="px-6 py-2 rounded-lg  text-white font-medium bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer transition-colors"
-                >
-                    Adicionar
-                </button>
-            </div> */}
         </div>
-    )
+    );
 }
