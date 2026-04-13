@@ -33,7 +33,7 @@ export default function Login() {
     return (
         <main className="min-h-screen w-full flex flex-col lg:flex-row font-sans">
 
-            <section className="flex-1 flex flex-col justify-center items-center px-6 py-12 lg:px-20 bg-">
+            <section className="flex-1 flex flex-col justify-center items-center px-6 py-12 lg:px-20">
                 <div className="w-full max-w-md space-y-8">
                     <header className="space-y-2">
                         <div className="flex items-center gap-2 text-[#2082B1]">
