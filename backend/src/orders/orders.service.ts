@@ -6,7 +6,7 @@ import { Customer } from 'src/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { CurrentUser } from 'src/auth/roles.decorator';
+import { ActivitiesService } from 'src/activities/activities.service';
 
 @Injectable()
 export class OrdersService {
@@ -14,102 +14,89 @@ export class OrdersService {
     constructor(
         @InjectRepository(Order)
         private readonly orderRepository: Repository<Order>,
-
         @InjectRepository(Customer)
-        private readonly customerRepository: Repository<Customer>
-
+        private readonly customerRepository: Repository<Customer>,
+        private readonly activitiesService: ActivitiesService,
     ){}
 
-    private async orderNumberFormatter(): Promise<string>{
+    private async orderNumberFormatter(company:string): Promise<string>{
 
-        const lastOrder = await this.orderRepository.find({
-
-            order: { created_at: 'DESC' },
-            take: 1
-
-        })
+    const lastOrder = await this.orderRepository.findOne({
+            where: { company },
+            order: { createdAt: 'DESC' },
+        });
 
         let nextNumber = 1;
 
-        if (lastOrder.length > 0){
-
-            const lastNumber = lastOrder[0].number;
-            const numericPart = parseInt(lastNumber.replace('OS-', ''));
+        if (lastOrder) {
+            const numericPart = parseInt(lastOrder.number.replace('OS-', ''));
             nextNumber = numericPart + 1;
-
         }
 
         return `OS-${nextNumber.toString().padStart(4, '0')}`;
-
     }
 
-    async create(createOrderDto: CreateOrderDto, currentUser: any) {
+    async create(createOrderDto: CreateOrderDto, user: User) {
 
-        const customer = await this.customerRepository.findOne({ where: { id: createOrderDto.customer_id }, });
-
-        if (!customer) throw new NotFoundException('Customer not found.');
-
-        const order = this.orderRepository.create({
-            ...createOrderDto,
-            number: await this.orderNumberFormatter(),
-            creator: { id: currentUser.userId } as User, 
-            customer,
+        const customer = await this.customerRepository.findOne({ 
+            where: { id: createOrderDto.customerId, company: user.company }, 
         });
 
-        const savedOrder = await this.orderRepository.save(order);
+        if (!customer) throw new NotFoundException('Customer not found in your company.');
 
-        return {
-            ...savedOrder,
-            customer: savedOrder.customer.id,
-            creator: savedOrder.creator.id, 
-        };
+        const order = this.orderRepository.save({
+            ...createOrderDto,
+            number: await this.orderNumberFormatter(user.company),
+            creatorId: user.id,
+            customerId: customer.id,
+        });
+
+        await this.activitiesService.createLog(user, 'order', 'sale', order);
+        return order;    
     }
     
-    async findAll(){
+    async findAll(user:User){
 
         return await this.orderRepository.find({
-
+            where: { company: user.company },
             relations: ['customer', 'creator'],
-            order: { created_at: 'DESC' }
-
-        });
-            
+            order: { createdAt: 'DESC' }
+        }); 
     }
 
-    async findOne(id: string){
+    async findOne(id: string, user:User){
 
         const order = await this.orderRepository.findOne({
-
-            where: { id },
+            where: { id, company: user.company},
             relations: ['customer', 'creator']
-
         });
 
         if (!order){ throw new NotFoundException('Order not found.') }
 
         return order;
-
     }
 
-    async update(id: string, updateOrderDto:UpdateOrderDto){
+    async update(id: string, updateOrderDto:UpdateOrderDto, user:User){
 
-        const order = await this.findOne(id);
+        const order = await this.findOne(id, user);
 
         Object.assign(order, updateOrderDto);
 
-        return await this.orderRepository.save(order);
+        const updatedOrder = await this.orderRepository.save(order);
 
+        await this.activitiesService.createLog(user, 'order', 'update', updatedOrder);
+
+        return updatedOrder;
     }
 
-    async remove(id: string){
+    async remove(id: string, user:User){
 
-        const order = await this.findOne(id);
+        const order = await this.findOne(id, user);
 
-        await this.orderRepository.remove(order);
+        await this.orderRepository.delete(id);
+
+        await this.activitiesService.createLog(user, 'order', 'delete', order);
 
         return { message: 'Order deleted successfully.' };
-
     }
-
-
 }

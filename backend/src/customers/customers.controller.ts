@@ -3,8 +3,9 @@ import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from 'src/auth/roles.decorator';
+import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { UserRole } from 'src/users/enums/user-role.enum';
 
 @Controller('customers')
 @UseGuards(AuthGuard('jwt'))
@@ -13,33 +14,43 @@ export class CustomersController {
     constructor(private readonly customersService: CustomersService){}
 
     @Post()
-    async create(
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
+    create(
         @Body() createCustomerDto: CreateCustomerDto,
         @CurrentUser() user: User
-    ){ return this.customersService.create(createCustomerDto, user)}
+    ) { 
+        return this.customersService.create(createCustomerDto, user)
+    }
 
     @Get()
-    async findAll(
-        @CurrentUser() user: User,
-    ){ return this.customersService.findAll(user.id) }
+    findAll( @CurrentUser() user: User) { 
+        return this.customersService.findAll(user) 
+    }
 
     @Get(':id')
     findOne(
         @Param('id') id: string, 
         @CurrentUser() user: User
-    ) { return this.customersService.findOne(id, user.id); }
+    ) { 
+        return this.customersService.findOne(id, user); 
+    }
 
     @Patch(':id')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
     update(
         @Param('id') id: string,
         @Body() updateCustomerDto: UpdateCustomerDto,
         @CurrentUser() user: User
-    ){ return this.customersService.update(id, updateCustomerDto, user.id)}
+    ) { 
+        return this.customersService.update(id, updateCustomerDto, user)
+    }
 
     @Delete(':id')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR)
     remove(
         @Param('id') id: string, 
-        @CurrentUser() user: User
-    ){ return this.customersService.remove(id, user.id); }
-
+        @CurrentUser() user: User   
+    ) { 
+        return this.customersService.remove(id, user); 
+    }
 }

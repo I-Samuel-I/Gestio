@@ -7,31 +7,40 @@ import { UsersModule } from './users/users.module';
 import { CustomersModule } from './customers/customers.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { ReportsModule } from './reports/reports.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        return {
-          type: 'postgres',
-          host: config.get('DB_HOST'),
-          port: Number(config.get('DB_PORT')),
-          username: config.get('DB_USERNAME'),
-          password: config.get('DB_PASSWORD'),
-          database: config.get('DB_NAME'),
-          autoLoadEntities: true,
-          synchronize: true,
-        };
-      },
+
+    imports: [ConfigModule],
+    inject: [ConfigService],
+        useFactory: (config: ConfigService) => {
+            return {
+            type: 'postgres',
+            host: config.get('DB_HOST'),
+            port: Number(config.get('DB_PORT')),
+            username: config.get('DB_USERNAME'),
+            password: config.get('DB_PASSWORD'),
+            database: config.get('DB_NAME'),
+            autoLoadEntities: true,
+            synchronize: true,
+            };
+        },
     }),
     AuthModule,
     UsersModule,
     CustomersModule,
     ProductsModule,
     OrdersModule,
+    TransactionsModule,
+    ReportsModule,
+    ActivitiesModule,
+    CompaniesModule,
   ],
 })
 export class AppModule {}

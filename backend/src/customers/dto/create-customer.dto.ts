@@ -9,21 +9,11 @@ export class CreateCustomerDto{
     @MinLength(3, { message: 'Name must have at least 3 characters' })
     name: string;
 
-    @IsEnum(CustomerDocument, {
-        message: 'Document type must be CPF or CNPJ',
-    })
+    @IsEnum(CustomerDocument, { message: 'Document type must be CPF or CNPJ', })
     document_type: CustomerDocument;
 
-    @ValidateIf(o => o.document_type === CustomerDocument.CPF)
-    @Matches(/^\d{11}$/, {
-        message: 'CPF must contain 11 digits'
-    })
-
-    @ValidateIf(o => o.document_type === CustomerDocument.CNPJ)
-    @Matches(/^\d{14}$/, {
-        message: 'CNPJ must contain 14 digits'
-    })
-
+    @IsString()
+    @Matches(/^\d{11}$|^\d{14}$/, { message: 'Document must contain 11 digits (CPF) or 14 digits (CNPJ)' })
     @IsNotEmpty()
     document: string;
 
@@ -34,9 +24,7 @@ export class CreateCustomerDto{
     @IsNumberString()
     phone: string;
 
-    @IsEnum(BrazilianStates, {
-        message: 'State must be a valid brazilian UF'
-    })
+    @IsEnum(BrazilianStates, { message: 'State must be a valid brazilian UF' })
     state: BrazilianStates;
 
     @IsString()
@@ -49,13 +37,6 @@ export class CreateCustomerDto{
     @MaxLength(100, { message: 'Address is too long' })
     address: string;
 
-    @IsEnum(CustomerStatus, {
-        message: 'Invalid status'
-    })
+    @IsEnum(CustomerStatus, { message: 'Invalid status' })
     status: CustomerStatus;
-
-    @IsNumber()
-    @Min(0, {message: 'Total purchases cannot be negative.'})
-    total_purchases: number;
-
 }

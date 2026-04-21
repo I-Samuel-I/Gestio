@@ -1,61 +1,72 @@
-import { Customer } from 'src/customers/entities/customer.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
-import { Order } from 'src/orders/entities/order.entity';
-import { UserRole } from '../enums/user-role.enum';
-import { UserStatus } from '../enums/user-status.enum';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UserRole } from 'src/users/enums/user-role.enum';
+import { UserStatus } from 'src/users/enums/user-status.enum';
 
-@Entity('users')
-export class User {
+@Injectable()
+export class AuthService {
+    constructor(
+        private readonly jwtService: JwtService,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) {}
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    async register(data:CreateUserDto) {
 
-    @Column()
-    name: string;
+        const userExists = await this.userRepository.findOne({ where: { email: data.email} });
 
-    @Column({ unique: true })
-    email: string;
+        if (userExists) throw new BadRequestException('User already exists.');
 
-    @Column({ select: false })
-    password: string;
+        const companyHasUsers = await this.userRepository.findOne({ where: { company: data.company?.trim().toUpperCase() }});
 
+        const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    @Column()
-    companyName: string;
-    
+        const newUser = this.userRepository.create({ 
+            name: data.name,
+            email: data.email, 
+            password: hashedPassword, 
+            phone: data.phone,  
+            company: data.company?.trim().toUpperCase(),
+            role: companyHasUsers ? UserRole.SELLER : UserRole.MANAGER,
+            status: UserStatus.PENDING
+        });
+        await this.userRepository.save(newUser);
 
-    @Column({
-        type: 'enum',
-        enum: UserRole,
-        default: UserRole.SELLER
-    })
-    role: UserRole
+        return { message: 'User registered successfully.' };
+    }
 
-    @Column({
-        type: 'enum',
-        enum: UserStatus,
-        default: UserStatus.PENDING,
-    })
-    status: UserStatus;
+    async validateUser(email: string, password: string) {
 
-    @Column({nullable:true})
-    company?: string;
+        const user = await this.userRepository
+            .createQueryBuilder('user')
+            .addSelect('user.password')
+            .where('user.email = :email', { email })
+            .getOne();
 
-    @Column({nullable:true})
-    phone?: string;
+        if (!user) { throw new UnauthorizedException('Invalid credentials.'); }
 
-    @Column({ default: true })
-    isActive: boolean;
+        const isMatch = await bcrypt.compare(password, user.password);
 
-    @CreateDateColumn()
-    createdAt: Date;
+        if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
 
-    @OneToMany(() => Customer, customer => customer.user)
-    customers: Customer[];
+        user.lastLogin = new Date();
+        await this.userRepository.save(user);
 
-    @OneToMany(() => Order, order => order.creator)
-    orders: Order[];
+        return user;
+    }
 
-    
+    login(user: User) {
+
+        const payload = { 
+            sub: user.id, 
+            email: user.email, 
+            company: user.company,
+            role: user.role, };
+        return { access_token: this.jwtService.sign(payload) };
+    }
 }
-
