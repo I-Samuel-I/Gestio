@@ -18,8 +18,7 @@ type ClientFormState = {
     state: string;
     city: string;
     address: string;
-    status: "active" | "inactive" | "pending";
-    total_purchases: number;
+    status: "ativo" | "inativo" | "pendente";
 };
 
 const BRAZILIAN_STATES = [
@@ -38,8 +37,7 @@ function getInitialClientState(client?: Client | null): ClientFormState {
         state: client?.state ?? "SP",
         city: client?.city ?? "",
         address: client?.address ?? "",
-        status: client?.status ?? "active",
-        total_purchases: Number(client?.total_purchases ?? 0),
+        status: client?.status ?? "ativo",
     };
 }
 
@@ -72,7 +70,6 @@ export default function ClientsForm({
                 client.city,
                 client.address,
                 client.status,
-                client.total_purchases,
             )
             : await PostClients(
                 client.name,
@@ -84,7 +81,6 @@ export default function ClientsForm({
                 client.city,
                 client.address,
                 client.status,
-                client.total_purchases,
             );
 
         if (saved) {
@@ -194,17 +190,6 @@ export default function ClientsForm({
                     }
                 />
 
-                <Input
-                    label="Total em Compras"
-                    type="number"
-                    value={client.total_purchases}
-                    onChange={(e) =>
-                        setClient({
-                            ...client,
-                            total_purchases: Number(e.target.value),
-                        })
-                    }
-                />
             </div>
 
             <div className="mt-5 flex flex-col gap-1.5">
@@ -215,13 +200,13 @@ export default function ClientsForm({
                     onChange={(e) =>
                         setClient({
                             ...client,
-                            status: e.target.value as "active" | "inactive" | "pending",
+                            status: e.target.value as "ativo" | "inativo" | "pendente",
                         })
                     }
                 >
-                    <option value="active">Ativo</option>
-                    <option value="pending">Pendente</option>
-                    <option value="inactive">Inativo</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="inativo">Inativo</option>
                 </select>
             </div>
 

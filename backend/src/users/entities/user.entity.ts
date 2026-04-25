@@ -1,72 +1,60 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
-import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { UserRole } from 'src/users/enums/user-role.enum';
-import { UserStatus } from 'src/users/enums/user-status.enum';
+import { Customer } from 'src/customers/entities/customer.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, UpdateDateColumn } from 'typeorm';
+import { Order } from 'src/orders/entities/order.entity';
+import { UserRole } from '../enums/user-role.enum';
+import { UserStatus } from '../enums/user-status.enum';
+import { Transaction } from 'src/transactions/entities/transaction.entity';
+import { Product } from 'src/products/entities/product.entity';
 
-@Injectable()
-export class AuthService {
-    constructor(
-        private readonly jwtService: JwtService,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-    ) {}
+@Entity('users')
+export class User {
 
-    async register(data:CreateUserDto) {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-        const userExists = await this.userRepository.findOne({ where: { email: data.email} });
+    @Column()
+    name: string;
 
-        if (userExists) throw new BadRequestException('User already exists.');
+    @Column({ unique: true })
+    email: string;
 
-        const companyHasUsers = await this.userRepository.findOne({ where: { company: data.company?.trim().toUpperCase() }});
+    @Column({ select: false })
+    password: string;
 
-        const hashedPassword = await bcrypt.hash(data.password, 10);
+    @Column({ type: 'enum', enum: UserRole, default: UserRole.SELLER })
+    role: UserRole
 
-        const newUser = this.userRepository.create({ 
-            name: data.name,
-            email: data.email, 
-            password: hashedPassword, 
-            phone: data.phone,  
-            company: data.company?.trim().toUpperCase(),
-            role: companyHasUsers ? UserRole.SELLER : UserRole.MANAGER,
-            status: UserStatus.PENDING
-        });
-        await this.userRepository.save(newUser);
+    @Column({ type: 'enum', enum: UserStatus, default: UserStatus.PENDING, })
+    status: UserStatus;
 
-        return { message: 'User registered successfully.' };
-    }
+    @Column()
+    company: string;
 
-    async validateUser(email: string, password: string) {
+    @Column({ nullable:true })
+    phone?: string;
 
-        const user = await this.userRepository
-            .createQueryBuilder('user')
-            .addSelect('user.password')
-            .where('user.email = :email', { email })
-            .getOne();
+    @Column({ default: true })
+    isActive: boolean;
 
-        if (!user) { throw new UnauthorizedException('Invalid credentials.'); }
+    @CreateDateColumn()
+    createdAt: Date;
 
-        const isMatch = await bcrypt.compare(password, user.password);
+    @UpdateDateColumn()
+    updatedAt: Date;
 
-        if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
+    @OneToMany(() => Product, product => product.user)
+    products: Product[];
 
-        user.lastLogin = new Date();
-        await this.userRepository.save(user);
+    @OneToMany(() => Customer, customer => customer.user)
+    customers: Customer[];
 
-        return user;
-    }
+    @OneToMany(() => Order, order => order.creator)
+    orders: Order[];
 
-    login(user: User) {
+    @OneToMany(() => Transaction, transaction => transaction.user)
+    transactions: Transaction[];
 
-        const payload = { 
-            sub: user.id, 
-            email: user.email, 
-            company: user.company,
-            role: user.role, };
-        return { access_token: this.jwtService.sign(payload) };
-    }
+    @Column({ type: 'timestamp', nullable: true })
+    lastLogin: Date;
 }
+

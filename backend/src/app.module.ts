@@ -3,20 +3,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-
 import { CustomersModule } from './customers/customers.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
 import { ActivitiesModule } from './activities/activities.module';
-import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
-
     imports: [ConfigModule],
     inject: [ConfigService],
         useFactory: (config: ConfigService) => {
@@ -40,7 +37,6 @@ import { CompaniesModule } from './companies/companies.module';
     TransactionsModule,
     ReportsModule,
     ActivitiesModule,
-    CompaniesModule,
   ],
 })
 export class AppModule {}

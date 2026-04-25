@@ -10,7 +10,7 @@ import Modal from "@/components/modal";
 import ModalForm from "@/components/modalForm";
 import CreateButtonForm from "@/components/createButtonForm";
 import { DeleteProduct, GetProducts, type Product } from "@/services/products";
-import {motion} from "motion/react";
+import {motion, AnimatePresence} from "motion/react";
 
 
 export default function Products() {
@@ -105,9 +105,9 @@ export default function Products() {
   return (
 
     <motion.main className="flex min-h-screen bg-slate-50"
-     initial={{ opacity: 0,}}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{ duration: 1.2,  ease: "easeInOut" }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       <Navbar
         mobileOpen={navMobile}
@@ -118,15 +118,28 @@ export default function Products() {
         <Header title="Produtos" onMenuClick={() => setNavMobile(true)} />
 
         <div className="p-8 space-y-6">
-          <section className="flex flex-col sm:flex-row justify-between items-start">
+          <motion.section 
+            className="flex flex-col sm:flex-row justify-between items-start"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+          >
             <div>
               <h1 className="text-2xl font-bold text-slate-800">Produtos</h1>
               <p className="text-slate-500">Gerencie seu catalogo de produtos</p>
             </div>
             <CreateButtonForm onClick={handleOpenCreateModal} text="Novo Produto" />
 
-            <Modal isOpen={open} onClose={handleCloseProductModal}>
-              <ModalForm
+            <AnimatePresence>
+              {open && (
+                <Modal isOpen={open} onClose={handleCloseProductModal}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ModalForm
                 icon={<BoxIcon size={45} color="#2082B1" />}
                 type="product"
                 title={selectedProduct ? "Editar Produto" : "Novo Produto"}
@@ -139,14 +152,25 @@ export default function Products() {
                 onCreated={loadProducts}
                 product={selectedProduct}
                 submitText={selectedProduct ? "Salvar" : "Adicionar"}
-              />
-            </Modal>
+                    />
+                  </motion.div>
+                </Modal>
+              )}
+            </AnimatePresence>
 
-            <Modal
-              isOpen={Boolean(productToDelete)}
-              onClose={() => setProductToDelete(null)}
-            >
-              <div className="p-6">
+            <AnimatePresence>
+              {productToDelete && (
+                <Modal
+                  isOpen={Boolean(productToDelete)}
+                  onClose={() => setProductToDelete(null)}
+                >
+                  <motion.div 
+                    className="p-6"
+                    initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
                 <div className="flex items-start gap-4">
                   <div className="rounded-xl bg-red-50 p-3 text-red-600">
                     <TriangleAlert size={28} />
@@ -179,11 +203,18 @@ export default function Products() {
                     Excluir
                   </button>
                 </div>
-              </div>
-            </Modal>
-          </section>
+                </motion.div>
+                </Modal>
+              )}
+            </AnimatePresence>
+          </motion.section>
 
-          <section className="flex flex-col sm:flex-row gap-4">
+          <motion.section 
+            className="flex flex-col sm:flex-row gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
             <Input
               type="text"
               placeholder="Buscar por nome..."
@@ -195,14 +226,28 @@ export default function Products() {
               <Filter className="w-4 h-4" />
               Buscar
             </button>
-          </section>
+          </motion.section>
 
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+          <motion.section 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             {products.length === 0 ? (
-              <div className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full ">
-                <div className="p-6 bg-[#E1EDF2] rounded-3xl w-fit animate-[floatUpDown_6s_ease-in-out_infinite]">
+              <motion.div 
+                className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+              >
+                <motion.div 
+                  className="p-6 bg-[#E1EDF2] rounded-3xl w-fit"
+                  animate={{ y: [-8, 8, -8] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                >
                   <Box color="#2082B1" size={50} />
-                </div>
+                </motion.div>
                 <div className="flex flex-col items-center">
                   <h3 className="text-2xl font-bold text-slate-800">Nenhum produto cadastrado</h3>
                   <p className="text-sm mt-2 text-slate-500 w-3/4">
@@ -211,10 +256,17 @@ export default function Products() {
                 </div>
 
                 <CreateButtonForm onClick={handleOpenCreateModal} text="Novo Produto" />
-              </div>
+              </motion.div>
             ) : (
-              filterProducts.map((product) => (
-                <div key={product.id} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+              filterProducts.map((product, index) => (
+                <motion.div 
+                  key={product.id} 
+                  className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all cursor-pointer"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
+                  whileHover={{ y: -4 }}
+                >
                   <div className="relative flex justify-between items-center mb-4">
                     <div className="p-3 bg-blue-50 rounded-lg">
                       <Box className="w-6 h-6 text-blue-600" />
@@ -280,10 +332,10 @@ export default function Products() {
                       </h3>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
-          </section>
+          </motion.section>
         </div>
       </div>
     </motion.main>

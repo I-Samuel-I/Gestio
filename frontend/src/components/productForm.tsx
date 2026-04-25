@@ -92,10 +92,10 @@ export default function ProductForm({
                             Selecione
                         </option>
                         <option value="kit">Kit</option>
-                        <option value="eletronic">Eletronico</option>
-                        <option value="service">Servico</option>
-                        <option value="accessory">Acessorio</option>
-                        <option value="other">Outro</option>
+                        <option value="eletrônico">Eletrônico</option>
+                        <option value="serviço">Serviço</option>
+                        <option value="acessório">Acessório</option>
+                        <option value="outro">Outro</option>
                     </select>
                 </div>
 

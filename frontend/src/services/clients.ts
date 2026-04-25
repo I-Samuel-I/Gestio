@@ -8,7 +8,7 @@ export type Client = {
   state: string;
   city: string;
   address: string;
-  status: "active" | "inactive" | "pending";
+  status: "ativo" | "inativo" | "pendente";
   total_purchases: number;
 };
 
@@ -43,8 +43,7 @@ export async function UpdateClient(
   state: string,
   city: string,
   address: string,
-  status: "active" | "inactive" | "pending",
-  total_purchases: number,
+  status: "ativo" | "inativo" | "pendente",
 ) {
   try {
     const token = localStorage.getItem("token");
@@ -64,18 +63,19 @@ export async function UpdateClient(
         city: city,
         address: address,
         status: status,
-        total_purchases: total_purchases,
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Error: " + response.statusText);
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error updating client:", error);
+    throw error;
   }
 }
 
@@ -88,8 +88,7 @@ export async function PostClients(
   state: string,
   city: string,
   address: string,
-  status: "active" | "inactive" | "pending",
-  total_purchases: number,
+  status: "ativo" | "inativo" | "pendente",
 ) {
   try {
     const token = localStorage.getItem("token");
@@ -109,18 +108,19 @@ export async function PostClients(
         city: city,
         address: address,
         status: status,
-        total_purchases: total_purchases,
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Error: " + response.statusText);
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error during client creation:", error);
+    throw error;
   }
 }
 

@@ -42,7 +42,7 @@ export default function Login() {
                         </div>
 
                         <div className="pt-6">
-                            <h2 className="text-3xl font-bold text-slate-900">Bem-viando de volta</h2>
+                            <h2 className="text-3xl font-bold text-slate-900">Bem-vindo(a) de volta</h2>
                             <p className="text-slate-500 mt-2">Entre com suas credenciais para acessar sua conta</p>
                         </div>
                     </header>
