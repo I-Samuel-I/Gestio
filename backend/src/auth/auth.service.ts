@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UserRole } from 'src/users/enums/user-role.enum';
 import { UserStatus } from 'src/users/enums/user-status.enum';
+import { Company } from 'src/settings/entities/company.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,8 @@ export class AuthService {
         private readonly jwtService: JwtService,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        @InjectRepository(Company)
+        private readonly companyRepository: Repository<Company>,
     ) {}
 
     async register(data:CreateUserDto) {
@@ -22,17 +25,31 @@ export class AuthService {
 
         if (userExists) throw new BadRequestException('User already exists.');
 
-        const companyHasUsers = await this.userRepository.findOne({ where: { company: data.company?.trim().toUpperCase() }});
+        const normalizedCompany = data.company.trim().toUpperCase();
+
+        if (!normalizedCompany) {
+            throw new BadRequestException('Company is required.');
+        }
+
+        const companyUsersCount = await this.userRepository.count({ where: { company: normalizedCompany } });
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        if (companyUsersCount === 0) {
+            await this.companyRepository.save({
+                name: normalizedCompany,
+                email: data.email,
+                phone: data.phone,
+            });
+        }
 
         const newUser = this.userRepository.create({ 
             name: data.name,
             email: data.email, 
             password: hashedPassword, 
             phone: data.phone,  
-            company: data.company?.trim().toUpperCase(),
-            role: companyHasUsers ? UserRole.SELLER : UserRole.MANAGER,
+            company: normalizedCompany,
+            role: companyUsersCount === 0 ? UserRole.MANAGER : UserRole.SELLER,
             status: UserStatus.PENDING
         });
         await this.userRepository.save(newUser);
@@ -62,11 +79,14 @@ export class AuthService {
 
     login(user: User) {
 
+        const normalizedRole = user.role;
+
         const payload = { 
             sub: user.id, 
             email: user.email, 
             company: user.company,
-            role: user.role, };
+            role: normalizedRole,
+        };
         return { access_token: this.jwtService.sign(payload) };
     }
 }

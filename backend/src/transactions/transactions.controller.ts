@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+    Query,
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,9 +16,10 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { UserRole } from 'src/users/enums/user-role.enum';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('transactions')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class TransactionsController {
 
     constructor(private readonly transactionsService: TransactionsService) {}
@@ -33,8 +35,11 @@ export class TransactionsController {
 
     @Get()
     @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.FINANCIAL)
-    findAll(@CurrentUser() user: User) { 
-        return this.transactionsService.findAll(user); 
+    findAll(
+        @CurrentUser() user: User,
+        @Query('search') search?: string,
+    ) {
+        return this.transactionsService.findAll(user, search);
     }
 
     @Get('recent')

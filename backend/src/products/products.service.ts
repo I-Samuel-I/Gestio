@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -29,14 +29,24 @@ export class ProductsService {
         return product;
     }
 
-    async findAll(user:User){
+    async findAll(user:User, search?: string){
 
-        console.log(`Buscando produtos para a empresa: ${user.company}`);
-        
-        return this.productsRepository.find({ 
-            where: { company: user.company },
-            order: { created_at: 'DESC' }}
-        )
+        const query = this.productsRepository
+            .createQueryBuilder('product')
+            .where('product.company = :company', { company: user.company });
+
+        const searchTerm = search?.trim();
+
+        if (searchTerm) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where('product.name ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(product.category AS TEXT) ILIKE :search', { search: `%${searchTerm}%` });
+                }),
+            );
+        }
+
+        return query.orderBy('product.created_at', 'DESC').getMany();
     }
 
     async findOne(id: string, user:User){

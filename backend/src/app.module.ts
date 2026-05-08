@@ -9,7 +9,7 @@ import { OrdersModule } from './orders/orders.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
 import { ActivitiesModule } from './activities/activities.module';
-import { CompaniesModule } from './companies/companies.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -38,7 +38,7 @@ import { CompaniesModule } from './companies/companies.module';
     TransactionsModule,
     ReportsModule,
     ActivitiesModule,
-    CompaniesModule,
+    SettingsModule
   ],
 })
 export class AppModule {}

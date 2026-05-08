@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './entities/customer.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -29,12 +29,29 @@ export class CustomersService {
         return customer;
     }
 
-    async findAll(user: User){
+    async findAll(user: User, search?: string) {
 
-        return await this.customersRepository.find({
-            where: { company: user.company },
-            order: { name: 'ASC' }
-        });
+        const query = this.customersRepository
+            .createQueryBuilder('customer')
+            .where('customer.company = :company', { company: user.company });
+
+        const searchTerm = search?.trim();
+
+        if (searchTerm) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where('customer.name ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('customer.email ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('customer.document ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('customer.phone ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('customer.city ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(customer.state AS TEXT) ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(customer.status AS TEXT) ILIKE :search', { search: `%${searchTerm}%` });
+                }),
+            );
+        }
+
+        return query.orderBy('customer.name', 'ASC').getMany();
     }
 
     async findOne(id: string, user: User){

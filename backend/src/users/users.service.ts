@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -21,9 +21,12 @@ export class UsersService {
 
         if (exists) { throw new BadRequestException('User already exists.'); }
 
+        const company = data.company.trim().toUpperCase();
+
         const hashedPassword = await bcrypt.hash(data.password, 10);
         const user = this.userRepo.create({
             ...data,
+            company,
             password: hashedPassword,
             role: UserRole.SELLER,
         });
@@ -31,14 +34,27 @@ export class UsersService {
         return this.userRepo.save(user);
     }
 
-    findAll(currentUser: User) { 
-        return this.userRepo.find({
-            where: { 
-                company: currentUser.company,
-                isActive: true 
-            }, 
-            order: {createdAt: 'DESC'}
-        }); 
+    findAll(currentUser: User, search?: string) {
+        const query = this.userRepo
+            .createQueryBuilder('user')
+            .where('user.company = :company', { company: currentUser.company })
+            .andWhere('user.isActive = :isActive', { isActive: true });
+
+        const searchTerm = search?.trim();
+
+        if (searchTerm) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where('user.name ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('user.email ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('user.phone ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(user.role AS TEXT) ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(user.status AS TEXT) ILIKE :search', { search: `%${searchTerm}%` });
+                }),
+            );
+        }
+
+        return query.orderBy('user.createdAt', 'DESC').getMany();
     }
 
     async findById(id: string, currentUser: User) { 
@@ -59,6 +75,10 @@ export class UsersService {
         if (data.password) { data.password = await bcrypt.hash(data.password, 10); }
 
         Object.assign(user, data);
+
+        if (user.company) {
+            user.company = user.company.trim().toUpperCase();
+        }
 
         return this.userRepo.save(user);
     }

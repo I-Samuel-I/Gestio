@@ -7,7 +7,7 @@ import { UserRole } from 'src/users/enums/user-role.enum';
 interface JwtPayload {
     sub: string;
     email: string;
-    role: UserRole;
+    role: string;
     company: string;
 }
 
@@ -21,12 +21,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload: any) {
+    async validate(payload: JwtPayload) {
+        const normalizedRole = payload.role === 'admin' ? UserRole.MANAGER : (payload.role as UserRole);
+
         return {
             id: payload.sub,
             email: payload.email,
             company: payload.company,
-            role: payload.role,
+            role: normalizedRole,
         };
     }
 }
