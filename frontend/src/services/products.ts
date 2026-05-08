@@ -1,12 +1,32 @@
 export type Product = {
-  id: number;
+  id: string | number;
   name: string;
   category: string;
   price: number;
   stock: number;
   available: boolean;
-}
+};
 
+export async function DeleteProduct(id: string | number) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:3000/products/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error: " + response.statusText);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+}
 
 // API POST PRODUCTS
 export async function PostProducts(
@@ -17,19 +37,19 @@ export async function PostProducts(
   category: string,
 ) {
   try {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:3000/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         name: name,
         price: price,
         stock: stock,
         available: available,
-        category: category
+        category: category,
       }),
     });
     if (!response.ok) {
@@ -46,19 +66,55 @@ export async function PostProducts(
 // API GET PRODUCTS
 export async function GetProducts() {
   try {
-    const token = localStorage.getItem("token"); // GET TOKEN FROM LOCAL STORAGE
+    const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:3000/products", {
-        headers:{
-            Authorization: `Bearer ${token}`
-        }
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-   
+
     if (!response.ok) {
-        throw new Error("Error: " + response.statusText);
+      throw new Error("Error: " + response.statusText);
     }
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching products:", error);
+  }
+}
+
+// API UPDATE PRODUCTS
+export async function UpdateProducts(
+  id: string | number,
+  name: string,
+  price: number,
+  stock: number,
+  available: boolean,
+  category: string,
+) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:3000/products/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name: name,
+        price: price,
+        stock: stock,
+        available: available,
+        category: category,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error: " + response.statusText);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating product:", error);
   }
 }

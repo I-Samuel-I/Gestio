@@ -1,40 +1,74 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Input from "./input";
-import { PostProducts } from "@/services/products";
+import { PostProducts, UpdateProducts, type Product } from "@/services/products";
 
 type ProductFormProps = {
     onClose?: () => void;
     onCreated?: () => void;
+    initialProduct?: Product | null;
+    submitText?: string;
 };
 
-export default function ProductForm({ onClose, onCreated }: ProductFormProps) {
+type ProductFormState = {
+    name: string;
+    category: string;
+    price: number;
+    stock: number;
+    available: boolean;
+};
 
-    const [product, setProduct] = useState({
-        name: "",
-        category: "",
-        price: 0,
-        stock: 0,
-        available: true,
-    });
+function getInitialProductState(product?: Product | null): ProductFormState {
+    return {
+        name: product?.name ?? "",
+        category: product?.category ?? "",
+        price: Number(product?.price ?? 0),
+        stock: Number(product?.stock ?? 0),
+        available: product?.available ?? true,
+    };
+}
 
-    
-    const addProduct = async (e: FormEvent) => {
+export default function ProductForm({
+    onClose,
+    onCreated,
+    initialProduct,
+    submitText,
+}: ProductFormProps) {
+    const [product, setProduct] = useState<ProductFormState>(
+        getInitialProductState(initialProduct),
+    );
+
+    useEffect(() => {
+        setProduct(getInitialProductState(initialProduct));
+    }, [initialProduct]);
+
+    const handleSubmitProduct = async (e: FormEvent) => {
         e.preventDefault();
-        const created = await PostProducts(
-            product.name,
-            product.price,
-            product.stock,
-            product.available,
-            product.category,
-        );
-        if (created) {
+
+        const saved = initialProduct
+            ? await UpdateProducts(
+                initialProduct.id,
+                product.name,
+                product.price,
+                product.stock,
+                product.available,
+                product.category,
+            )
+            : await PostProducts(
+                product.name,
+                product.price,
+                product.stock,
+                product.available,
+                product.category,
+            );
+
+        if (saved) {
             onCreated?.();
             onClose?.();
         }
-    }
+    };
 
     return (
-        <form onSubmit={addProduct}>
+        <form onSubmit={handleSubmitProduct}>
             <div className="grid grid-cols-2 gap-5">
                 <Input
                     label="Nome do Produto"
@@ -44,67 +78,73 @@ export default function ProductForm({ onClose, onCreated }: ProductFormProps) {
                         setProduct({ ...product, name: e.target.value })
                     }
                 />
-                <div>
-                    <label >Categoria</label>
+
+                <div className="flex flex-col gap-1.5 w-full">
+                    <label className="text-sm font-medium text-slate-700">Categoria</label>
                     <select
-                        className="w-full mt-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
                         value={product.category}
                         onChange={(e) =>
                             setProduct({ ...product, category: e.target.value })
                         }
                     >
+                        <option value="" disabled>
+                            Selecione
+                        </option>
                         <option value="kit">Kit</option>
-                        <option value="eletronic">Eletrônico</option>
-                        <option value="service">Serviço</option>
-                        <option value="acessory">Acessório</option>
+                        <option value="eletronic">Eletronico</option>
+                        <option value="service">Servico</option>
+                        <option value="accessory">Acessorio</option>
                         <option value="other">Outro</option>
                     </select>
-
                 </div>
 
-
                 <Input
-                    label="Preço (R$)"
+                    label="Preco (R$)"
                     type="number"
                     value={product.price}
-                    onChange={(e) => setProduct({ ...product, price: Number(e.target.value) })}
+                    onChange={(e) =>
+                        setProduct({ ...product, price: Number(e.target.value) })
+                    }
                 />
 
                 <Input
                     label="Estoque"
                     type="number"
                     value={product.stock}
-                    onChange={(e) => setProduct({ ...product, stock: Number(e.target.value) })}
+                    onChange={(e) =>
+                        setProduct({ ...product, stock: Number(e.target.value) })
+                    }
                 />
             </div>
-            <div className="mt-5">
-               <label >Status</label>
-                    <select
-                        className="w-full mt-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={String(product.available)}
-                        onChange={(e) =>
-                            setProduct({ ...product, available: e.target.value === "true" })
-                        }
-                    >
-                        <option value="true">Disponível</option>
-                        <option value="false">Sem Estoque</option>
-                
-                    </select>
+            <div className="mt-5 flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-slate-700">Status</label>
+                <select
+                    className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
+                    value={String(product.available)}
+                    onChange={(e) =>
+                        setProduct({ ...product, available: e.target.value === "true" })
+                    }
+                >
+                    <option value="true">Disponivel</option>
+                    <option value="false">Sem Estoque</option>
+                </select>
             </div>
             <div className="flex justify-end gap-3 mt-10">
                 <button
-                   
+                    type="button"
+                    onClick={onClose}
                     className="px-6 py-2 rounded-lg border hover:cursor-pointer border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
                 >
                     Cancelar
                 </button>
                 <button
-
-                    className="px-6 py-2 rounded-lg  text-white font-medium bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer transition-colors"
+                    type="submit"
+                    className="px-6 py-2 rounded-lg text-white font-medium bg-[#2082B1] hover:bg-[#1a6a8f] hover:cursor-pointer transition-colors"
                 >
-                    Adicionar
+                    {submitText ?? (initialProduct ? "Salvar" : "Adicionar")}
                 </button>
             </div>
         </form>
-    )
+    );
 }

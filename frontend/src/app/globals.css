@@ -58,20 +58,49 @@ body {
   color: black;
   background-color: #f5f5f5;
   font-family: var(--font-poppins), sans-serif;
-
-  .recharts-surface:focus,
-  .recharts-surface:focus-visible {
-    outline: none !important;
-  }
-
-  .chart-no-select,
-  .chart-no-select * {
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
 }
+
+body .recharts-surface:focus,
+body .recharts-surface:focus-visible {
+  outline: none !important;
+}
+
+body .chart-no-select,
+body .chart-no-select * {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+body option {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+
+
+
+/*  Loading Page Animation */
 
 .loader {
   position: relative;
