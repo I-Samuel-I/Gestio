@@ -44,20 +44,22 @@ export default function ProductForm({
     const handleSubmitProduct = async (e: FormEvent) => {
         e.preventDefault();
 
+        const normalizedAvailable = product.stock > 0 ? product.available : false;
+
         const saved = initialProduct
             ? await UpdateProducts(
                 initialProduct.id,
                 product.name,
                 product.price,
                 product.stock,
-                product.available,
+                normalizedAvailable,
                 product.category,
             )
             : await PostProducts(
                 product.name,
                 product.price,
                 product.stock,
-                product.available,
+                normalizedAvailable,
                 product.category,
             );
 
@@ -73,6 +75,7 @@ export default function ProductForm({
                 <Input
                     label="Nome do Produto"
                     placeholder="Ex: Produto Premium A"
+                    required
                     value={product.name}
                     onChange={(e) =>
                         setProduct({ ...product, name: e.target.value })
@@ -82,6 +85,7 @@ export default function ProductForm({
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-slate-700">Categoria</label>
                     <select
+                        required
                         className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
                         value={product.category}
                         onChange={(e) =>
@@ -102,6 +106,8 @@ export default function ProductForm({
                 <Input
                     label="Preco (R$)"
                     type="number"
+                    min={0}
+                    required
                     value={product.price}
                     onChange={(e) =>
                         setProduct({ ...product, price: Number(e.target.value) })
@@ -111,17 +117,26 @@ export default function ProductForm({
                 <Input
                     label="Estoque"
                     type="number"
+                    min={0}
+                    required
                     value={product.stock}
-                    onChange={(e) =>
-                        setProduct({ ...product, stock: Number(e.target.value) })
-                    }
+                    onChange={(e) => {
+                        const stock = Number(e.target.value);
+                        setProduct({
+                            ...product,
+                            stock: stock,
+                            available: stock > 0 ? product.available : false,
+                        });
+                    }}
                 />
             </div>
             <div className="mt-5 flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-slate-700">Status</label>
                 <select
+                    required
+                    disabled={product.stock === 0}
                     className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
-                    value={String(product.available)}
+                    value={String(product.stock > 0 ? product.available : false)}
                     onChange={(e) =>
                         setProduct({ ...product, available: e.target.value === "true" })
                     }

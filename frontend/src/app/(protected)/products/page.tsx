@@ -10,7 +10,7 @@ import Modal from "@/components/modal";
 import ModalForm from "@/components/modalForm";
 import CreateButtonForm from "@/components/createButtonForm";
 import { DeleteProduct, GetProducts, type Product } from "@/services/products";
-import {motion, AnimatePresence} from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 
 export default function Products() {
@@ -45,7 +45,7 @@ export default function Products() {
     setOpen(true);
     setOpenMenuId(null);
   };
-  
+
   // Close create/edit modal
   const handleCloseProductModal = () => {
     setOpen(false);
@@ -118,7 +118,7 @@ export default function Products() {
         <Header title="Produtos" onMenuClick={() => setNavMobile(true)} />
 
         <div className="p-8 space-y-6">
-          <motion.section 
+          <motion.section
             className="flex flex-col sm:flex-row justify-between items-start"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -140,18 +140,18 @@ export default function Products() {
                     transition={{ duration: 0.2 }}
                   >
                     <ModalForm
-                icon={<BoxIcon size={45} color="#2082B1" />}
-                type="product"
-                title={selectedProduct ? "Editar Produto" : "Novo Produto"}
-                subTitle={
-                  selectedProduct
-                    ? "Atualize os dados do produto selecionado"
-                    : "Adicione um novo produto ao catalogo"
-                }
-                onClose={handleCloseProductModal}
-                onCreated={loadProducts}
-                product={selectedProduct}
-                submitText={selectedProduct ? "Salvar" : "Adicionar"}
+                      icon={<BoxIcon size={45} color="#2082B1" />}
+                      type="product"
+                      title={selectedProduct ? "Editar Produto" : "Novo Produto"}
+                      subTitle={
+                        selectedProduct
+                          ? "Atualize os dados do produto selecionado"
+                          : "Adicione um novo produto ao catalogo"
+                      }
+                      onClose={handleCloseProductModal}
+                      onCreated={loadProducts}
+                      product={selectedProduct}
+                      submitText={selectedProduct ? "Salvar" : "Adicionar"}
                     />
                   </motion.div>
                 </Modal>
@@ -164,52 +164,52 @@ export default function Products() {
                   isOpen={Boolean(productToDelete)}
                   onClose={() => setProductToDelete(null)}
                 >
-                  <motion.div 
+                  <motion.div
                     className="p-6"
                     initial={{ opacity: 0, scale: 0.95, y: -20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                <div className="flex items-start gap-4">
-                  <div className="rounded-xl bg-red-50 p-3 text-red-600">
-                    <TriangleAlert size={28} />
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-xl font-bold text-slate-800">Excluir produto</h2>
-                    <p className="mt-2 text-sm text-slate-500">
-                      Tem certeza que deseja excluir{" "}
-                      <span className="font-semibold text-slate-700">
-                        {productToDelete?.name}
-                      </span>
-                      ? Essa ação nao pode ser desfeita.
-                    </p>
-                  </div>
-                </div>
+                    <div className="flex items-start gap-4">
+                      <div className="rounded-xl bg-red-50 p-3 text-red-600">
+                        <TriangleAlert size={28} />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-xl font-bold text-slate-800">Excluir produto</h2>
+                        <p className="mt-2 text-sm text-slate-500">
+                          Tem certeza que deseja excluir{" "}
+                          <span className="font-semibold text-slate-700">
+                            {productToDelete?.name}
+                          </span>
+                          ? Essa ação nao pode ser desfeita.
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="mt-8 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setProductToDelete(null)}
-                    className="px-6 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleConfirmDelete}
-                    className="px-6 py-2 rounded-lg text-white font-medium bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
-                  >
-                    Excluir
-                  </button>
-                </div>
-                </motion.div>
+                    <div className="mt-8 flex justify-end gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setProductToDelete(null)}
+                        className="px-6 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleConfirmDelete}
+                        className="px-6 py-2 rounded-lg text-white font-medium bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </motion.div>
                 </Modal>
               )}
             </AnimatePresence>
           </motion.section>
 
-          <motion.section 
+          <motion.section
             className="flex flex-col sm:flex-row gap-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -228,20 +228,20 @@ export default function Products() {
             </button>
           </motion.section>
 
-          <motion.section 
+          <motion.section
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
             {products.length === 0 ? (
-              <motion.div 
+              <motion.div
                 className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
               >
-                <motion.div 
+                <motion.div
                   className="p-6 bg-[#E1EDF2] rounded-3xl w-fit"
                   animate={{ y: [-8, 8, -8] }}
                   transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
@@ -259,8 +259,8 @@ export default function Products() {
               </motion.div>
             ) : (
               filterProducts.map((product, index) => (
-                <motion.div 
-                  key={product.id} 
+                <motion.div
+                  key={product.id}
                   className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -309,7 +309,7 @@ export default function Products() {
 
                   <div className="flex gap-2 justify-between items-center mb-6">
                     <span className="text-slate-500 rounded-full text-xs font-semibold">
-                      {product.category}
+                      {product.category.toUpperCase()}
                     </span>
                     <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${product.available === true ? "bg-green-200 text-green-700" :
                       product.available === false ? "bg-red-200 text-red-700" : "bg-yellow-100 text-yellow-700"

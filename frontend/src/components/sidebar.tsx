@@ -1,18 +1,17 @@
-"use client";
+    "use client";
 
 import {
-  LayoutDashboard,
-  Package,
-  Users,
+  Building2,
   CircleDollarSign,
   FileText,
-  Settings,
-  Building2,
+  LayoutDashboard,
   LucideIcon,
+  Package,
+  Settings,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 type MobileProps = {
   mobileOpen: boolean;
@@ -23,68 +22,56 @@ type NavItemProps = {
   icon: LucideIcon;
   label: string;
   active?: boolean;
-  onClick?: () => void;
 };
 
 type ActiveItem =
   | ""
   | "Produtos"
   | "Clientes"
-  | "Usuários"
+  | "Usuarios"
   | "Dashboard"
   | "Financeiro"
-  | "Relatório"
-  | "Configurações";
+  | "Relatorio"
+  | "Configuracoes";
 
 export default function Navbar({ mobileOpen, onClose }: MobileProps) {
-  const [activeItem, setActiveItem] = useState<ActiveItem>("");
   const pathname = usePathname();
+  let activeItem: ActiveItem = "";
 
-  useEffect(() => {
-    if (pathname.startsWith("/products")) {
-      setActiveItem("Produtos");
-    } else if (pathname.startsWith("/clients")) {
-      setActiveItem("Clientes");
-    }
-    else if (pathname.startsWith("/users")) {
-      setActiveItem("Usuários");
-    }
-    else if (pathname.startsWith("/dashboard")) {
-      setActiveItem("Dashboard");
-    }
-    else if (pathname.startsWith("/finance")) {
-      setActiveItem("Financeiro");
-    }
-    else if (pathname.startsWith("/report")) {
-      setActiveItem("Relatório");
-    }
-    else if (pathname.startsWith("/config")) {
-      setActiveItem("Configurações");
-    }
-    else {
-      setActiveItem("");
-    }
-  }, [pathname]);
+  if (pathname.startsWith("/products")) {
+    activeItem = "Produtos";
+  } else if (pathname.startsWith("/clients")) {
+    activeItem = "Clientes";
+  } else if (pathname.startsWith("/users")) {
+    activeItem = "Usuarios";
+  } else if (pathname.startsWith("/dashboard")) {
+    activeItem = "Dashboard";
+  } else if (pathname.startsWith("/finance")) {
+    activeItem = "Financeiro";
+  } else if (pathname.startsWith("/report")) {
+    activeItem = "Relatorio";
+  } else if (pathname.startsWith("/config")) {
+    activeItem = "Configuracoes";
+  }
 
   return (
     <>
       {mobileOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
         />
       )}
 
-      <nav className="hidden md:flex fixed flex-col md:w-50 lg:w-60 xl:w-70 h-screen bg-white border-r border-gray-200 p-4 justify-between">
+      <nav className="fixed hidden h-screen flex-col justify-between border-r border-gray-200 bg-white p-4 md:flex md:w-50 lg:w-60 xl:w-70">
         <div>
-          {/* Logo Section */}
-          <div className="flex items-center gap-3 px-2 mb-8">
+          <div className="mb-8 flex items-center gap-3 px-2">
             <Building2 size={28} color="#2082B1" strokeWidth={2.5} />
             <h1 className="text-xl font-bold text-gray-800">GestIO</h1>
           </div>
 
           <div className="mb-6">
-            <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
               Cadastros
             </h2>
             <ul className="space-y-1">
@@ -93,7 +80,6 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   icon={Package}
                   label="Produtos"
                   active={activeItem === "Produtos"}
-                  onClick={() => setActiveItem("Produtos")}
                 />
               </Link>
               <Link href="/clients">
@@ -101,23 +87,21 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   icon={Users}
                   label="Clientes"
                   active={activeItem === "Clientes"}
-                  onClick={() => setActiveItem("Clientes")}
                 />
               </Link>
               <Link href="/users">
                 <NavItem
                   icon={Users}
-                  label="Usuários"
-                  active={activeItem === "Usuários"}
-                  onClick={() => setActiveItem("Usuários")}
+                  label="Usuarios"
+                  active={activeItem === "Usuarios"}
                 />
               </Link>
             </ul>
           </div>
 
           <div>
-            <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Operações
+            <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Operacoes
             </h2>
             <ul className="space-y-1">
               <Link href="/dashboard">
@@ -125,7 +109,6 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   icon={LayoutDashboard}
                   label="Dashboard"
                   active={activeItem === "Dashboard"}
-                  onClick={() => setActiveItem("Dashboard")}
                 />
               </Link>
               <Link href="/finance">
@@ -133,39 +116,36 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
                   icon={CircleDollarSign}
                   label="Financeiro"
                   active={activeItem === "Financeiro"}
-                  onClick={() => setActiveItem("Financeiro")}
                 />
               </Link>
               <Link href="/report">
                 <NavItem
                   icon={FileText}
-                  label="Relatório"
-                  active={activeItem === "Relatório"}
-                  onClick={() => setActiveItem("Relatório")}
+                  label="Relatorio"
+                  active={activeItem === "Relatorio"}
                 />
               </Link>
               <Link href="/config">
                 <NavItem
                   icon={Settings}
-                  label="Configurações"
-                  active={activeItem === "Configurações"}
-                  onClick={() => setActiveItem("Configurações")}
+                  label="Configuracoes"
+                  active={activeItem === "Configuracoes"}
                 />
               </Link>
             </ul>
           </div>
         </div>
 
-        <div className="relative border-t border-gray-100 pt-4 flex items-center gap-3 px-2">
-          <div className="w-10 h-10 rounded-full bg-[#0DA2E7] flex items-center justify-center text-white font-bold">
+        <div className="relative flex items-center gap-3 border-t border-gray-100 px-2 pt-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0DA2E7] font-bold text-white">
             AD
           </div>
-          <div className=" flex gap-3 ">
+          <div className="flex gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-gray-800 truncate">
+              <h3 className="truncate text-sm font-semibold text-gray-800">
                 Admin
               </h3>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="truncate text-xs text-gray-500">
                 admin@empresa.com
               </p>
             </div>
@@ -176,20 +156,17 @@ export default function Navbar({ mobileOpen, onClose }: MobileProps) {
   );
 }
 
-function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
+function NavItem({ icon: Icon, label, active }: NavItemProps) {
   return (
     <li>
-      <button
-        onClick={onClick}
-        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:cursor-pointer
-                    ${active
-            ? "bg-[#2082B1] text-white"
-            : "text-black hover:bg-gray-100"
-          }`}
+      <div
+        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+          active ? "bg-[#2082B1] text-white" : "text-black hover:bg-gray-100"
+        }`}
       >
         <Icon size={20} className={active ? "text-white" : "text-black"} />
         <span className="text-sm font-semibold">{label}</span>
-      </button>
+      </div>
     </li>
   );
 }

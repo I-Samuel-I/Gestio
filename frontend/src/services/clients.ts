@@ -67,15 +67,13 @@ export async function UpdateClient(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      throw new Error("Error: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error updating client:", error);
-    throw error;
   }
 }
 
@@ -112,15 +110,13 @@ export async function PostClients(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      throw new Error("Error: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error during client creation:", error);
-    throw error;
   }
 }
 

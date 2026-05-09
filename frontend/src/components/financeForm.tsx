@@ -177,7 +177,7 @@ export default function FinanceForm({
                     required
                 />
 
-                {/* Descrição */}
+                {/* Description */}
                 <Input
                     label="Descrição"
                     type="text"
@@ -192,7 +192,7 @@ export default function FinanceForm({
                     required
                 />
 
-                {/* Categoria */}
+                {/* Category */}
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-slate-700">
                         Categoria
@@ -215,7 +215,7 @@ export default function FinanceForm({
                     </select>
                 </div>
 
-                {/* Data */}
+                {/* Date */}
                 <Input
                     label="Data"
                     type="date"

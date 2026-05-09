@@ -38,15 +38,13 @@ export async function PostTransaction(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      throw new Error("Error: " + response.statusText);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error creating transaction:", error);
-    throw error;
   }
 }
 

@@ -10,7 +10,7 @@ import { DeleteUser, GetUsers, type User as AppUser } from "@/services/users";
 import { Ellipsis, Filter, Mail, Search, Shield, TriangleAlert, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CreateButtonForm from "@/components/createButtonForm";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 type UserStatus = AppUser["status"];
 type UserRole = AppUser["role"];
@@ -130,101 +130,138 @@ export default function Users() {
 
     return (
 
-        <motion.main className="flex min-h-screen bg-slate-50"
+        
+        <motion.main
+            className="flex min-h-screen bg-slate-50"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
         >
-            <main className="flex min-h-screen bg-slate-50">
-                <Navbar
-                    mobileOpen={navMobile}
-                    onClose={() => setNavMobile(false)}
-                />
-                <div className="flex flex-col flex-1 md:ml-50 lg:ml-70">
-                    <Header title="Usuarios" onMenuClick={() => setNavMobile(true)} />
-                    <div className="p-6 md:p-8 space-y-6">
-                        <section className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                            <div>
-                                <h1 className="text-2xl font-bold text-slate-800">Usuarios</h1>
-                                <p className="text-slate-500">
-                                    Gerencie seus usuarios.
-                                </p>
-                            </div>
-                            <CreateButtonForm onClick={handleOpenCreateModal} text="Novo Usuario" />
+            <Navbar
+                mobileOpen={navMobile}
+                onClose={() => setNavMobile(false)}
+            />
+            <div className="flex flex-col flex-1 md:ml-50 lg:ml-70">
+                <Header title="Usuarios" onMenuClick={() => setNavMobile(true)} />
+                <div className="p-6 md:p-8 space-y-6">
+                    <motion.section
+                        className="flex flex-col sm:flex-row justify-between items-start gap-4"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.6 }}
+                    >
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-800">Usuarios</h1>
+                            <p className="text-slate-500">
+                                Gerencie seus usuarios.
+                            </p>
+                        </div>
+                        <CreateButtonForm onClick={handleOpenCreateModal} text="Novo Usuario" />
 
-                            <Modal isOpen={open} onClose={handleCloseUserModal}>
-                                <ModalForm
-                                    icon={<User size={45} color="#2082B1" />}
-                                    type="user"
-                                    title={selectedUser ? "Editar Usuario" : "Novo Usuario"}
-                                    subTitle={
-                                        selectedUser
-                                            ? "Atualize os dados do usuario selecionado"
-                                            : "Adicione um novo usuario a sua base"
-                                    }
-                                    onClose={handleCloseUserModal}
-                                    onCreated={loadUsers}
-                                    user={selectedUser}
-                                    submitText={selectedUser ? "Salvar" : "Adicionar"}
-                                />
-                            </Modal>
+                        <AnimatePresence>
+                            {open && (
+                                <Modal isOpen={open} onClose={handleCloseUserModal}>
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <ModalForm
+                                            icon={<User size={45} color="#2082B1" />}
+                                            type="user"
+                                            title={selectedUser ? "Editar Usuario" : "Novo Usuario"}
+                                            subTitle={
+                                                selectedUser
+                                                    ? "Atualize os dados do usuario selecionado"
+                                                    : "Adicione um novo usuario a sua base"
+                                            }
+                                            onClose={handleCloseUserModal}
+                                            onCreated={loadUsers}
+                                            user={selectedUser}
+                                            submitText={selectedUser ? "Salvar" : "Adicionar"}
+                                        />
+                                    </motion.div>
+                                </Modal>
+                            )}
+                        </AnimatePresence>
 
-                            <Modal
-                                isOpen={Boolean(userToDelete)}
-                                onClose={() => setUserToDelete(null)}
-                            >
-                                <div className="p-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="rounded-xl bg-red-50 p-3 text-red-600">
-                                            <TriangleAlert size={28} />
+                        <AnimatePresence>
+                            {userToDelete && (
+                                <Modal
+                                    isOpen={Boolean(userToDelete)}
+                                    onClose={() => setUserToDelete(null)}
+                                >
+                                    <motion.div
+                                        className="p-6"
+                                        initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <div className="flex items-start gap-4">
+                                            <div className="rounded-xl bg-red-50 p-3 text-red-600">
+                                                <TriangleAlert size={28} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h2 className="text-xl font-bold text-slate-800">Excluir usuario</h2>
+                                                <p className="mt-2 text-sm text-slate-500">
+                                                    Tem certeza que deseja excluir{" "}
+                                                    <span className="font-semibold text-slate-700">
+                                                        {userToDelete?.name}
+                                                    </span>
+                                                    ? Essa acao nao pode ser desfeita.
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="flex-1">
-                                            <h2 className="text-xl font-bold text-slate-800">Excluir usuario</h2>
-                                            <p className="mt-2 text-sm text-slate-500">
-                                                Tem certeza que deseja excluir{" "}
-                                                <span className="font-semibold text-slate-700">
-                                                    {userToDelete?.name}
-                                                </span>
-                                                ? Essa acao nao pode ser desfeita.
-                                            </p>
+
+                                        <div className="mt-8 flex justify-end gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setUserToDelete(null)}
+                                                className="px-6 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors cursor-pointer"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleConfirmDelete}
+                                                className="px-6 py-2 rounded-lg text-white font-medium bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
+                                            >
+                                                Excluir
+                                            </button>
                                         </div>
-                                    </div>
+                                    </motion.div>
+                                </Modal>
+                            )}
+                        </AnimatePresence>
+                    </motion.section>
 
-                                    <div className="mt-8 flex justify-end gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={() => setUserToDelete(null)}
-                                            className="px-6 py-2 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors cursor-pointer"
-                                        >
-                                            Cancelar
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleConfirmDelete}
-                                            className="px-6 py-2 rounded-lg text-white font-medium bg-red-600 hover:bg-red-700 transition-colors cursor-pointer"
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
-                                </div>
-                            </Modal>
-                        </section>
+                    <motion.section
+                        className="flex flex-col sm:flex-row gap-4"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.6 }}
+                    >
+                        <Input
+                            type="text"
+                            placeholder="Buscar por nome, email ou empresa..."
+                            icon={Search}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
 
-                        <section className="flex flex-col sm:flex-row gap-4">
-                            <Input
-                                type="text"
-                                placeholder="Buscar por nome, email ou empresa..."
-                                icon={Search}
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
+                        <button className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 transition font-medium">
+                            <Filter className="w-4 h-4" />
+                            Buscar
+                        </button>
+                    </motion.section>
 
-                            <button className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 transition font-medium">
-                                <Filter className="w-4 h-4" />
-                                Buscar
-                            </button>
-                        </section>
-
+                    <motion.section
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                    >
                         {users.length === 0 ? (
                             <section className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full">
                                 <div className="p-6 bg-[#E1EDF2] rounded-3xl w-fit animate-[floatUpDown_6s_ease-in-out_infinite]">
@@ -398,9 +435,9 @@ export default function Users() {
                                 </section>
                             </>
                         )}
-                    </div>
+                    </motion.section>
                 </div>
-            </main>
+            </div>
         </motion.main>
     );
 }

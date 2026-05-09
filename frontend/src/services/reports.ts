@@ -21,6 +21,5 @@ export async function GetFinancialReport(): Promise<FinancialReport | null> {
     return data;
   } catch (error) {
     console.error("Error fetching financial report:", error);
-    return null;
   }
 }
