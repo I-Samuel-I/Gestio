@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Customer } from 'src/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -44,7 +44,7 @@ export class OrdersService {
 
         if (!customer) throw new NotFoundException('Customer not found in your company.');
 
-        const order = this.orderRepository.save({
+        const order = await this.orderRepository.save({
             ...createOrderDto,
             number: await this.orderNumberFormatter(user.company),
             creatorId: user.id,
@@ -55,13 +55,31 @@ export class OrdersService {
         return order;    
     }
     
-    async findAll(user:User){
+    async findAll(user:User, search?: string){
 
-        return await this.orderRepository.find({
-            where: { company: user.company },
-            relations: ['customer', 'creator'],
-            order: { createdAt: 'DESC' }
-        }); 
+        const query = this.orderRepository
+            .createQueryBuilder('orderEntity')
+            .leftJoinAndSelect('orderEntity.customer', 'customer')
+            .leftJoinAndSelect('orderEntity.creator', 'creator')
+            .where('orderEntity.company = :company', { company: user.company });
+
+        const searchTerm = search?.trim();
+
+        if (searchTerm) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where('orderEntity.number ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('orderEntity.title ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('orderEntity.description ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('customer.name ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('creator.name ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(orderEntity.status AS TEXT) ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(orderEntity.type AS TEXT) ILIKE :search', { search: `%${searchTerm}%` });
+                }),
+            );
+        }
+
+        return query.orderBy('orderEntity.createdAt', 'DESC').getMany();
     }
 
     async findOne(id: string, user:User){

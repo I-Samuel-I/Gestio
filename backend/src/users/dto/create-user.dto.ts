@@ -20,5 +20,5 @@ export class CreateUserDto {
 
     @IsString()
     @MinLength(4)
-    company: string
+    company: string;
 }

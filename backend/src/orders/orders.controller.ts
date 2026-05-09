@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CurrentUser } from 'src/auth/roles.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -21,8 +21,11 @@ export class OrdersController {
     }
 
     @Get()
-    findAll(@CurrentUser() user: User) { 
-        return this.ordersService.findAll(user); 
+    findAll(
+        @CurrentUser() user: User,
+        @Query('search') search?: string,
+    ) {
+        return this.ordersService.findAll(user, search);
     }
 
     @Get(':id')

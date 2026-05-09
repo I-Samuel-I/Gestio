@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -6,9 +6,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { UserRole } from 'src/users/enums/user-role.enum';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('customers')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class CustomersController {
 
     constructor(private readonly customersService: CustomersService){}
@@ -23,8 +24,11 @@ export class CustomersController {
     }
 
     @Get()
-    findAll( @CurrentUser() user: User) { 
-        return this.customersService.findAll(user) 
+    findAll(
+        @CurrentUser() user: User,
+        @Query('search') search?: string,
+    ) {
+        return this.customersService.findAll(user, search);
     }
 
     @Get(':id')

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -33,7 +33,7 @@ export class TransactionsService {
             }, user);
         }
 
-        const transaction = this.transactionRepository.save({ 
+        const transaction = await this.transactionRepository.save({ 
             ...createTransactionDto,
             productId: createTransactionDto.productId,
             quantity: createTransactionDto.quantity,
@@ -46,12 +46,28 @@ export class TransactionsService {
         return transaction;
     }
 
-    async findAll(user:User) {
+    async findAll(user:User, search?: string) {
 
-        return this.transactionRepository.find({ 
-            where: { company: user.company },
-            order: { date: 'DESC' } 
-        });
+        const query = this.transactionRepository
+            .createQueryBuilder('transaction')
+            .where('transaction.company = :company', { company: user.company });
+
+        const searchTerm = search?.trim();
+
+        if (searchTerm) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where('transaction.description ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(transaction.type AS TEXT) ILIKE :search', { search: `%${searchTerm}%` })
+                        .orWhere('CAST(transaction.category AS TEXT) ILIKE :search', { search: `%${searchTerm}%` });
+                }),
+            );
+        }
+
+        return query
+            .orderBy('transaction.date', 'DESC')
+            .addOrderBy('transaction.createdAt', 'DESC')
+            .getMany();
     }
 
     async findOne(id: string, user:User) {
@@ -110,6 +126,9 @@ export class TransactionsService {
 
                 id: transaction.id,
                 description: transaction.description,
+                amount: transaction.amount,
+                category: transaction.category,
+                quantity: transaction.quantity,
                 transactionDate: transaction.date, 
                 performedBy: transaction.user?.name || transaction.company,
                 type: transaction.type,

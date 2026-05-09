@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -6,8 +6,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { CurrentUser, Roles } from 'src/auth/roles.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { UserRole } from 'src/users/enums/user-role.enum';
+import { RolesGuard } from 'src/auth/roles.guard';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('products')
 export class ProductsController {
 
@@ -23,8 +24,11 @@ export class ProductsController {
     }
 
     @Get()
-    async findAll(@CurrentUser() user: User) { 
-        return this.productsService.findAll(user); 
+    async findAll(
+        @CurrentUser() user: User,
+        @Query('search') search?: string,
+    ) {
+        return this.productsService.findAll(user, search);
     }
 
     @Get(':id')
