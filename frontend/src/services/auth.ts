@@ -72,3 +72,5 @@ export async function authUser(token: string) {
     console.error("Error during user authentication:", error);
   }
 }
+
+

@@ -16,9 +16,9 @@ type UserStatus = AppUser["status"];
 type UserRole = AppUser["role"];
 
 const statusMeta: Record<UserStatus, { label: string; className: string }> = {
-    active: { label: "Ativo", className: "bg-green-100 text-green-700" },
-    inactive: { label: "Inativo", className: "bg-red-100 text-red-700" },
-    pending: { label: "Pendente", className: "bg-yellow-100 text-yellow-700" },
+    ativo: { label: "Ativo", className: "bg-green-100 text-green-700" },
+    inativo: { label: "Inativo", className: "bg-red-100 text-red-700" },
+    pendente: { label: "Pendente", className: "bg-yellow-100 text-yellow-700" },
 };
 
 const roleMeta: Record<UserRole, { label: string; className: string }> = {

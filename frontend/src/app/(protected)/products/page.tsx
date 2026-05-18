@@ -26,6 +26,9 @@ export default function Products() {
     p.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
 
 
+  
+
+
   // Load products from API
   const loadProducts = async () => {
     const data = await GetProducts();
@@ -182,7 +185,7 @@ export default function Products() {
                           <span className="font-semibold text-slate-700">
                             {productToDelete?.name}
                           </span>
-                          ? Essa ação nao pode ser desfeita.
+                          ? Essa ação não pode ser desfeita.
                         </p>
                       </div>
                     </div>
@@ -265,7 +268,7 @@ export default function Products() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
-                  whileHover={{ y: -4 }}
+                  
                 >
                   <div className="relative flex justify-between items-center mb-4">
                     <div className="p-3 bg-blue-50 rounded-lg">

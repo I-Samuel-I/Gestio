@@ -91,9 +91,6 @@ export default function Login() {
                                     Lembrar de mim
                                 </label>
                             </div>
-                            <p className="text-[#2082B1] font-semibold hover:underline cursor-pointer">
-                                Esqueceu a senha?
-                            </p>
                         </div>
                         <ButtonForm text="Entrar" type="submit" />
                     </form>

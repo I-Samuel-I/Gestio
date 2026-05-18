@@ -4,7 +4,7 @@ export type UserRole =
   | "vendas"
   | "financeiro";
 
-export type UserStatus = "active" | "inactive" | "pending";
+export type UserStatus = "ativo" | "inativo" | "pendente";
 
 export type User = {
   id: string;
