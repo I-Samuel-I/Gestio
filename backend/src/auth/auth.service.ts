@@ -23,12 +23,12 @@ export class AuthService {
 
         const userExists = await this.userRepository.findOne({ where: { email: data.email} });
 
-        if (userExists) throw new BadRequestException('User already exists.');
+        if (userExists) throw new BadRequestException('Usuário já existe.');
 
         const normalizedCompany = data.company.trim().toUpperCase();
 
         if (!normalizedCompany) {
-            throw new BadRequestException('Company is required.');
+            throw new BadRequestException('Empresa é obrigatória.');
         }
 
         const companyUsersCount = await this.userRepository.count({ where: { company: normalizedCompany } });
@@ -54,7 +54,7 @@ export class AuthService {
         });
         await this.userRepository.save(newUser);
 
-        return { message: 'User registered successfully.' };
+        return { message: 'Usuário registrado com sucesso.' };
     }
 
     async validateUser(email: string, password: string) {
@@ -65,11 +65,11 @@ export class AuthService {
             .where('user.email = :email', { email })
             .getOne();
 
-        if (!user) { throw new UnauthorizedException('Invalid credentials.'); }
+        if (!user) { throw new UnauthorizedException('Credenciais inválidas.'); }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch) { throw new UnauthorizedException('Invalid credentials.'); }
+        if (!isMatch) { throw new UnauthorizedException('Credenciais inválidas.'); }
 
         user.lastLogin = new Date();
         await this.userRepository.save(user);
