@@ -53,7 +53,7 @@ export class ProductsService {
 
         const product = await this.productsRepository.findOne({ where: { id, company: user.company } });
 
-        if (!product){ throw new NotFoundException('Product not found in your company.') }
+        if (!product){ throw new NotFoundException('Produto não encontrado na sua empresa.') }
 
         return product;
     }
@@ -62,7 +62,7 @@ export class ProductsService {
 
         const product = await this.productsRepository.findOne({ where: {id, company: user.company }});
 
-        if (!product) { throw new NotFoundException('Product not found in your company.'); }
+        if (!product) { throw new NotFoundException('Produto não encontrado na sua empresa.'); }
 
         Object.assign(product, updateProductDto);
 
@@ -77,12 +77,12 @@ export class ProductsService {
 
         const product = await this.productsRepository.findOne({ where: {id, company: user.company}});
 
-        if (!product) { throw new NotFoundException('Product not found.'); }
+        if (!product) { throw new NotFoundException('Produto não encontrado.'); }
 
         await this.productsRepository.delete(id);
 
         await this.activitiesService.createLog(user, 'product', 'delete', product);
 
-        return { message: 'Product deleted successfully.' };
+        return { message: 'Produto excluído com sucesso.' };
     }
 }
