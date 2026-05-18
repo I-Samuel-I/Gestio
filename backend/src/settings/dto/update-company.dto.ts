@@ -3,8 +3,8 @@ import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
 export class UpdateCompanyDto {
 
     @IsOptional()
-    @IsString()
-    @Length(3, 100)
+    @IsString({ message: 'Nome deve ser um texto.' })
+    @Length(3, 100, { message: 'Nome deve ter entre 3 e 100 caracteres.' })
     name?: string;
 
     @IsOptional()
@@ -13,10 +13,10 @@ export class UpdateCompanyDto {
     cnpj?: string;
 
     @IsOptional()
-    @IsEmail()
+    @IsEmail({}, { message: 'Email inválido.' })
     email?: string;
 
     @IsOptional()
-    @IsString()
+    @IsString({ message: 'Telefone deve ser um texto.' })
     phone?: string;
 }

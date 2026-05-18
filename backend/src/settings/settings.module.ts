@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SettingsController } from './settings.controller';
+import { CompanyController } from './company.controller';
 import { SettingsService } from './settings.service';
 import { Company } from './entities/company.entity';
 import { UserPreferences } from './entities/user-preferences.entity';
@@ -13,7 +14,7 @@ import { Activity } from 'src/activities/entities/activity.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Company, UserPreferences, User, Customer, Product, Order, Transaction, Activity])],
-    controllers: [SettingsController],
+    controllers: [SettingsController, CompanyController],
     providers: [SettingsService],
     exports: [SettingsService],
 })

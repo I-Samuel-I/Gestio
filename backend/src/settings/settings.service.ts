@@ -37,7 +37,7 @@ export class SettingsService {
     async getCompany(user: User) {
 
         const company = await this.companyRepo.findOne({ where: { name: user.company }});
-        if (!company) { throw new NotFoundException('Company not found.') };
+        if (!company) { throw new NotFoundException('Empresa não encontrada.') };
         return company;
     }
 
