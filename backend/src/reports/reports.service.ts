@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Transaction } from '../transactions/entities/transaction.entity';
@@ -171,13 +171,21 @@ export class ReportsService {
 
         if (query.startDate || query.endDate) {
             if (query.startDate) {
-                startDate = new Date(query.startDate);
+                const parsedStart = this.parseDate(query.startDate);
+                if (!parsedStart) {
+                    throw new BadRequestException('Data inicial inválida.');
+                }
+                startDate = parsedStart;
                 startDate.setHours(0, 0, 0, 0);
                 period.startDate = this.toIsoDate(startDate);
             }
 
             if (query.endDate) {
-                endDate = new Date(query.endDate);
+                const parsedEnd = this.parseDate(query.endDate);
+                if (!parsedEnd) {
+                    throw new BadRequestException('Data final inválida.');
+                }
+                endDate = parsedEnd;
                 endDate.setHours(23, 59, 59, 999);
                 period.endDate = this.toIsoDate(endDate);
             }
@@ -260,11 +268,24 @@ export class ReportsService {
 
     private toDateKey(value: Date | string) {
         const date = this.toDate(value);
-        return date.toISOString().slice(0, 10);
+        return this.formatUtcDate(date);
     }
 
     private toIsoDate(value: Date) {
-        return value.toISOString().slice(0, 10);
+        return this.formatLocalDate(value);
+    }
+    private formatLocalDate(value: Date) {
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, '0');
+        const day = String(value.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    private formatUtcDate(value: Date) {
+        const year = value.getUTCFullYear();
+        const month = String(value.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(value.getUTCDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     private parseNumber(value?: string | number) {
@@ -274,6 +295,24 @@ export class ReportsService {
 
         const parsed = Number(value);
         return Number.isNaN(parsed) ? undefined : parsed;
+    }
+
+    private parseDate(value?: string) {
+        if (!value) {
+            return undefined;
+        }
+
+        const trimmed = value.trim();
+        const dateOnlyMatch = /^\d{4}-\d{2}-\d{2}$/.exec(trimmed);
+
+        if (dateOnlyMatch) {
+            const [year, month, day] = trimmed.split('-').map(Number);
+            const local = new Date(year, month - 1, day);
+            return Number.isNaN(local.getTime()) ? undefined : local;
+        }
+
+        const parsed = new Date(trimmed);
+        return Number.isNaN(parsed.getTime()) ? undefined : parsed;
     }
 }
 
