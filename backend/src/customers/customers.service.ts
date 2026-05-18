@@ -60,7 +60,7 @@ export class CustomersService {
             where: { id, company: user.company }
         })
 
-        if (!customer){ throw new NotFoundException('Customer not found in your company.')}
+        if (!customer){ throw new NotFoundException('Cliente não encontrado na sua empresa.')}
         
         return customer;
     }
@@ -91,6 +91,6 @@ export class CustomersService {
 
         await this.activitiesService.createLog(user, 'customer', 'delete', customer);
 
-        return { message: 'Customer deleted successfully.' }
+        return { message: 'Cliente excluído com sucesso.' }
     }
 }
