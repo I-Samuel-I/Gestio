@@ -76,7 +76,7 @@ export class TransactionsService {
             where: { id, company: user.company }, 
         });
 
-        if (!transaction) { throw new NotFoundException('Transaction not found.'); }
+        if (!transaction) { throw new NotFoundException('Transação não encontrada.'); }
 
         return transaction;
     }
@@ -102,7 +102,7 @@ export class TransactionsService {
 
         await this.activitiesService.createLog(user, 'transaction', 'delete', transaction);
 
-        return { message: 'Transaction deleted successfully.' };
+        return { message: 'Transação excluída com sucesso.' };
     }
 
     async findRecent(user: User) {

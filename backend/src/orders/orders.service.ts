@@ -42,13 +42,14 @@ export class OrdersService {
             where: { id: createOrderDto.customerId, company: user.company }, 
         });
 
-        if (!customer) throw new NotFoundException('Customer not found in your company.');
+        if (!customer) throw new NotFoundException('Cliente não encontrado na sua empresa.');
 
         const order = await this.orderRepository.save({
             ...createOrderDto,
             number: await this.orderNumberFormatter(user.company),
             creatorId: user.id,
             customerId: customer.id,
+            company: user.company,
         });
 
         await this.activitiesService.createLog(user, 'order', 'sale', order);
@@ -89,7 +90,7 @@ export class OrdersService {
             relations: ['customer', 'creator']
         });
 
-        if (!order){ throw new NotFoundException('Order not found.') }
+        if (!order){ throw new NotFoundException('Pedido não encontrado.') }
 
         return order;
     }
@@ -115,6 +116,6 @@ export class OrdersService {
 
         await this.activitiesService.createLog(user, 'order', 'delete', order);
 
-        return { message: 'Order deleted successfully.' };
+        return { message: 'Pedido excluído com sucesso.' };
     }
 }

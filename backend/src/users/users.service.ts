@@ -19,7 +19,7 @@ export class UsersService {
 
         const exists = await this.userRepo.findOne({ where: { email: data.email } });
 
-        if (exists) { throw new BadRequestException('User already exists.'); }
+        if (exists) { throw new BadRequestException('Usuário já existe.'); }
 
         const company = data.company.trim().toUpperCase();
 
@@ -38,7 +38,12 @@ export class UsersService {
         const query = this.userRepo
             .createQueryBuilder('user')
             .where('user.company = :company', { company: currentUser.company })
-            .andWhere('user.isActive = :isActive', { isActive: true });
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('user.isActive = :isActive', { isActive: true })
+                        .orWhere('user.id = :currentUserId', { currentUserId: currentUser.id });
+                }),
+            );
 
         const searchTerm = search?.trim();
 
@@ -63,7 +68,7 @@ export class UsersService {
             where:{ id, company:currentUser.company }
         }); 
 
-        if (!user){ throw new NotFoundException('User not found in your company.') }
+        if (!user){ throw new NotFoundException('Usuário não encontrado na sua empresa.') }
 
         return user;
     }

@@ -6,14 +6,14 @@ import { CustomerStatus } from "../enums/customer-status.enum";
 export class CreateCustomerDto{
 
     @IsString()
-    @MinLength(3, { message: 'Name must have at least 3 characters' })
+    @MinLength(3, { message: 'Nome deve ter pelo menos 3 caracteres' })
     name: string;
 
-    @IsEnum(CustomerDocument, { message: 'Document type must be CPF or CNPJ', })
+    @IsEnum(CustomerDocument, { message: 'Tipo de documento deve ser CPF ou CNPJ', })
     document_type: CustomerDocument;
 
     @IsString()
-    @Matches(/^\d{11}$|^\d{14}$/, { message: 'Document must contain 11 digits (CPF) or 14 digits (CNPJ)' })
+    @Matches(/^\d{11}$|^\d{14}$/, { message: 'Documento deve conter 11 dígitos (CPF) ou 14 dígitos (CNPJ)' })
     @IsNotEmpty()
     document: string;
 
@@ -24,19 +24,19 @@ export class CreateCustomerDto{
     @IsNumberString()
     phone: string;
 
-    @IsEnum(BrazilianStates, { message: 'State must be a valid brazilian UF' })
+    @IsEnum(BrazilianStates, { message: 'Estado deve ser uma UF brasileira válida' })
     state: BrazilianStates;
 
     @IsString()
-    @MinLength(2, { message: 'City must have at least 2 characters' })
-    @MaxLength(100, { message: 'City is too long' })
+    @MinLength(2, { message: 'Cidade deve ter pelo menos 2 caracteres' })
+    @MaxLength(100, { message: 'Cidade é muito longa' })
     city: string;
 
     @IsString()
-    @MinLength(5, { message: 'Address must have at least 5 characters' })
-    @MaxLength(100, { message: 'Address is too long' })
+    @MinLength(5, { message: 'Endereço deve ter pelo menos 5 caracteres' })
+    @MaxLength(100, { message: 'Endereço é muito longo' })
     address: string;
 
-    @IsEnum(CustomerStatus, { message: 'Invalid status' })
+    @IsEnum(CustomerStatus, { message: 'Status inválido' })
     status: CustomerStatus;
 }
