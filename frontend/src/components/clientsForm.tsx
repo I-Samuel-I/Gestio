@@ -18,8 +18,7 @@ type ClientFormState = {
     state: string;
     city: string;
     address: string;
-    status: "active" | "inactive" | "pending";
-    total_purchases: number;
+    status: "ativo" | "inativo" | "pendente";
 };
 
 const BRAZILIAN_STATES = [
@@ -38,8 +37,7 @@ function getInitialClientState(client?: Client | null): ClientFormState {
         state: client?.state ?? "SP",
         city: client?.city ?? "",
         address: client?.address ?? "",
-        status: client?.status ?? "active",
-        total_purchases: Number(client?.total_purchases ?? 0),
+        status: client?.status ?? "ativo",
     };
 }
 
@@ -72,7 +70,6 @@ export default function ClientsForm({
                 client.city,
                 client.address,
                 client.status,
-                client.total_purchases,
             )
             : await PostClients(
                 client.name,
@@ -84,7 +81,6 @@ export default function ClientsForm({
                 client.city,
                 client.address,
                 client.status,
-                client.total_purchases,
             );
 
         if (saved) {
@@ -100,6 +96,7 @@ export default function ClientsForm({
                     label="Nome Completo"
                     placeholder="Ex: Maria Silva"
                     minLength={3}
+                    required
                     value={client.name}
                     onChange={(e) =>
                         setClient({ ...client, name: e.target.value })
@@ -109,6 +106,7 @@ export default function ClientsForm({
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-slate-700">Tipo de Documento</label>
                     <select
+                        required
                         className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
                         value={client.document_type}
                         onChange={(e) =>
@@ -126,6 +124,7 @@ export default function ClientsForm({
                 <Input
                     label="Documento"
                     placeholder={client.document_type === "CPF" ? "Somente numeros do CPF" : "Somente numeros do CNPJ"}
+                    required
                     value={client.document}
                     minLength={client.document_type === "CPF" ? 11 : 14}
                     maxLength={client.document_type === "CPF" ? 11 : 14}
@@ -138,6 +137,7 @@ export default function ClientsForm({
                     label="Email"
                     type="email"
                     placeholder="email@exemplo.com"
+                    required
                     value={client.email}
                     onChange={(e) =>
                         setClient({ ...client, email: e.target.value })
@@ -147,11 +147,13 @@ export default function ClientsForm({
                 <Input
                     label="Telefone"
                     placeholder="83 9 9999-9999"
+                    type="text"
                     minLength={11}
                     maxLength={11}
+                    required
                     value={client.phone}
                     onChange={(e) =>
-                        setClient({ ...client, phone: e.target.value })
+                        setClient({ ...client, phone: e.target.value.replace(/\D/g, "") })
                     }
                 />
 
@@ -160,6 +162,7 @@ export default function ClientsForm({
                     placeholder="Ex: Sao Paulo"
                     minLength={2}
                     maxLength={100}
+                    required
                     value={client.city}
                     onChange={(e) =>
                         setClient({ ...client, city: e.target.value })
@@ -169,6 +172,7 @@ export default function ClientsForm({
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium text-slate-700">Estado</label>
                     <select
+                        required
                         className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
                         value={client.state}
                         onChange={(e) =>
@@ -186,6 +190,7 @@ export default function ClientsForm({
                 <Input
                     label="Endereco"
                     placeholder="Rua, numero e complemento"
+                    required
                     value={client.address}
                     minLength={5}
                     maxLength={100}
@@ -194,34 +199,24 @@ export default function ClientsForm({
                     }
                 />
 
-                <Input
-                    label="Total em Compras"
-                    type="number"
-                    value={client.total_purchases}
-                    onChange={(e) =>
-                        setClient({
-                            ...client,
-                            total_purchases: Number(e.target.value),
-                        })
-                    }
-                />
             </div>
 
             <div className="mt-5 flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-slate-700">Status</label>
                 <select
+                    required
                     className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 outline-none transition-all focus:border-[#2082B1] focus:ring-1 focus:ring-[#2082B1]/10"
                     value={client.status}
                     onChange={(e) =>
                         setClient({
                             ...client,
-                            status: e.target.value as "active" | "inactive" | "pending",
+                            status: e.target.value as "ativo" | "inativo" | "pendente",
                         })
                     }
                 >
-                    <option value="active">Ativo</option>
-                    <option value="pending">Pendente</option>
-                    <option value="inactive">Inativo</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="pendente">Pendente</option>
+                    <option value="inativo">Inativo</option>
                 </select>
             </div>
 

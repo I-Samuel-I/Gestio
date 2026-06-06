@@ -8,7 +8,7 @@ export type Client = {
   state: string;
   city: string;
   address: string;
-  status: "active" | "inactive" | "pending";
+  status: "ativo" | "inativo" | "pendente";
   total_purchases: number;
 };
 
@@ -43,8 +43,7 @@ export async function UpdateClient(
   state: string,
   city: string,
   address: string,
-  status: "active" | "inactive" | "pending",
-  total_purchases: number,
+  status: "ativo" | "inativo" | "pendente",
 ) {
   try {
     const token = localStorage.getItem("token");
@@ -64,7 +63,6 @@ export async function UpdateClient(
         city: city,
         address: address,
         status: status,
-        total_purchases: total_purchases,
       }),
     });
 
@@ -88,8 +86,7 @@ export async function PostClients(
   state: string,
   city: string,
   address: string,
-  status: "active" | "inactive" | "pending",
-  total_purchases: number,
+  status: "ativo" | "inativo" | "pendente",
 ) {
   try {
     const token = localStorage.getItem("token");
@@ -109,7 +106,6 @@ export async function PostClients(
         city: city,
         address: address,
         status: status,
-        total_purchases: total_purchases,
       }),
     });
 

@@ -33,7 +33,7 @@ export async function registerUser(
   password: string,
   name: string,
   phone: string,
-  companyName: string,
+  company: string,
 ) {
   try {
     const response = await fetch("http://localhost:3000/auth/register", {
@@ -41,7 +41,7 @@ export async function registerUser(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password, name, phone, companyName }),
+      body: JSON.stringify({ email, password, name, phone, company }),
     });
     if (!response.ok) {
       throw new Error("Error: " + response.statusText);

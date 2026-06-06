@@ -73,6 +73,7 @@ export default function UsersForm({
                 <Input
                     label="Nome Completo"
                     placeholder="Ex: Joao da Silva"
+                    required
                     value={user.name}
                     onChange={(e) =>
                         setUser({ ...user, name: e.target.value })
@@ -83,6 +84,7 @@ export default function UsersForm({
                     label="Email"
                     type="email"
                     placeholder="email@empresa.com"
+                    required
                     value={user.email}
                     onChange={(e) =>
                         setUser({ ...user, email: e.target.value })
@@ -93,14 +95,19 @@ export default function UsersForm({
                     <Input
                         label="Telefone"
                         placeholder="11999998888"
+                        type="text"
+                        minLength={11}
+                        maxLength={11}
+                        required
                         value={user.phone}
                         onChange={(e) =>
-                            setUser({ ...user, phone: e.target.value })
+                            setUser({ ...user, phone: e.target.value.replace(/\D/g, "") })
                         }
                     />
                     <Input
                         label="Empresa"
                         placeholder="Nome da empresa"
+                        required
                         value={user.company}
                         onChange={(e) =>
                             setUser({ ...user, company: e.target.value })
@@ -111,6 +118,7 @@ export default function UsersForm({
                 <Input
                     label={initialUser ? "Nova Senha" : "Senha"}
                     type="password"
+                    required={!initialUser}
                     placeholder={
                         initialUser
                             ? "Deixe em branco para manter a atual"

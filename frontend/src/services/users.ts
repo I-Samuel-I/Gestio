@@ -1,9 +1,8 @@
 export type UserRole =
-  | "admin"
+  | "gerente"
   | "supervisor"
-  | "seller"
-  | "support"
-  | "financial";
+  | "vendas"
+  | "financeiro";
 
 export type UserStatus = "active" | "inactive" | "pending";
 
