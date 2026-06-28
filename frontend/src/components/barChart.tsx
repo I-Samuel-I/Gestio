@@ -79,7 +79,7 @@ const getIntroOfPage = (label: string | number | undefined) => {
   return '';
 };
 
-const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps<number, string>) => {
   const isVisible = active && payload && payload.length;
   return (
     <div className="custom-tooltip" style={{ visibility: isVisible ? 'visible' : 'hidden' }}>
@@ -114,8 +114,8 @@ const CustomContentOfTooltip = ({
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" niceTicks="snap125" />
-      <YAxis width="auto" niceTicks="snap125" />
+      <XAxis dataKey="name" />
+      <YAxis width="auto" />
       <Tooltip content={CustomTooltip} isAnimationActive={isAnimationActive} defaultIndex={defaultIndex} />
       <Legend />
       <Bar dataKey="pv" barSize={20} fill="#8884d8" isAnimationActive={isAnimationActive} />

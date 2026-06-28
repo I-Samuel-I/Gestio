@@ -39,8 +39,12 @@ export default function UsersForm({
     const [formError, setFormError] = useState("");
 
     useEffect(() => {
-        setUser(getInitialUserState(initialUser));
-        setFormError("");
+        const timer = window.setTimeout(() => {
+            setUser(getInitialUserState(initialUser));
+            setFormError("");
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [initialUser]);
 
     const handleSubmitUser = async (e: FormEvent) => {

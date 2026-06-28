@@ -108,7 +108,11 @@ export default function Finance() {
   }
 
   useEffect(() => {
-    LoadFinance();
+    const timer = window.setTimeout(() => {
+      void LoadFinance();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const cashFlowData: FinanceCashFlowEntry[] = finance?.cashFlow ?? [];
@@ -222,11 +226,7 @@ export default function Finance() {
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <div className="flex flex-col gap-4 lg:flex-row">
-              <LineGraph
-                data={cashFlowData}
-                month={finance?.period?.month}
-                year={finance?.period?.year}
-              />
+              <LineGraph data={cashFlowData} />
               <PieGraph data={categoryDistributionData} />
             </div>
           </motion.section>

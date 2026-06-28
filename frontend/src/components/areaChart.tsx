@@ -60,10 +60,7 @@ export default function AreaGraph({ data = [] }: AreaGraphProps) {
               tick={{ fill: "#64748b", fontSize: 12 }}
             />
             <Tooltip
-              formatter={(value: number, key: string) => [
-                `R$ ${Number(value).toLocaleString("pt-BR")}`,
-                key === "income" ? "Receita" : "Despesas",
-              ]}
+              formatter={(value: number | undefined, key: string | undefined) => [`R$ ${Number(value ?? 0).toLocaleString("pt-BR")}`, key === "income" ? "Receita" : "Despesas"]}
               contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
             />
             <Legend

@@ -284,7 +284,7 @@ export default function Clients() {
                         <th className="p-4">Documento</th>
                         <th className="p-4">Localizacao</th>
                         <th className="p-4">Status</th>
-                      
+                        <th className="p-4">Total Compras</th>
                         <th className="p-4 text-right">Ações</th>
                       </tr>
                     </thead>
@@ -343,7 +343,9 @@ export default function Clients() {
                             </span>
                           </td>
 
-                    
+                          <td className="p-4 font-medium">
+                            R$ {client.total_purchases}
+                          </td>
 
                           <td className="p-4">
                             <div
@@ -461,7 +463,9 @@ export default function Clients() {
                         {statusMeta[client.status].label}
                       </span>
 
-                    
+                      <span className="font-semibold">
+                        R$ {client.total_purchases}
+                      </span>
                     </div>
                   </div>
                 ))}

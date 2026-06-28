@@ -1,5 +1,5 @@
 "use client";
-import { Bell, LogOut, Menu, Search } from "lucide-react";
+import { Bell, LogOut, Search } from "lucide-react";
 import NavBar from "./navbar";
 import { logoutUser } from "@/services/auth";
 import { useRouter } from "next/navigation";

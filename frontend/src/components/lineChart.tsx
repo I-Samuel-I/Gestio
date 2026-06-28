@@ -104,10 +104,7 @@ export default function LineGraph({ data = [] }: LineGraphProps) {
             />
             <Tooltip
               labelFormatter={(label) => `Dia ${formatDay(String(label))}`}
-              formatter={(value: number, key: string) => [
-                formatCompactBRL(Number(value)),
-                key,
-              ]}
+              formatter={(value: number | undefined, key: string | undefined) => [formatCompactBRL(Number(value ?? 0)), String(key ?? "")]}
               contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
             />
             <defs>

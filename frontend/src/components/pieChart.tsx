@@ -37,7 +37,7 @@ export default function PieGraph({ data = [] }: PieGraphProps) {
                                 <Cell key={index} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString("pt-BR")}`}
+                        <Tooltip formatter={(value: number | undefined) => `R$ ${Number(value ?? 0).toLocaleString("pt-BR")}`}
                             contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
                         />
                         <Legend

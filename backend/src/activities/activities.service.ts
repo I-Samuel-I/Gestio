@@ -28,40 +28,40 @@ export class ActivitiesService {
 
                 if (action === 'create') {
 
-                    title = 'New customer registered';
-                    description = `${data.name} was added as a customer`;
+                    title = 'Novo cliente registrado';
+                    description = `${data.name} foi adicionado como cliente`;
 
                 } else if (action === 'update') {
 
-                    title = 'Customer updated';
-                    description = `Data for ${data.name} has been edited`;
+                    title = 'Cliente atualizado';
+                    description = `Dados de ${data.name} foram editados`;
 
                 } else {
 
-                    title = 'Customer removed';
-                    description = `The record for ${data.name} was deleted`;
+                    title = 'Cliente removido';
+                    description = `O registro de ${data.name} foi deletado`;
                 }
                 
                 break;
 
             case 'transaction':
 
-                const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data.amount);
+                const formattedAmount = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.amount);
 
                 if (action === 'payment') {
 
-                    title = 'Payment received';
+                    title = 'Pagamento recebido';
                     description = `${formattedAmount} - ${data.description}`;
 
                 } else if (action === 'update') {
 
-                    title = 'Payment edited';
-                    description = `Transaction #${data.id.slice(0,4)} was corrected`;
+                    title = 'Pagamento editado';
+                    description = `Transação #${data.id.slice(0,4)} foi corrigida`;
 
                 } else {
 
-                    title = 'Payment removed';
-                    description = `The ${formattedAmount} entry was reversed`;
+                    title = 'Pagamento removido';
+                    description = `O lançamento de ${formattedAmount} foi revertido`;
 
                 }
 
@@ -70,22 +70,22 @@ export class ActivitiesService {
             case 'order':
 
                 const orderNumber = data.number || 'N/A';
-                const clientName = data.customer?.name || 'Customer';
+                const clientName = data.customer?.name || 'Cliente';
 
                 if (action === 'sale') {
 
-                    title = 'New sale completed';
-                    description = `Order #${orderNumber} - ${clientName}`;
+                    title = 'Nova venda concluída';
+                    description = `Pedido #${orderNumber} - ${clientName}`;
 
                 } else if (action === 'update') {
 
-                    title = 'Order updated';
-                    description = `Status for order #${orderNumber} has changed to ${data.status}`;
+                    title = 'Pedido atualizado';
+                    description = `Status do pedido #${orderNumber} foi alterado para ${data.status}`;
 
                 } else {
 
-                    title = 'Order removed';
-                    description = `Order #${orderNumber} was cancelled/deleted`;
+                    title = 'Pedido removido';
+                    description = `Pedido #${orderNumber} foi cancelado/deletado`;
 
                 }
                 break;
@@ -94,18 +94,18 @@ export class ActivitiesService {
 
                 if (action === 'create') {
 
-                    title = 'New product added';
-                    description = `${data.name} was added to the catalog`;
+                    title = 'Novo produto adicionado';
+                    description = `${data.name} foi adicionado ao catálogo`;
 
                 } else if (action === 'update') {
 
-                    title = 'Product updated';
-                    description = `${data.name} stock or details updated`;
+                    title = 'Produto atualizado';
+                    description = `Estoque ou detalhes de ${data.name} foram atualizados`;
 
                 } else {
 
-                    title = 'Product removed';
-                    description = `Product ${data.name} was deleted`;
+                    title = 'Produto removido';
+                    description = `Produto ${data.name} foi deletado`;
 
                 }
 

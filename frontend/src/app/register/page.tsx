@@ -32,13 +32,6 @@ export default function Register() {
         }
     };
 
-    const InputErros = {
-        name: "",
-        email:"",
-        password: "",
-        phone: "",
-        compnay: "",
-    }
 
     
  
