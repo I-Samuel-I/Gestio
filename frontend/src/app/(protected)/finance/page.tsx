@@ -8,7 +8,15 @@ import ModalForm from "@/components/modalForm";
 import Navbar from "@/components/sidebar";
 import PieGraph from "@/components/pieChart";
 import StatCard from "@/components/statCard";
-import { finances } from "@/mock/finance";
+import {
+  GetFinance,
+  GetFinanceCategoryDistribution,
+  GetRecentFinanceTransactions,
+  type FinanceCashFlowEntry,
+  type FinanceCategoryDistributionItem,
+  type FinanceReport,
+  type RecentFinanceTransaction,
+} from "@/services/finance";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -18,12 +26,15 @@ import {
   Wallet,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import dayjs from "dayjs";
 
-type TransactionType = "income" | "expense";
+
+
+type TransactionType = "entrada" | "saída";
 
 function transactionMeta(type: TransactionType) {
-  if (type === "income") {
+  if (type === "entrada") {
     return {
       icon: ArrowUpRight,
       color: "#21C462",
@@ -41,6 +52,68 @@ function transactionMeta(type: TransactionType) {
 export default function Finance() {
   const [open, setOpen] = useState(false);
   const [navMobile, setNavMobile] = useState(false);
+  const [finance, setFinance] = useState<FinanceReport | null>(null);
+  const [recentTransactions, setRecentTransactions] = useState<
+    RecentFinanceTransaction[]
+  >([]);
+  const [categoryDistribution, setCategoryDistribution] = useState<
+    FinanceCategoryDistributionItem[]
+  >([]);
+
+
+
+  function formatDate(date: string) {
+    const d = dayjs(date);
+    const now = dayjs();
+    const diffMin = now.diff(d, "minute");
+    const diffHour = now.diff(d, "hour");
+    const diffDay = now.diff(d, "day");
+
+
+    if (diffDay > 0) {
+      return `${diffDay} dia(s) atras`;
+    }
+
+    if (diffMin < 60) {
+      return `${diffMin} min atras`;
+    }
+
+    if (diffHour < 24) {
+      return `${diffHour} hora(s) atras`;
+    }
+
+    return d.format("DD/MM/YYYY");
+  }
+
+  async function LoadFinance() {
+    const currentDate = new Date();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+
+    const financeData = await GetFinance(month, year);
+    const categoryData = await GetFinanceCategoryDistribution(month, year);
+    const recentData = await GetRecentFinanceTransactions();
+
+    if (financeData) {
+      setFinance(financeData);
+    }
+
+    if (categoryData) {
+      setCategoryDistribution(categoryData.categories);
+    }
+
+    if (recentData) {
+      setRecentTransactions(recentData);
+    }
+  }
+
+  useEffect(() => {
+    LoadFinance();
+  }, []);
+
+  const cashFlowData: FinanceCashFlowEntry[] = finance?.cashFlow ?? [];
+  const categoryDistributionData: FinanceCategoryDistributionItem[] =
+    categoryDistribution;
 
   return (
     <motion.main
@@ -90,6 +163,7 @@ export default function Finance() {
                       type="finance"
                       title="Nova Transacao"
                       subTitle="Adicione uma nova transacao financeira"
+                      onCreated={LoadFinance}
                       onClose={() => setOpen(false)}
                     />
                   </motion.div>
@@ -103,7 +177,7 @@ export default function Finance() {
                   <span>
                     <p className="text-slate-500">Saldo Atual</p>
                     <h2 className="mt-2 break-words text-2xl font-bold text-slate-800 md:text-3xl">
-                      R$ {finances.header.currentBalance.toLocaleString("pt-BR")}
+                      R$ {(finance?.balance ?? 0).toLocaleString("pt-BR")}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#E6F1F6] p-3">
@@ -117,7 +191,7 @@ export default function Finance() {
                   <span>
                     <p className="text-slate-500">Receita do Mes</p>
                     <h2 className="mt-2 break-words text-2xl font-bold text-slate-800 md:text-3xl">
-                      R$ {finances.header.expensesMonth.toLocaleString("pt-BR")}
+                      R$ {(finance?.revenue ?? 0).toLocaleString("pt-BR")}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#E8F9EE] p-3">
@@ -131,7 +205,7 @@ export default function Finance() {
                   <span>
                     <p className="text-slate-500">Despesa do Mes</p>
                     <h2 className="mt-2 break-words text-2xl font-bold text-slate-800 md:text-3xl">
-                      R$ {finances.header.accountsReceivable.toLocaleString("pt-BR")}
+                      R$ {(finance?.expenses ?? 0).toLocaleString("pt-BR")}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#FDF5E6] p-3">
@@ -148,8 +222,12 @@ export default function Finance() {
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <div className="flex flex-col gap-4 lg:flex-row">
-              <LineGraph />
-              <PieGraph />
+              <LineGraph
+                data={cashFlowData}
+                month={finance?.period?.month}
+                year={finance?.period?.year}
+              />
+              <PieGraph data={categoryDistributionData} />
             </div>
           </motion.section>
 
@@ -167,7 +245,7 @@ export default function Finance() {
                   Ultimas movimentacoes financeiras
                 </p>
 
-                {finances.transactions.map((transaction) => {
+                {recentTransactions.map((transaction) => {
                   const meta = transactionMeta(transaction.type as TransactionType);
                   const Icon = meta.icon;
 
@@ -185,17 +263,22 @@ export default function Finance() {
                         </div>
 
                         <div className="flex flex-col">
-                          <p>{transaction.title}</p>
+                          <p>{transaction.performedBy}</p>
                           <p className="text-sm text-slate-500">
-                            {new Date(transaction.date).toLocaleDateString("pt-BR")}
+                            {transaction.description}
                           </p>
                         </div>
                       </div>
 
-                      <p className="font-medium sm:text-right" style={{ color: meta.color }}>
-                        {transaction.type === "income" ? "+" : "-"}R$
-                        {transaction.value.toLocaleString("pt-BR")}
-                      </p>
+                      <div className="flex flex-col sm:items-end">
+                        <p className="font-medium sm:text-right" style={{ color: meta.color }}>
+                          {transaction.type === "entrada" ? "+" : "-"}R$
+                          {Number(transaction.amount).toLocaleString("pt-BR")}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          {formatDate(transaction.transactionDate)}
+                        </p>
+                      </div>
                     </div>
                   );
                 })}
@@ -210,7 +293,7 @@ export default function Finance() {
                 Ultimas movimentacoes financeiras
               </p>
 
-              {finances.transactions.map((transaction) => {
+              {recentTransactions.map((transaction) => {
                 const meta = transactionMeta(transaction.type as TransactionType);
                 const Icon = meta.icon;
 
@@ -225,16 +308,21 @@ export default function Finance() {
                           <Icon size={22} color={meta.color} />
                         </div>
 
-                        <div className="flex flex-col">
-                          <p>{transaction.title}</p>
-                          <div className="mt-1 flex items-center justify-between">
-                            <p className="font-medium" style={{ color: meta.color }}>
-                              {transaction.type === "income" ? "+" : "-"}R$
-                              {transaction.value.toLocaleString("pt-BR")}
-                            </p>
+                        <div className="flex flex-1 flex-col">
+                          <p>{transaction.performedBy}</p>
+                          <div className="mt-1 flex items-start justify-between gap-3">
                             <p className="text-sm text-slate-500">
-                              {new Date(transaction.date).toLocaleDateString("pt-BR")}
+                              {transaction.description}
                             </p>
+                            <div className="flex flex-col items-end">
+                              <p className="font-medium" style={{ color: meta.color }}>
+                                {transaction.type === "entrada" ? "+" : "-"}R$
+                                {Number(transaction.amount).toLocaleString("pt-BR")}
+                              </p>
+                              <p className="text-sm text-slate-500">
+                                {formatDate(transaction.transactionDate)}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>

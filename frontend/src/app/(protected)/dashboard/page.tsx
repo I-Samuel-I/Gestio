@@ -4,17 +4,29 @@ import AreaGraph from "@/components/areaChart";
 import Header from "@/components/header";
 import Navbar from "@/components/sidebar";
 import StatCard from "@/components/statCard";
-import { dashboard } from "@/mock/dashboard";
+import {
+  GetDashboardActivities,
+  GetDashboardCustomers,
+  GetDashboardFinancial,
+  GetDashboardStock,
+  type DashboardActivity,
+} from "@/services/dashboard";
 import dayjs from "dayjs";
 import { Box, DollarSign, User } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-type ActivityCategory = "client" | "product" | "payment";
+type ActivityCategory = "customer" | "product" | "transaction" | "order";
+
+type DashboardGraphItem = {
+  month: string;
+  income: number;
+  expense: number;
+};
 
 function activityMeta(category: ActivityCategory) {
   switch (category) {
-    case "client":
+    case "customer":
       return {
         icon: User,
         color: "#0A76A9",
@@ -26,7 +38,8 @@ function activityMeta(category: ActivityCategory) {
         color: "#F59F0A",
         bgColor: "#FDF5E6",
       };
-    case "payment":
+    case "transaction":
+    case "order":
       return {
         icon: DollarSign,
         color: "#21C45D",
@@ -41,7 +54,7 @@ function formatDate(date: string) {
   const diffMin = now.diff(d, "minute");
   const diffHour = now.diff(d, "hour");
   const diffDay = now.diff(d, "day");
-  const diffMonth = now.diff(d, "month");
+ 
 
   if (diffDay > 0) {
     return `${diffDay} dia(s) atras`;
@@ -55,15 +68,78 @@ function formatDate(date: string) {
     return `${diffHour} hora(s) atras`;
   }
 
-  if (diffMonth > 0) {
-    return `${diffMonth} mes(es) atras`;
-  }
-
   return d.format("DD/MM/YYYY");
+}
+
+function getMonthLabel(month: number, year: number) {
+  return new Date(year, month - 1, 1).toLocaleDateString("pt-BR", {
+    month: "long",
+  });
 }
 
 export default function Dashboard() {
   const [navMobile, setNavMobile] = useState(false);
+  const [totalClients, setTotalClients] = useState(0);
+  const [productsActive, setProductsActive] = useState(0);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(0);
+  const [recentActivities, setRecentActivities] = useState<DashboardActivity[]>(
+    [],
+  );
+  const [graphData, setGraphData] = useState<DashboardGraphItem[]>([]);
+
+  useEffect(() => {
+    async function LoadDashboard() {
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getFullYear();
+
+      const customersData = await GetDashboardCustomers();
+      const stockData = await GetDashboardStock();
+      const currentMonthFinancial = await GetDashboardFinancial(month, year);
+      const activitiesData = await GetDashboardActivities();
+
+      if (customersData) {
+        setTotalClients(customersData.total);
+      }
+
+      if (stockData) {
+        setProductsActive(stockData.totalProducts - stockData.outOfStockCount);
+      }
+
+      if (currentMonthFinancial) {
+        setMonthlyRevenue(currentMonthFinancial.revenue);
+      }
+
+      if (activitiesData) {
+        setRecentActivities(activitiesData);
+      }
+
+      const monthsToLoad = Array.from({ length: 6 }, (_, index) => {
+        const date = new Date(year, month - 1 - (5 - index), 1);
+
+        return {
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+        };
+      });
+
+      const financialResults = await Promise.all(
+        monthsToLoad.map(async (item) => {
+          const financialData = await GetDashboardFinancial(item.month, item.year);
+
+          return {
+            month: getMonthLabel(item.month, item.year),
+            income: financialData?.revenue ?? 0,
+            expense: financialData?.expenses ?? 0,
+          };
+        }),
+      );
+
+      setGraphData(financialResults);
+    }
+
+    LoadDashboard();
+  }, []);
 
   return (
     <motion.main
@@ -92,7 +168,7 @@ export default function Dashboard() {
                   <span>
                     <p className="text-slate-500">Total de Clientes</p>
                     <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                      {dashboard.header.totalClients}
+                      {totalClients}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#E6F1F6] p-3">
@@ -106,7 +182,7 @@ export default function Dashboard() {
                   <span>
                     <p className="text-slate-500">Produtos Ativos</p>
                     <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                      {dashboard.header.productsActive}
+                      {productsActive}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#FDF5E6] p-3">
@@ -120,7 +196,7 @@ export default function Dashboard() {
                   <span>
                     <p className="text-slate-500">Receita Mensal</p>
                     <h2 className="mt-2 text-3xl font-bold text-slate-800">
-                      R$ {dashboard.header.monthlyRevenue.toLocaleString("pt-BR")}
+                      R$ {monthlyRevenue.toLocaleString("pt-BR")}
                     </h2>
                   </span>
                   <div className="rounded-xl bg-[#E8F9EE] p-3">
@@ -137,15 +213,8 @@ export default function Dashboard() {
             transition={{ delay: 0.2, duration: 0.6 }}
           >
             <div className="flex flex-col gap-5 lg:flex-row">
-              <AreaGraph />
-              <StatCard>
-                <h3 className="text-xl font-bold text-slate-800">
-                  Produtos Mais Vendidos
-                </h3>
-                <p className="font-light text-slate-500">
-                  Ranking baseado nas transacoes
-                </p>
-              </StatCard>
+              <AreaGraph data={graphData} />
+             
             </div>
           </motion.section>
 
@@ -154,7 +223,7 @@ export default function Dashboard() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <div className="hidden md:block">
+            <div className="hidden md:block mb-10">
               <StatCard>
                 <h3 className="text-xl font-bold text-slate-800">
                   Atividades Recentes
@@ -163,8 +232,8 @@ export default function Dashboard() {
                   Ultimas atualizacoes no sistema
                 </p>
 
-                {dashboard.recentActivities.map((activity) => {
-                  const meta = activityMeta(activity.category as ActivityCategory);
+                {recentActivities.map((activity) => {
+                  const meta = activityMeta(activity.type as ActivityCategory);
                   const Icon = meta.icon;
 
                   return (
@@ -184,7 +253,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <p className="text-xs text-slate-500">
-                        {formatDate(activity.date)}
+                        {formatDate(activity.createdAt)}
                       </p>
                     </div>
                   );
@@ -200,8 +269,8 @@ export default function Dashboard() {
                 Ultimas atualizacoes no sistema
               </p>
               <div className="mt-5 flex flex-col gap-5">
-                {dashboard.recentActivities.map((activity) => {
-                  const meta = activityMeta(activity.category as ActivityCategory);
+                {recentActivities.map((activity) => {
+                  const meta = activityMeta(activity.type as ActivityCategory);
                   const Icon = meta.icon;
 
                   return (
@@ -221,7 +290,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <p className="mt-2 text-xs text-slate-500">
-                        {formatDate(activity.date)}
+                        {formatDate(activity.createdAt)}
                       </p>
                     </StatCard>
                   );

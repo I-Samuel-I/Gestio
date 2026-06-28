@@ -1,5 +1,7 @@
+
 // API LOGIN USER
 export async function loginUser(email: string, password: string) {
+
   try {
     // HAD CALL TO BACKEND LOGIN API
     const response = await fetch("http://localhost:3000/auth/login", {
@@ -12,7 +14,13 @@ export async function loginUser(email: string, password: string) {
 
     // VERIFY RESPONSE FOR SERVER ERRORS
     if (!response.ok) {
-      throw new Error("Error: " + response.statusText);
+      const errorData = await response.json().catch(() => null);
+      const message =
+        errorData?.message instanceof Array
+          ? errorData.message.join(" ")
+          : errorData?.message ?? response.statusText;
+
+      throw new Error(message);
     }
 
     // IF OK, RETURN DATA
@@ -44,7 +52,13 @@ export async function registerUser(
       body: JSON.stringify({ email, password, name, phone, company }),
     });
     if (!response.ok) {
-      throw new Error("Error: " + response.statusText);
+      const errorData = await response.json().catch(() => null);
+      const message =
+        errorData?.message instanceof Array
+          ? errorData.message.join(" ")
+          : errorData?.message ?? response.statusText;
+
+      throw new Error(message);
     }
     const data = await response.json();
     return data;
@@ -74,3 +88,6 @@ export async function authUser(token: string) {
 }
 
 
+export function logoutUser(){
+  localStorage.removeItem("token");
+}

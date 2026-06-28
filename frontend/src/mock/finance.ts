@@ -20,7 +20,7 @@ export const finances = {
       { date: "2026-01-06", value: 280 },
       { date: "2026-01-11", value: 3500 },
       { date: "2026-01-15", value: 450 },
-      { date: "2026-01-16", value: 8500 },
+      { date: "2026-01-16", value: 12500 },
     ],
   },
 

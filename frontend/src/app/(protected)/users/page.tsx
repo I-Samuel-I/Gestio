@@ -49,8 +49,11 @@ export default function Users() {
     const [selectedUser, setSelectedUser] = useState<AppUser | null>(null);
     const [userToDelete, setUserToDelete] = useState<AppUser | null>(null);
     const [currentUserRole, setCurrentUserRole] = useState<UserRole | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     const canManageUsers = currentUserRole === "gerente";
+    const canManageTargetUser = (user: AppUser) =>
+        canManageUsers && currentUserId !== user.id;
 
     const filterUsers = users.filter((user) =>
         `${user.name} ${user.email} ${user.company ?? user.companyName ?? ""}`
@@ -109,6 +112,7 @@ export default function Users() {
 
         authUser(token).then((data) => {
             setCurrentUserRole(data?.role ?? null);
+            setCurrentUserId(data?.id ?? null);
         });
     }, []);
 
@@ -262,7 +266,7 @@ export default function Users() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
                     >
-                        {users.length === 0 ? (
+                        {filterUsers.length === 0 ? (
                             <section className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full">
                                 <div className="p-6 bg-[#E1EDF2] rounded-3xl w-fit animate-[floatUpDown_6s_ease-in-out_infinite]">
                                     <User color="#2082B1" size={50} />
@@ -321,7 +325,7 @@ export default function Users() {
                                                             <p className="text-slate-500">{user.company ?? user.companyName ?? "-"}</p>
                                                         </td>
 
-                                                        {canManageUsers && (
+                                                        {canManageTargetUser(user) && (
                                                             <td className="p-4">
                                                                 <div className="relative flex justify-end">
                                                                     <button
@@ -330,7 +334,7 @@ export default function Users() {
                                                                                 currentId === user.id ? null : user.id,
                                                                             )
                                                                         }
-                                                                        className="p-2 rounded-lg hover:bg-blue-50 hover:text-red cursor-pointer transition-colors"
+                                                                        className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-blue-50 hover:text-slate-700"
                                                                     >
                                                                         <Ellipsis className="w-5 h-5" />
                                                                     </button>
@@ -368,7 +372,7 @@ export default function Users() {
                                             className="bg-white rounded-xl shadow-sm p-4 space-y-3"
                                         >
                                             <div className="relative">
-                                                {canManageUsers && (
+                                                {canManageTargetUser(user) && (
                                                     <>
                                                         <button
                                                             onClick={() =>
@@ -376,7 +380,7 @@ export default function Users() {
                                                                     currentId === user.id ? null : user.id,
                                                                 )
                                                             }
-                                                            className="absolute top-0 right-0 p-2 rounded-lg hover:bg-blue-50 hover:text-red cursor-pointer transition-colors"
+                                                            className="absolute right-0 top-0 cursor-pointer rounded-lg p-2 transition-colors hover:bg-blue-50 hover:text-slate-700"
                                                         >
                                                             <Ellipsis className="w-5 h-5" />
                                                         </button>

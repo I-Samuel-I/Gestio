@@ -80,7 +80,9 @@ export default function ModalForm(props: CreateModalProps) {
                     submitText={props.submitText}
                 />
             )}
-            {type === "finance" && (<FinanceForm />)}
+            {type === "finance" && (
+                <FinanceForm onClose={onClose} onCreated={onCreated} />
+            )}
         </div>
     );
 }

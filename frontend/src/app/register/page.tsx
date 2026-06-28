@@ -14,17 +14,35 @@ export default function Register() {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [companyName, setCompanyName] = useState("");
+    const [formError, setFormError] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setFormError("");
             await registerUser(email, password, name, phone, companyName);
             router.push("/products");
         } catch (error) {
-            alert(error);
+            setFormError(
+                error instanceof Error
+                    ? error.message
+                    : "Nao foi possivel criar a conta.",
+            );
         }
     };
+
+    const InputErros = {
+        name: "",
+        email:"",
+        password: "",
+        phone: "",
+        compnay: "",
+    }
+
+    
+ 
+
 
     return (
         <motion.main
@@ -121,6 +139,7 @@ export default function Register() {
                         <div className="flex gap-5">
                             <Input
                                 label="Nome completo"
+                                minLength={3}
                                 type="text"
                                 placeholder="Seu nome"
                                 icon={User}
@@ -129,16 +148,19 @@ export default function Register() {
                             />
                             <Input
                                 label="Telefone"
-                                type="number"
+                                minLength={11}
+                                maxLength={11}
+                                type="text"
                                 placeholder="(00) 00000-0000"
                                 icon={Phone}
                                 value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                             />
                         </div>
                         <Input
                             label="Nome da Empresa"
                             type="text"
+                            minLength={4}
                             placeholder="Sua Empresa"
                             icon={Building}
                             value={companyName}
@@ -155,13 +177,18 @@ export default function Register() {
                         <Input
                             label="Senha"
                             type="password"
-                            placeholder="Mínimo 8 caracteres"
+                            placeholder="Mínimo 4 caracteres"
                             icon={Lock}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        {formError && (
+                            <p className="text-sm font-medium text-red-600">
+                                {formError}
+                            </p>
+                        )}
                         <div className="flex items-center text-sm gap-2">
-                            <input type="checkbox" id="terms" />
+                            <input type="checkbox" id="terms" required />
                             <label htmlFor="terms" className="text-sm text-slate-600">
                                 Li e concordo com os
                                 <span className="text-[#2082B1] cursor-pointer hover:underline">

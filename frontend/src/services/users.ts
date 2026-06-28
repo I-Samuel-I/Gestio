@@ -92,25 +92,33 @@ export async function PostUsers(
   email: string,
   password: string,
   phone: string,
-  companyName: string,
+  company: string,
 ) {
   try {
-    const response = await fetch("http://localhost:3000/auth/register", {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:3000/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         name: name,
         email: email,
         password: password,
         phone: phone,
-        companyName: companyName,
+        company: company,
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Error: " + response.statusText);
+      const errorData = await response.json().catch(() => null);
+      const message =
+        errorData?.message instanceof Array
+          ? errorData.message.join(" ")
+          : errorData?.message ?? response.statusText;
+
+      throw new Error("Error: " + message);
     }
 
     const data = await response.json();

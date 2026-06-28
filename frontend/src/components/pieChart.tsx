@@ -1,14 +1,16 @@
-import { finances } from "@/mock/finance";
 import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from "recharts";
 
 const COLORS = ["#0EA5E9", "#22C55E", "#F59E0B", "#EF4444", "#8B5CF6"];
 
-export default function PieGraph() {
-    const data = finances.categoryDistribution.map((item) => ({
-        name: item.category,
-        value: item.value,
-        percentage: item.percentage,
-    }));
+type PieGraphProps = {
+    data?: {
+        name: string;
+        revenue: number;
+        percentage: number;
+    }[];
+};
+
+export default function PieGraph({ data = [] }: PieGraphProps) {
 
     return (
         <div
@@ -22,7 +24,7 @@ export default function PieGraph() {
                     <PieChart>
                         <Pie
                             data={data}
-                            dataKey="value"
+                            dataKey="revenue"
                             nameKey="name"
                             cx="50%"
                             cy="50%"

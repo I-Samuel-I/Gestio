@@ -36,34 +36,49 @@ export default function UsersForm({
     const [user, setUser] = useState<UserFormState>(
         getInitialUserState(initialUser),
     );
+    const [formError, setFormError] = useState("");
 
     useEffect(() => {
         setUser(getInitialUserState(initialUser));
+        setFormError("");
     }, [initialUser]);
 
     const handleSubmitUser = async (e: FormEvent) => {
         e.preventDefault();
 
-        const saved = initialUser
-            ? await UpdateUser(
-                initialUser.id,
-                user.name,
-                user.email,
-                user.phone,
-                user.company,
-                user.password,
-            )
-            : await PostUsers(
-                user.name,
-                user.email,
-                user.password,
-                user.phone,
-                user.company,
-            );
+        if (user.phone && user.phone.length < 11) {
+            setFormError("Telefone deve ter pelo menos 11 digitos.");
+            return;
+        }
 
-        if (saved) {
-            onCreated?.();
-            onClose?.();
+        setFormError("");
+
+        try {
+            const saved = initialUser
+                ? await UpdateUser(
+                    initialUser.id,
+                    user.name,
+                    user.email,
+                    user.phone,
+                    user.company,
+                    user.password,
+                )
+                : await PostUsers(
+                    user.name,
+                    user.email,
+                    user.password,
+                    user.phone,
+                    user.company,
+                );
+
+            if (saved) {
+                onCreated?.();
+                onClose?.();
+            }
+        } catch (error) {
+            setFormError(
+                error instanceof Error ? error.message.replace("Error: ", "") : "Nao foi possivel salvar o usuario.",
+            );
         }
     };
 
@@ -129,6 +144,10 @@ export default function UsersForm({
                         setUser({ ...user, password: e.target.value })
                     }
                 />
+
+                {formError && (
+                    <p className="text-sm font-medium text-red-600">{formError}</p>
+                )}
             </div>
 
             <div className="flex justify-end gap-3 mt-10">

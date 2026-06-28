@@ -4,7 +4,12 @@ import Header from "@/components/header";
 import Input from "@/components/input";
 import Navbar from "@/components/sidebar";
 import ToogleButton from "@/components/toogleButton";
-import { GetSettingsProfile } from "@/services/settings";
+import {
+  GetSettingsCompany,
+  GetSettingsPreferences,
+  UpdateSettingsCompany,
+  UpdateSettingsPreferences,
+} from "@/services/settings";
 import { Bell, Building, Clock, Globe, Palette } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -15,23 +20,73 @@ export default function Config() {
   const [cnpj, setCnpj] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [lowStockAlert, setLowStockAlert] = useState(false);
+  const [dailySummary, setDailySummary] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    const fetchCompanyData = async () => {
-      const data = await GetSettingsProfile();
+    const fetchSettingsData = async () => {
+      try {
+        const companyData = await GetSettingsCompany();
+        const preferencesData = await GetSettingsPreferences();
 
-      if (!data) return;
+        if (companyData) {
+          setCompanyName(companyData.name ?? "");
+          setCnpj(companyData.cnpj ?? "");
+          setContactEmail(companyData.email ?? "");
+          setContactPhone(companyData.phone ?? "");
+        }
 
-      setCompanyName(data.companyName ?? "");
-      setCnpj(data.companyDocument ?? "");
-      setContactEmail(data.contactEmail ?? "");
-      setContactPhone(data.phone ?? "");
+        if (preferencesData) {
+          setEmailNotifications(preferencesData.emailNotifications ?? false);
+          setLowStockAlert(preferencesData.lowStockAlert ?? false);
+          setDailySummary(preferencesData.dailySummary ?? false);
+        }
+      } catch (error) {
+        setFormError(
+          error instanceof Error
+            ? error.message
+            : "Nao foi possivel carregar as configuracoes.",
+        );
+      }
     };
 
-    fetchCompanyData();
+    fetchSettingsData();
   }, []);
 
+  const handleSaveSettings = async () => {
+    try {
+      setSaving(true);
+      setFormError("");
+      setSuccessMessage("");
 
+      await UpdateSettingsCompany(
+        companyName,
+        cnpj.replace(/\D/g, ""),
+        contactEmail,
+        contactPhone,
+      );
+
+      await UpdateSettingsPreferences(
+        emailNotifications,
+        lowStockAlert,
+        dailySummary,
+      );
+
+      setSuccessMessage("Configuracoes salvas com sucesso.");
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel salvar as configuracoes.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <motion.main
@@ -88,7 +143,7 @@ export default function Config() {
                   label="CNPJ"
                   type="text"
                   value={cnpj}
-                  onChange={(e) => setCnpj(e.target.value)}
+                  onChange={(e) => setCnpj(e.target.value.replace(/\D/g, ""))}
                 />
                 <Input
                   label="E-mail de Contato"
@@ -98,9 +153,9 @@ export default function Config() {
                 />
                 <Input
                   label="Telefone"
-                  type="number"
+                  type="text"
                   value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
+                  onChange={(e) => setContactPhone(e.target.value.replace(/\D/g, ""))}
                 />
               </div>
             </div>
@@ -131,7 +186,10 @@ export default function Config() {
                       Receba atualizacoes no seu E-mail
                     </p>
                   </span>
-                  <ToogleButton />
+                  <ToogleButton
+                    checked={emailNotifications}
+                    onChange={setEmailNotifications}
+                  />
                 </div>
                 <div className="mt-7 flex items-center justify-between gap-5 border-b border-slate-200">
                   <span>
@@ -140,7 +198,10 @@ export default function Config() {
                       Quando produtos atingirem o minimo
                     </p>
                   </span>
-                  <ToogleButton />
+                  <ToogleButton
+                    checked={lowStockAlert}
+                    onChange={setLowStockAlert}
+                  />
                 </div>
                 <div className="mt-7 flex items-center justify-between gap-5 border-b border-slate-200">
                   <span>
@@ -149,7 +210,10 @@ export default function Config() {
                       Relatorio automatico ao fim do dia
                     </p>
                   </span>
-                  <ToogleButton />
+                  <ToogleButton
+                    checked={dailySummary}
+                    onChange={setDailySummary}
+                  />
                 </div>
               </div>
             </div>
@@ -175,6 +239,29 @@ export default function Config() {
               <div className="mt-7 flex flex-col gap-5 sm:flex-row">
                 <Input icon={Globe} label="Idioma" type="select" />
                 <Input icon={Clock} label="Fuso Horario" type="select" />
+              </div>
+
+              {formError && (
+                <p className="mt-6 text-sm font-medium text-red-600">
+                  {formError}
+                </p>
+              )}
+
+              {successMessage && (
+                <p className="mt-6 text-sm font-medium text-green-600">
+                  {successMessage}
+                </p>
+              )}
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveSettings}
+                  disabled={saving}
+                  className="rounded-lg bg-[#2082B1] px-6 py-2 font-medium text-white transition-colors hover:cursor-pointer hover:bg-[#1a6a8f] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {saving ? "Salvando..." : "Salvar"}
+                </button>
               </div>
             </div>
           </motion.section>

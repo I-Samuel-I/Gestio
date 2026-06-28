@@ -1,8 +1,8 @@
 "use client";
 import { Bell, LogOut, Menu, Search } from "lucide-react";
-import { useState } from "react";
-import Navbar from "./sidebar";
 import NavBar from "./navbar";
+import { logoutUser } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 type HeaderProps = {
   title: string;
@@ -10,6 +10,14 @@ type HeaderProps = {
 };
 
 export default function Header({ title, onMenuClick }: HeaderProps) {
+
+  const router = useRouter();
+
+  const logout = async () => {
+    await logoutUser();
+    router.replace("/login")
+
+  }
 
   return (
     <header className="flex h-fit w-full items-center justify-between p-5 bg-white shadow-sm">
@@ -25,7 +33,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
           />
         </div>
         <div className=" md:hidden" onClick={onMenuClick} >
-          <NavBar/>
+          <NavBar />
         </div>
         <button className="relative p-2 text-slate-500 hover:text-[#0DA2E7] hover:bg-[#E7F6FE] rounded-full transition-colors hover:cursor-pointer">
           <Bell className="w-6 h-6" />
@@ -33,7 +41,9 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                         2
                     </span> */}
         </button>
-        <button className="p-2 text-slate-500 hover:text-[#0DA2E7] hover:cursor-pointer hover:bg-[#E7F6FE] rounded-full transition-colors">
+        <button 
+        onClick={logout}
+        className="p-2 text-slate-500 hover:text-[#0DA2E7] hover:cursor-pointer hover:bg-[#E7F6FE] rounded-full transition-colors">
           <LogOut className="w-6 h-6" />
         </button>
       </article>

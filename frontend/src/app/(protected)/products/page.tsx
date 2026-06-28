@@ -26,7 +26,7 @@ export default function Products() {
     p.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
 
 
-  
+
 
 
   // Load products from API
@@ -136,44 +136,34 @@ export default function Products() {
             <AnimatePresence>
               {open && (
                 <Modal isOpen={open} onClose={handleCloseProductModal}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ModalForm
-                      icon={<BoxIcon size={45} color="#2082B1" />}
-                      type="product"
-                      title={selectedProduct ? "Editar Produto" : "Novo Produto"}
-                      subTitle={
-                        selectedProduct
-                          ? "Atualize os dados do produto selecionado"
-                          : "Adicione um novo produto ao catalogo"
-                      }
-                      onClose={handleCloseProductModal}
-                      onCreated={loadProducts}
-                      product={selectedProduct}
-                      submitText={selectedProduct ? "Salvar" : "Adicionar"}
-                    />
-                  </motion.div>
+
+                  <ModalForm
+                    icon={<BoxIcon size={45} color="#2082B1" />}
+                    type="product"
+                    title={selectedProduct ? "Editar Produto" : "Novo Produto"}
+                    subTitle={
+                      selectedProduct
+                        ? "Atualize os dados do produto selecionado"
+                        : "Adicione um novo produto ao catalogo"
+                    }
+                    onClose={handleCloseProductModal}
+                    onCreated={loadProducts}
+                    product={selectedProduct}
+                    submitText={selectedProduct ? "Salvar" : "Adicionar"}
+                  />
+
                 </Modal>
               )}
             </AnimatePresence>
 
-            <AnimatePresence>
+            <AnimatePresence >
               {productToDelete && (
                 <Modal
                   isOpen={Boolean(productToDelete)}
                   onClose={() => setProductToDelete(null)}
+
                 >
-                  <motion.div
-                    className="p-6"
-                    initial={{ opacity: 0, scale: 0.95, y: -20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div className="p-6">
                     <div className="flex items-start gap-4">
                       <div className="rounded-xl bg-red-50 p-3 text-red-600">
                         <TriangleAlert size={28} />
@@ -206,7 +196,7 @@ export default function Products() {
                         Excluir
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 </Modal>
               )}
             </AnimatePresence>
@@ -225,10 +215,6 @@ export default function Products() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 transition-all font-medium">
-              <Filter className="w-4 h-4" />
-              Buscar
-            </button>
           </motion.section>
 
           <motion.section
@@ -268,7 +254,7 @@ export default function Products() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
-                  
+
                 >
                   <div className="relative flex justify-between items-center mb-4">
                     <div className="p-3 bg-blue-50 rounded-lg">

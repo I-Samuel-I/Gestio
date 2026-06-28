@@ -3,48 +3,96 @@
 import Header from "@/components/header";
 import Navbar from "@/components/sidebar";
 import StatCard from "@/components/statCard";
-import { report } from "@/mock/report";
+import {
+  GetReportCustomers,
+  GetReportFinancial,
+  GetReportSales,
+  GetReportStock,
+} from "@/services/report";
 import { DollarSign, File, Package, TrendingUp, Users } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
-
-const reportCards = [
-  {
-    title: "Relatorio de Vendas",
-    description: report.salesReport,
-    footer: "Resumo das vendas por periodo",
-    icon: TrendingUp,
-    iconColor: "#0A76A9",
-    iconBg: "#E6F1F6",
-  },
-  {
-    title: "Relatorio de Clientes",
-    description: report.clientsReport,
-    footer: "Resumo dos clientes por periodo",
-    icon: Users,
-    iconColor: "#3ACB6F",
-    iconBg: "#E8F9EE",
-  },
-  {
-    title: "Relatorio de Estoque",
-    description: report.stockReport,
-    footer: "Resumo do estoque por periodo",
-    icon: Package,
-    iconColor: "#F59F0A",
-    iconBg: "#FDF5E6",
-  },
-  {
-    title: "Relatorio Financeiro",
-    description: report.financeReport,
-    footer: "Resumo do financeiro por periodo",
-    icon: DollarSign,
-    iconColor: "#AF57DB",
-    iconBg: "#F7EEFB",
-  },
-];
+import { useEffect, useState } from "react";
 
 export default function Report() {
   const [navMobile, setNavMobile] = useState(false);
+  const [salesDescription, setSalesDescription] = useState("");
+  const [customersDescription, setCustomersDescription] = useState("");
+  const [stockDescription, setStockDescription] = useState("");
+  const [financialDescription, setFinancialDescription] = useState("");
+
+  useEffect(() => {
+    async function LoadReports() {
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getFullYear();
+
+      const salesData = await GetReportSales();
+      const customersData = await GetReportCustomers();
+      const stockData = await GetReportStock();
+      const financialData = await GetReportFinancial(month, year);
+
+      if (salesData) {
+        setSalesDescription(
+          `${salesData.count} entradas registradas totalizando R$ ${salesData.totalAmount.toLocaleString("pt-BR")}`,
+        );
+      }
+
+      if (customersData) {
+        setCustomersDescription(
+          `${customersData.active} clientes ativos, ${customersData.total} clientes no total`,
+        );
+      }
+
+      if (stockData) {
+        setStockDescription(
+          `${stockData.totalProducts} produtos cadastrados, ${stockData.lowStockCount} com estoque baixo`,
+        );
+      }
+
+      if (financialData) {
+        setFinancialDescription(
+          `Receita total de R$ ${financialData.revenue.toLocaleString("pt-BR")}, despesas de R$ ${financialData.expenses.toLocaleString("pt-BR")}, lucro liquido de R$ ${financialData.balance.toLocaleString("pt-BR")}`,
+        );
+      }
+    }
+
+    LoadReports();
+  }, []);
+
+  const reportCards = [
+    {
+      title: "Relatorio de Vendas",
+      description: salesDescription,
+      footer: "Resumo das vendas por periodo",
+      icon: TrendingUp,
+      iconColor: "#0A76A9",
+      iconBg: "#E6F1F6",
+    },
+    {
+      title: "Relatorio de Clientes",
+      description: customersDescription,
+      footer: "Resumo dos clientes por periodo",
+      icon: Users,
+      iconColor: "#3ACB6F",
+      iconBg: "#E8F9EE",
+    },
+    {
+      title: "Relatorio de Estoque",
+      description: stockDescription,
+      footer: "Resumo do estoque por periodo",
+      icon: Package,
+      iconColor: "#F59F0A",
+      iconBg: "#FDF5E6",
+    },
+    {
+      title: "Relatorio Financeiro",
+      description: financialDescription,
+      footer: "Resumo do financeiro por periodo",
+      icon: DollarSign,
+      iconColor: "#AF57DB",
+      iconBg: "#F7EEFB",
+    },
+  ];
 
   return (
     <motion.main

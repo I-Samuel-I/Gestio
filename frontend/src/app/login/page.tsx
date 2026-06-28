@@ -12,15 +12,21 @@ import { useState } from "react";
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [formError, setFormError] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setFormError("");
             await loginUser(email, password);
             router.push("/products");
         } catch (error) {
-            alert(error);
+            setFormError(
+                error instanceof Error
+                    ? error.message
+                    : "Email ou senha incorretos.",
+            );
         }
     };
 
@@ -79,19 +85,11 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="remember-me"
-                                    className="rounded border-gray-300 text-[#2082B1] focus:ring-[#2082B1]"
-                                />
-
-                                <label htmlFor="remember-me" className="text-slate-500 cursor-pointer">
-                                    Lembrar de mim
-                                </label>
-                            </div>
-                        </div>
+                        {formError && (
+                            <p className="text-sm font-medium text-red-600">
+                                {formError}
+                            </p>
+                        )}
                         <ButtonForm text="Entrar" type="submit" />
                     </form>
 

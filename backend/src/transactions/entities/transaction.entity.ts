@@ -19,8 +19,8 @@ export class Transaction{
     }})
     amount: number;
 
-    @Column()
-    quantity: number;
+    @Column({ nullable: true })
+    quantity?: number;
 
     @Column({ type: 'date' })
     date: Date;

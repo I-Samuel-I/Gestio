@@ -10,7 +10,6 @@ import {
   Legend,
 } from "recharts";
 import StatCard from "./statCard";
-import { dashboard } from "@/mock/dashboard";
 
 type DashboardData = {
   month: string;
@@ -18,16 +17,11 @@ type DashboardData = {
   expense: number;
 };
 
-const toMonthShort = (month: string) => month.trim().slice(0, 3);
-
-const buildGraphDashboard = () => {
-  const data: DashboardData[] = dashboard.IncomexExpense.map((item) => ({
-    month:item.month,
-    income: item.income,
-    expense: item.expense,
-  }));
-  return data;
+type AreaGraphProps = {
+  data?: DashboardData[];
 };
+
+const toMonthShort = (month: string) => month.trim().slice(0, 3);
 
 const formatCompactBRL = (value: number) => {
   const abs = Math.abs(value);
@@ -41,12 +35,11 @@ const formatCompactBRL = (value: number) => {
   return `R$ ${value.toLocaleString("pt-BR")}`;
 };
 
-export default function AreaGraph() {
-  const data = buildGraphDashboard();
+export default function AreaGraph({ data = [] }: AreaGraphProps) {
   return (
     <StatCard>
       <h3 className="text-2xl font-bold text-slate-900">Receita vs Despesas</h3>
-      <p className="text-slate-500">Ultimos {data.length} meses</p>
+      <p className="text-slate-500">Últimos {data.length} meses</p>
 
       <div style={{ width: "100%", height: 340, marginTop: 20 }}>
         <ResponsiveContainer>

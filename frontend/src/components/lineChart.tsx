@@ -1,4 +1,3 @@
-import { finances } from "@/mock/finance";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -18,6 +17,10 @@ type FinanceData = {
   balance: number;
 };
 
+type LineGraphProps = {
+  data?: FinanceData[];
+};
+
 const formatDay = (isoDate: string) => isoDate.split("-")[2];
 
 const formatCompactBRL = (value: number) => {
@@ -32,23 +35,21 @@ const formatCompactBRL = (value: number) => {
   return `R$ ${value.toLocaleString("pt-BR")}`;
 };
 
-const buildGraphFinance = () => {
+const buildGraphFinance = (data: FinanceData[]) => {
   const byDate = new Map<string, { inflow: number; outflow: number }>();
 
-  for (const item of finances.cashFlow.inflow) {
+  for (const item of data) {
     const prev = byDate.get(item.date) ?? { inflow: 0, outflow: 0 };
-    byDate.set(item.date, { ...prev, inflow: prev.inflow + item.value });
-  }
-
-  for (const item of finances.cashFlow.outflow) {
-    const prev = byDate.get(item.date) ?? { inflow: 0, outflow: 0 };
-    byDate.set(item.date, { ...prev, outflow: prev.outflow + item.value });
+    byDate.set(item.date, {
+      inflow: prev.inflow + Number(item.inflow),
+      outflow: prev.outflow + Number(item.outflow),
+    });
   }
 
   const dates = [...byDate.keys()].sort();
   let running = 0;
 
-  const data: FinanceData[] = dates.map((date) => {
+  return dates.map((date) => {
     const day = byDate.get(date)!;
     running += day.inflow - day.outflow;
 
@@ -59,24 +60,32 @@ const buildGraphFinance = () => {
       balance: running,
     };
   });
-
-  return data;
 };
 
-export default function LineGraph() {
-  const data = buildGraphFinance();
+export default function LineGraph({ data = [] }: LineGraphProps) {
+  const chartData = buildGraphFinance(data);
 
   return (
-   <StatCard>
-      <h3  className="text-xl font-bold text-slate-800">
+    <StatCard>
+      <h3 className="text-xl font-bold text-slate-800">
         Fluxo de Caixa
       </h3>
-      <p className="text-slate-500 font-light" >Entradas e saídas do mês</p>
+      <p className="text-slate-500 font-light">Entradas e saídas do mês</p>
 
-      <div style={{ width: "100%", height: 340, marginTop: "20px" }} className="chart-no-select">
+      <div
+        style={{ width: "100%", height: 340, marginTop: "20px" }}
+        className="chart-no-select"
+      >
         <ResponsiveContainer>
-          <ComposedChart data={data} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}> 
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#dbe3ed" />
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#dbe3ed"
+            />
 
             <XAxis
               dataKey="date"
@@ -85,28 +94,31 @@ export default function LineGraph() {
               tickLine={false}
               tick={{ fill: "#64748b", fontSize: 12 }}
             />
-            <YAxis 
+            <YAxis
               width={72}
               tickMargin={10}
-              tickFormatter={(v) => formatCompactBRL(v).replace("R$", "R$")} 
+              tickFormatter={(v) => formatCompactBRL(v).replace("R$", "R$")}
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#64748b", fontSize: 12 }}
             />
             <Tooltip
               labelFormatter={(label) => `Dia ${formatDay(String(label))}`}
-              formatter={(value: number, key: string) => [formatCompactBRL(Number(value)), key]}
+              formatter={(value: number, key: string) => [
+                formatCompactBRL(Number(value)),
+                key,
+              ]}
               contentStyle={{ borderRadius: 10, border: "1px solid #e2e8f0" }}
             />
             <defs>
-              <linearGradient id="inflowGradient" x1="0" y1="0" x2="0" y2="1" >
+              <linearGradient id="inflowGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#21C45D" stopOpacity={1} />
-                <stop offset="95%" stopColor="#21C45D" stopOpacity={0.30} />
+                <stop offset="95%" stopColor="#21C45D" stopOpacity={0.3} />
               </linearGradient>
 
               <linearGradient id="outflowGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#DC2828" stopOpacity={1} />
-                <stop offset="95%" stopColor="#DC2828" stopOpacity={0.30} />
+                <stop offset="95%" stopColor="#DC2828" stopOpacity={0.3} />
               </linearGradient>
             </defs>
             <Area
@@ -119,7 +131,14 @@ export default function LineGraph() {
               legendType="none"
               tooltipType="none"
             />
-            <Line type="monotone" dataKey="inflow" name="Entradas" stroke="#21C45D" strokeWidth={2} dot={false} />
+            <Line
+              type="monotone"
+              dataKey="inflow"
+              name="Entradas"
+              stroke="#21C45D"
+              strokeWidth={2}
+              dot={false}
+            />
 
             <Area
               type="monotone"
@@ -131,7 +150,14 @@ export default function LineGraph() {
               legendType="none"
               tooltipType="none"
             />
-            <Line type="monotone" dataKey="outflow" name="Saidas" stroke="#DC2828" strokeWidth={2} dot={false} />
+            <Line
+              type="monotone"
+              dataKey="outflow"
+              name="Saidas"
+              stroke="#DC2828"
+              strokeWidth={2}
+              dot={false}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

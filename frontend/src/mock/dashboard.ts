@@ -12,31 +12,7 @@ export const dashboard = {
             income: 24840,
             expense: 12730,
         },
-        {
-            month: "Fevereiro",
-            income: 19800,
-            expense: 10500,
-        },
-        {
-            month: "Março",
-            income: 22000,
-            expense: 11000,
-        },
-        {
-            month: "Abril",
-            income: 25000,
-            expense: 12000,
-        },
-        {
-            month: "Maio",
-            income: 27000,
-            expense: 13000,
-        },
-        {
-            month: "Junho",
-            income: 30000,
-            expense: 15000,
-        },
+
     ],
 
     topProducts: [
