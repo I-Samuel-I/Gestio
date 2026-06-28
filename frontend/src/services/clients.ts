@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type Client = {
   id: string;
   name: string;
@@ -15,7 +16,7 @@ export type Client = {
 export async function DeleteClient(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/customers/${id}`, {
+    const response = await fetch(apiUrl(`/customers/${id}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -47,7 +48,7 @@ export async function UpdateClient(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/customers/${id}`, {
+    const response = await fetch(apiUrl(`/customers/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +91,7 @@ export async function PostClients(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/customers/", {
+    const response = await fetch(apiUrl("/customers/"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +124,7 @@ export async function PostClients(
 export async function GetClients() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/customers", {
+    const response = await fetch(apiUrl("/customers"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -143,7 +144,7 @@ export async function GetClients() {
 export async function GetClientById(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/customers/${id}`, {
+    const response = await fetch(apiUrl(`/customers/${id}`), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

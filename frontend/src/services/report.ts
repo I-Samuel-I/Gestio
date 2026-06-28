@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type ReportSales = {
   count: number;
   totalAmount: number;
@@ -45,7 +46,7 @@ export type ReportFinancial = {
 export async function GetReportSales() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/sales", {
+    const response = await fetch(apiUrl("/reports/sales"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -65,7 +66,7 @@ export async function GetReportSales() {
 export async function GetReportCustomers() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/customers", {
+    const response = await fetch(apiUrl("/reports/customers"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -85,7 +86,7 @@ export async function GetReportCustomers() {
 export async function GetReportStock() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/stock", {
+    const response = await fetch(apiUrl("/reports/stock"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -109,7 +110,7 @@ export async function GetReportFinancial(month?: number, year?: number) {
       month && year ? `?month=${month}&year=${year}` : "";
 
     const response = await fetch(
-      `http://localhost:3000/reports/financial${query}`,
+      apiUrl(`/reports/financial${query}`),
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -126,4 +127,26 @@ export async function GetReportFinancial(month?: number, year?: number) {
   } catch (error) {
     console.error("Error fetching financial report:", error);
   }
+}
+export async function DownloadReportFinancialPdf(month?: number, year?: number) {
+  const token = localStorage.getItem("token");
+  const query = month && year ? `?month=${month}&year=${year}` : "";
+
+  const response = await fetch(apiUrl(`/reports/financial/pdf${query}`), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error: " + response.statusText);
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "relatorio-financeiro.pdf";
+  link.click();
+  window.URL.revokeObjectURL(url);
 }

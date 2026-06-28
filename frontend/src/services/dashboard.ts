@@ -1,3 +1,4 @@
+import { API_URL, apiUrl } from "./api";
 export type DashboardCustomersReport = {
   total: number;
   active: number;
@@ -54,7 +55,7 @@ export type DashboardActivity = {
 export async function GetDashboardCustomers() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/customers", {
+    const response = await fetch(apiUrl("/reports/customers"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -74,7 +75,7 @@ export async function GetDashboardCustomers() {
 export async function GetDashboardStock() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/stock", {
+    const response = await fetch(apiUrl("/reports/stock"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -94,7 +95,7 @@ export async function GetDashboardStock() {
 export async function GetDashboardSales() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/sales", {
+    const response = await fetch(apiUrl("/reports/sales"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -114,7 +115,7 @@ export async function GetDashboardSales() {
 export async function GetDashboardActivities() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/activities", {
+    const response = await fetch(apiUrl("/activities"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -135,7 +136,7 @@ export async function GetDashboardFinancial(month: number, year: number) {
   try {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/reports/financial?month=${month}&year=${year}`,
+      `${API_URL}/reports/financial?month=${month}&year=${year}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

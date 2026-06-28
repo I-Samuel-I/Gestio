@@ -258,15 +258,15 @@ export default function Clients() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            {clients.length === 0 ? (
+            {filterClients.length === 0 ? (
               <section className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full">
               <div className="p-6 bg-[#E1EDF2] rounded-3xl w-fit animate-[floatUpDown_6s_ease-in-out_infinite]">
                 <User color="#2082B1" size={50} />
               </div>
               <div className="flex flex-col items-center">
-                <h3 className="text-2xl font-bold text-slate-800">Nenhum cliente cadastrado</h3>
+                <h3 className="text-2xl font-bold text-slate-800">{search ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}</h3>
                 <p className="text-sm mt-2 text-slate-500 w-3/4">
-                  Comece adicionando seu primeiro cliente para acompanhar contatos e compras.
+                  {search ? "Tente buscar por outro nome, email ou documento." : "Comece adicionando seu primeiro cliente para acompanhar contatos e compras."}
                 </p>
               </div>
 

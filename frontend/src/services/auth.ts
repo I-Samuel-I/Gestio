@@ -1,10 +1,11 @@
+import { apiUrl } from "./api";
 
 // API LOGIN USER
 export async function loginUser(email: string, password: string) {
 
   try {
     // HAD CALL TO BACKEND LOGIN API
-    const response = await fetch("http://localhost:3000/auth/login", {
+    const response = await fetch(apiUrl("/auth/login"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +45,7 @@ export async function registerUser(
   company: string,
 ) {
   try {
-    const response = await fetch("http://localhost:3000/auth/register", {
+    const response = await fetch(apiUrl("/auth/register"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export async function registerUser(
 // API AUTH USER
 export async function authUser(token: string) {
   try {
-    const response = await fetch("http://localhost:3000/auth/me", {
+    const response = await fetch(apiUrl("/auth/me"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

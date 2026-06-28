@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type SettingsCompany = {
   id: string;
   name: string;
@@ -19,7 +20,7 @@ export type SettingsPreferences = {
 export async function GetSettingsCompany() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/settings/company", {
+    const response = await fetch(apiUrl("/settings/company"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -46,7 +47,7 @@ export async function GetSettingsCompany() {
 export async function GetSettingsPreferences() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/settings/preferences", {
+    const response = await fetch(apiUrl("/settings/preferences"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -78,7 +79,7 @@ export async function UpdateSettingsCompany(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/settings/company", {
+    const response = await fetch(apiUrl("/settings/company"), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +118,7 @@ export async function UpdateSettingsPreferences(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/settings/preferences", {
+    const response = await fetch(apiUrl("/settings/preferences"), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

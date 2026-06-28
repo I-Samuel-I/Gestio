@@ -245,6 +245,9 @@ export default function Finance() {
                   Ultimas movimentacoes financeiras
                 </p>
 
+                {recentTransactions.length === 0 && (
+                  <p className="mt-6 text-sm text-slate-500">Nenhuma transacao recente.</p>
+                )}
                 {recentTransactions.map((transaction) => {
                   const meta = transactionMeta(transaction.type as TransactionType);
                   const Icon = meta.icon;
@@ -293,7 +296,10 @@ export default function Finance() {
                 Ultimas movimentacoes financeiras
               </p>
 
-              {recentTransactions.map((transaction) => {
+              {recentTransactions.length === 0 && (
+                  <p className="mt-6 text-sm text-slate-500">Nenhuma transacao recente.</p>
+                )}
+                {recentTransactions.map((transaction) => {
                 const meta = transactionMeta(transaction.type as TransactionType);
                 const Icon = meta.icon;
 

@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type UserRole =
   | "gerente"
   | "supervisor"
@@ -22,7 +23,7 @@ export type User = {
 export async function DeleteUser(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
+    const response = await fetch(apiUrl(`/users/${id}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -67,7 +68,7 @@ export async function UpdateUser(
       body.password = password;
     }
 
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
+    const response = await fetch(apiUrl(`/users/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +97,7 @@ export async function PostUsers(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/users", {
+    const response = await fetch(apiUrl("/users"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -131,7 +132,7 @@ export async function PostUsers(
 export async function GetUsers() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/users", {
+    const response = await fetch(apiUrl("/users"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -151,7 +152,7 @@ export async function GetUsers() {
 export async function GetUserById(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
+    const response = await fetch(apiUrl(`/users/${id}`), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

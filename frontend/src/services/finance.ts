@@ -1,3 +1,4 @@
+import { API_URL, apiUrl } from "./api";
 export type FinancePeriod = {
   month?: number;
   year?: number;
@@ -96,7 +97,7 @@ export async function GetFinance(
     if (endDate) query.append("endDate", endDate);
 
     const response = await fetch(
-      `http://localhost:3000/reports/financial${query.toString() ? `?${query.toString()}` : ""}`,
+      `${API_URL}/reports/financial${query.toString() ? `?${query.toString()}` : ""}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -131,7 +132,7 @@ export async function GetFinanceCategoryDistribution(
     if (endDate) query.append("endDate", endDate);
 
     const response = await fetch(
-      `http://localhost:3000/reports/category-distribution${query.toString() ? `?${query.toString()}` : ""}`,
+      `${API_URL}/reports/category-distribution${query.toString() ? `?${query.toString()}` : ""}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -166,7 +167,7 @@ export async function GetFinanceCashflow(
     if (endDate) query.append("endDate", endDate);
 
     const response = await fetch(
-      `http://localhost:3000/reports/cashflow${query.toString() ? `?${query.toString()}` : ""}`,
+      `${API_URL}/reports/cashflow${query.toString() ? `?${query.toString()}` : ""}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,7 +190,7 @@ export async function GetFinanceTransactions(search?: string) {
   try {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/transactions${search ? `?search=${encodeURIComponent(search)}` : ""}`,
+      `${API_URL}/transactions${search ? `?search=${encodeURIComponent(search)}` : ""}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -211,7 +212,7 @@ export async function GetFinanceTransactions(search?: string) {
 export async function GetRecentFinanceTransactions() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/transactions/recent", {
+    const response = await fetch(apiUrl("/transactions/recent"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -231,7 +232,7 @@ export async function GetRecentFinanceTransactions() {
 export async function GetFinanceTransactionById(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/transactions/${id}`, {
+    const response = await fetch(apiUrl(`/transactions/${id}`), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -266,7 +267,7 @@ export async function PostFinanceTransaction(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/transactions", {
+    const response = await fetch(apiUrl("/transactions"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -313,7 +314,7 @@ export async function UpdateFinanceTransaction(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/transactions/${id}`, {
+    const response = await fetch(apiUrl(`/transactions/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -344,7 +345,7 @@ export async function UpdateFinanceTransaction(
 export async function DeleteFinanceTransaction(id: string) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/transactions/${id}`, {
+    const response = await fetch(apiUrl(`/transactions/${id}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

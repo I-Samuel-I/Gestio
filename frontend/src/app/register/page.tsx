@@ -22,7 +22,7 @@ export default function Register() {
         try {
             setFormError("");
             await registerUser(email, password, name, phone, companyName);
-            router.push("/products");
+            router.push("/login");
         } catch (error) {
             setFormError(
                 error instanceof Error

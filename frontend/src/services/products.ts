@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type Product = {
   id: string | number;
   name: string;
@@ -10,7 +11,7 @@ export type Product = {
 export async function DeleteProduct(id: string | number) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/products/${id}`, {
+    const response = await fetch(apiUrl(`/products/${id}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -38,7 +39,7 @@ export async function PostProducts(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/products", {
+    const response = await fetch(apiUrl("/products"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +68,7 @@ export async function PostProducts(
 export async function GetProducts() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/products", {
+    const response = await fetch(apiUrl("/products"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -94,7 +95,7 @@ export async function UpdateProducts(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:3000/products/${id}`, {
+    const response = await fetch(apiUrl(`/products/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

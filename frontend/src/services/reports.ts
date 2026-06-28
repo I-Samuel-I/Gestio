@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export interface FinancialReport {
   revenue: number;
   expenses: number;
@@ -7,7 +8,7 @@ export interface FinancialReport {
 export async function GetFinancialReport(): Promise<FinancialReport | null> {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/reports/financial", {
+    const response = await fetch(apiUrl("/reports/financial"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

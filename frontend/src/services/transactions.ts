@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 export type Transaction = {
   id: string;
   type: "entrada" | "saída";
@@ -20,7 +21,7 @@ export async function PostTransaction(
 ) {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/transactions", {
+    const response = await fetch(apiUrl("/transactions"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +52,7 @@ export async function PostTransaction(
 export async function GetTransactions() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/transactions", {
+    const response = await fetch(apiUrl("/transactions"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -71,7 +72,7 @@ export async function GetTransactions() {
 export async function GetRecentTransactions() {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/transactions/recent", {
+    const response = await fetch(apiUrl("/transactions/recent"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },

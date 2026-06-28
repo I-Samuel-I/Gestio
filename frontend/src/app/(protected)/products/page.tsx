@@ -234,7 +234,7 @@ export default function Products() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            {products.length === 0 ? (
+            {filterProducts.length === 0 ? (
               <motion.div
                 className="col-span-full flex text-center mt-20 items-center gap-5 flex-col w-full"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -249,9 +249,9 @@ export default function Products() {
                   <Box color="#2082B1" size={50} />
                 </motion.div>
                 <div className="flex flex-col items-center">
-                  <h3 className="text-2xl font-bold text-slate-800">Nenhum produto cadastrado</h3>
+                  <h3 className="text-2xl font-bold text-slate-800">{search ? "Nenhum produto encontrado" : "Nenhum produto cadastrado"}</h3>
                   <p className="text-sm mt-2 text-slate-500 w-3/4">
-                    Comece adicionando seu primeiro produto ao catalogo para gerenciar seu estoque.
+                    {search ? "Tente buscar por outro nome de produto." : "Comece adicionando seu primeiro produto ao catalogo para gerenciar seu estoque."}
                   </p>
                 </div>
 

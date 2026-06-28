@@ -232,6 +232,9 @@ export default function Dashboard() {
                   Ultimas atualizacoes no sistema
                 </p>
 
+                {recentActivities.length === 0 && (
+                  <p className="mt-6 text-sm text-slate-500">Nenhuma atividade recente.</p>
+                )}
                 {recentActivities.map((activity) => {
                   const meta = activityMeta(activity.type as ActivityCategory);
                   const Icon = meta.icon;
@@ -269,6 +272,9 @@ export default function Dashboard() {
                 Ultimas atualizacoes no sistema
               </p>
               <div className="mt-5 flex flex-col gap-5">
+                {recentActivities.length === 0 && (
+                  <p className="mt-6 text-sm text-slate-500">Nenhuma atividade recente.</p>
+                )}
                 {recentActivities.map((activity) => {
                   const meta = activityMeta(activity.type as ActivityCategory);
                   const Icon = meta.icon;
