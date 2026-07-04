@@ -167,6 +167,86 @@ export class ReportsService {
         });
     }
 
+    async salesReportPdf(user: User): Promise<Buffer> {
+
+        const sales = await this.transactionRepository.find({
+            where: {
+                company: user.company,
+                type: TransactionType.INCOME,
+                category: TransactionCategory.SALES
+            }
+        });
+
+        const totalAmount = sales.reduce((sum, t) => sum + Number(t.amount), 0);
+        const recentSales = this.pickRecentTransactions(sales, 10);
+
+        return this.renderSimplePdf({
+            title: 'RELATORIO DE VENDAS',
+            summary: [
+                { label: 'Quantidade de vendas', value: String(sales.length) },
+                { label: 'Total vendido', value: this.formatMoney(totalAmount) }
+            ],
+            tableTitle: 'Vendas recentes',
+            emptyMessage: 'Nenhuma venda encontrada.',
+            headers: ['Data', 'Descricao', 'Quantidade', 'Valor'],
+            rows: recentSales.map(sale => [
+                this.toIsoDate(this.toDate(sale.date)),
+                this.limitText(sale.description, 36),
+                String(sale.quantity),
+                this.formatMoney(Number(sale.amount))
+            ])
+        });
+    }
+
+    async customersReportPdf(user: User): Promise<Buffer> {
+
+        const customers = await this.customerRepository.find({ where: { company: user.company } });
+        const active = customers.filter(customer => customer.status === CustomerStatus.ACTIVE).length;
+
+        return this.renderSimplePdf({
+            title: 'RELATORIO DE CLIENTES',
+            summary: [
+                { label: 'Total de clientes', value: String(customers.length) },
+                { label: 'Clientes ativos', value: String(active) }
+            ],
+            tableTitle: 'Clientes',
+            emptyMessage: 'Nenhum cliente encontrado.',
+            headers: ['Nome', 'Email', 'Telefone', 'Status'],
+            rows: customers.slice(0, 10).map(customer => [
+                this.limitText(customer.name, 28),
+                this.limitText(customer.email, 30),
+                this.limitText(customer.phone, 18),
+                String(customer.status)
+            ])
+        });
+    }
+
+    async stockReportPdf(user: User): Promise<Buffer> {
+
+        const products = await this.productRepository.find({ where: { company: user.company } });
+        const lowStock = 5;
+        const lowStockCount = products.filter(product => product.stock > 0 && product.stock <= lowStock).length;
+        const outOfStockCount = products.filter(product => product.stock <= 0).length;
+
+        return this.renderSimplePdf({
+            title: 'RELATORIO DE ESTOQUE',
+            summary: [
+                { label: 'Total de produtos', value: String(products.length) },
+                { label: 'Estoque baixo', value: String(lowStockCount) },
+                { label: 'Sem estoque', value: String(outOfStockCount) }
+            ],
+            tableTitle: 'Produtos',
+            emptyMessage: 'Nenhum produto encontrado.',
+            headers: ['Produto', 'Categoria', 'Estoque', 'Preco'],
+            rows: products.slice(0, 10).map(product => [
+                this.limitText(product.name, 32),
+                String(product.category),
+                String(product.stock),
+                this.formatMoney(Number(product.price))
+            ])
+        });
+    }
+
     private filterByPeriod(transactions: Transaction[], query: ReportPeriodQuery) {
         const { startDate, endDate, period } = this.resolvePeriod(query);
 
@@ -454,6 +534,100 @@ export class ReportsService {
 
             doc.end();
         });
+    }
+
+    private renderSimplePdf(data: {
+        title: string;
+        summary: { label: string; value: string }[];
+        tableTitle: string;
+        emptyMessage: string;
+        headers: string[];
+        rows: string[][];
+    }): Promise<Buffer> {
+
+        return new Promise((resolve, reject) => {
+
+            const doc = new PDFDocument({ margin: 50 });
+            const chunks: Buffer[] = [];
+
+            doc.on('data', chunk => chunks.push(chunk));
+            doc.on('end', () => resolve(Buffer.concat(chunks)));
+            doc.on('error', err => reject(err));
+
+            doc.fontSize(18).font('Helvetica-Bold').text(data.title, { align: 'center' });
+            doc.moveDown(0.3);
+            doc.fontSize(10).font('Helvetica').text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, { align: 'right' });
+            doc.moveDown(0.5);
+
+            doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+            doc.moveDown(0.8);
+
+            const boxX = 50;
+            const boxY = doc.y;
+            const boxWidth = 495;
+            const boxHeight = 28 + data.summary.length * 16;
+
+            doc.roundedRect(boxX, boxY, boxWidth, boxHeight, 4).stroke();
+            doc.fontSize(11).font('Helvetica-Bold').text('Resumo', boxX + 12, boxY + 8);
+
+            let summaryY = boxY + 28;
+            doc.fontSize(10).font('Helvetica');
+            for (const item of data.summary) {
+                doc.text(`${item.label}: ${item.value}`, boxX + 12, summaryY);
+                summaryY += 16;
+            }
+
+            doc.y = boxY + boxHeight + 22;
+            doc.fontSize(12).font('Helvetica-Bold').text(data.tableTitle, 50);
+            doc.moveDown(0.3);
+
+            const startX = 50;
+            const widths = this.tableWidths(data.headers.length);
+            let y = doc.y;
+
+            doc.fontSize(10).font('Helvetica-Bold');
+            let x = startX;
+            data.headers.forEach((header, index) => {
+                doc.text(header, x, y, { width: widths[index] });
+                x += widths[index];
+            });
+            y += 18;
+
+            doc.font('Helvetica').fontSize(10);
+
+            if (data.rows.length === 0) {
+                doc.text(data.emptyMessage, startX, y);
+            } else {
+                for (const row of data.rows) {
+                    if (y > 720) {
+                        doc.addPage();
+                        y = 50;
+                    }
+
+                    x = startX;
+                    row.forEach((value, index) => {
+                        doc.text(value, x, y, { width: widths[index] });
+                        x += widths[index];
+                    });
+
+                    y += 16;
+                }
+            }
+
+            doc.fontSize(9).font('Helvetica-Oblique').text('Relatorio gerado pelo sistema Gestio.', 50, y + 20);
+            doc.end();
+        });
+    }
+
+    private tableWidths(columns: number) {
+        const totalWidth = 495;
+        const width = totalWidth / columns;
+        return Array(columns).fill(width);
+    }
+
+    private limitText(value: string | null | undefined, size: number) {
+        const text = String(value ?? '');
+        return text.length > size ? `${text.slice(0, size)}...` : text;
     }
 
     private formatMoney(value: number) { return Number(value).toFixed(2); }
