@@ -4,7 +4,10 @@ import Header from "@/components/header";
 import Navbar from "@/components/sidebar";
 import StatCard from "@/components/statCard";
 import {
+  DownloadReportCustomersPdf,
   DownloadReportFinancialPdf,
+  DownloadReportSalesPdf,
+  DownloadReportStockPdf,
   GetReportCustomers,
   GetReportFinancial,
   GetReportSales,
@@ -36,7 +39,7 @@ export default function Report() {
   const [customersDescription, setCustomersDescription] = useState("");
   const [stockDescription, setStockDescription] = useState("");
   const [financialDescription, setFinancialDescription] = useState("");
-  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState<string | null>(null);
   const [reportHistory, setReportHistory] = useState<ReportHistoryItem[]>([]);
 
   useEffect(() => {
@@ -108,48 +111,93 @@ export default function Report() {
       return nextHistory;
     });
   };
-  const handleGenerateFinancialPdf = async () => {
+  const handleGenerateReportPdf = async (
+    reportKey: string,
+    download: () => Promise<void>,
+    title: string,
+    fileName: string,
+  ) => {
+    try {
+      setGeneratingPdf(reportKey);
+      await download();
+      saveReportHistory(title, fileName);
+    } catch (error) {
+      console.error(`Error generating ${reportKey} PDF:`, error);
+    } finally {
+      setGeneratingPdf(null);
+    }
+  };
+
+  const handleGenerateSalesPdf = () =>
+    handleGenerateReportPdf(
+      "sales",
+      DownloadReportSalesPdf,
+      "Relatorio de Vendas",
+      "relatorio-vendas.pdf",
+    );
+
+  const handleGenerateCustomersPdf = () =>
+    handleGenerateReportPdf(
+      "customers",
+      DownloadReportCustomersPdf,
+      "Relatorio de Clientes",
+      "relatorio-clientes.pdf",
+    );
+
+  const handleGenerateStockPdf = () =>
+    handleGenerateReportPdf(
+      "stock",
+      DownloadReportStockPdf,
+      "Relatorio de Estoque",
+      "relatorio-estoque.pdf",
+    );
+
+  const handleGenerateFinancialPdf = () => {
     const currentDate = new Date();
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
 
-    try {
-      setGeneratingPdf(true);
-      await DownloadReportFinancialPdf(month, year);
-      saveReportHistory("Relatorio Financeiro", "relatorio-financeiro.pdf");
-    } catch (error) {
-      console.error("Error generating financial PDF:", error);
-    } finally {
-      setGeneratingPdf(false);
-    }
+    return handleGenerateReportPdf(
+      "financial",
+      () => DownloadReportFinancialPdf(month, year),
+      "Relatorio Financeiro",
+      "relatorio-financeiro.pdf",
+    );
   };
   const reportCards = [
     {
       title: "Relatorio de Vendas",
+      reportKey: "sales",
       description: salesDescription,
       footer: "Resumo das vendas por periodo",
       icon: TrendingUp,
       iconColor: "#0A76A9",
       iconBg: "#E6F1F6",
+      onGenerate: handleGenerateSalesPdf,
     },
     {
       title: "Relatorio de Clientes",
+      reportKey: "customers",
       description: customersDescription,
       footer: "Resumo dos clientes por periodo",
       icon: Users,
       iconColor: "#3ACB6F",
       iconBg: "#E8F9EE",
+      onGenerate: handleGenerateCustomersPdf,
     },
     {
       title: "Relatorio de Estoque",
+      reportKey: "stock",
       description: stockDescription,
       footer: "Resumo do estoque por periodo",
       icon: Package,
       iconColor: "#F59F0A",
       iconBg: "#FDF5E6",
+      onGenerate: handleGenerateStockPdf,
     },
     {
       title: "Relatorio Financeiro",
+      reportKey: "financial",
       description: financialDescription,
       footer: "Resumo do financeiro por periodo",
       icon: DollarSign,
@@ -220,11 +268,11 @@ export default function Report() {
                         <button
                           type="button"
                           onClick={item.onGenerate}
-                          disabled={!item.onGenerate || generatingPdf}
+                          disabled={generatingPdf !== null}
                           className="absolute bottom-0 right-0 flex cursor-pointer gap-2 rounded-lg border border-slate-300 p-2 text-slate-800 transition-colors hover:border-[#0A76A9] hover:bg-[#E6F1F6] hover:text-[#0A76A9] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <File color="#0A76A9" size={20} />
-                          <h3 className="text-sm">{item.onGenerate && generatingPdf ? "Gerando" : "Gerar"}</h3>
+                          <h3 className="text-sm">{generatingPdf === item.reportKey ? "Gerando" : "Gerar"}</h3>
                         </button>
                       </div>
                     </StatCard>

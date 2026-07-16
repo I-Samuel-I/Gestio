@@ -128,11 +128,10 @@ export async function GetReportFinancial(month?: number, year?: number) {
     console.error("Error fetching financial report:", error);
   }
 }
-export async function DownloadReportFinancialPdf(month?: number, year?: number) {
+async function downloadReportPdf(endpoint: string, fileName: string) {
   const token = localStorage.getItem("token");
-  const query = month && year ? `?month=${month}&year=${year}` : "";
 
-  const response = await fetch(apiUrl(`/reports/financial/pdf${query}`), {
+  const response = await fetch(apiUrl(endpoint), {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -146,7 +145,24 @@ export async function DownloadReportFinancialPdf(month?: number, year?: number) 
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "relatorio-financeiro.pdf";
+  link.download = fileName;
   link.click();
   window.URL.revokeObjectURL(url);
+}
+
+export async function DownloadReportSalesPdf() {
+  await downloadReportPdf("/reports/sales/pdf", "relatorio-vendas.pdf");
+}
+
+export async function DownloadReportCustomersPdf() {
+  await downloadReportPdf("/reports/customers/pdf", "relatorio-clientes.pdf");
+}
+
+export async function DownloadReportStockPdf() {
+  await downloadReportPdf("/reports/stock/pdf", "relatorio-estoque.pdf");
+}
+
+export async function DownloadReportFinancialPdf(month?: number, year?: number) {
+  const query = month && year ? `?month=${month}&year=${year}` : "";
+  await downloadReportPdf(`/reports/financial/pdf${query}`, "relatorio-financeiro.pdf");
 }
