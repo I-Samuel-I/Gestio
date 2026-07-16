@@ -1,4 +1,7 @@
 import { apiUrl } from "./api";
+
+export type SettingsLanguage = "pt-BR" | "en-US";
+export type SettingsTimezone = "America/Sao_Paulo" | "America/New_York";
 export type SettingsCompany = {
   id: string;
   name: string;
@@ -15,6 +18,8 @@ export type SettingsPreferences = {
   emailNotifications: boolean;
   lowStockAlert: boolean;
   dailySummary: boolean;
+  language: SettingsLanguage;
+  timezone: SettingsTimezone;
 };
 
 export async function GetSettingsCompany() {
@@ -115,6 +120,8 @@ export async function UpdateSettingsPreferences(
   emailNotifications: boolean,
   lowStockAlert: boolean,
   dailySummary: boolean,
+  language: SettingsLanguage,
+  timezone: SettingsTimezone,
 ) {
   try {
     const token = localStorage.getItem("token");
@@ -128,6 +135,8 @@ export async function UpdateSettingsPreferences(
         emailNotifications,
         lowStockAlert,
         dailySummary,
+        language,
+        timezone,
       }),
     });
 

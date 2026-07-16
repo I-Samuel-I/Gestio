@@ -22,4 +22,10 @@ export class UserPreferences {
 
     @Column({ default: false })
     dailySummary: boolean;
+
+    @Column({ default: 'pt-BR' })
+    language: string;
+
+    @Column({ default: 'America/Sao_Paulo' })
+    timezone: string;
 }

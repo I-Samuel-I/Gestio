@@ -9,10 +9,22 @@ import {
   GetSettingsPreferences,
   UpdateSettingsCompany,
   UpdateSettingsPreferences,
+  type SettingsLanguage,
+  type SettingsTimezone,
 } from "@/services/settings";
 import { Bell, Building, Clock, Globe, Palette } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+
+const languageOptions: { value: SettingsLanguage; label: string }[] = [
+  { value: "pt-BR", label: "Portugues (Brasil)" },
+  { value: "en-US", label: "English (United States)" },
+];
+
+const timezoneOptions: { value: SettingsTimezone; label: string }[] = [
+  { value: "America/Sao_Paulo", label: "Brasil (Sao Paulo)" },
+  { value: "America/New_York", label: "Estados Unidos (Eastern Time)" },
+];
 
 export default function Config() {
   const [navMobile, setNavMobile] = useState(false);
@@ -23,6 +35,8 @@ export default function Config() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [lowStockAlert, setLowStockAlert] = useState(false);
   const [dailySummary, setDailySummary] = useState(false);
+  const [language, setLanguage] = useState<SettingsLanguage>("pt-BR");
+  const [timezone, setTimezone] = useState<SettingsTimezone>("America/Sao_Paulo");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -44,6 +58,8 @@ export default function Config() {
           setEmailNotifications(preferencesData.emailNotifications ?? false);
           setLowStockAlert(preferencesData.lowStockAlert ?? false);
           setDailySummary(preferencesData.dailySummary ?? false);
+          setLanguage(preferencesData.language ?? "pt-BR");
+          setTimezone(preferencesData.timezone ?? "America/Sao_Paulo");
         }
       } catch (error) {
         setFormError(
@@ -74,6 +90,8 @@ export default function Config() {
         emailNotifications,
         lowStockAlert,
         dailySummary,
+        language,
+        timezone,
       );
 
       setSuccessMessage("Configuracoes salvas com sucesso.");
@@ -237,8 +255,41 @@ export default function Config() {
                 </span>
               </div>
               <div className="mt-7 flex flex-col gap-5 sm:flex-row">
-                <Input icon={Globe} label="Idioma" type="select" />
-                <Input icon={Clock} label="Fuso Horario" type="select" />
+                <label className="flex w-full flex-col gap-1.5">
+                  <span className="text-sm font-medium text-slate-700">Idioma</span>
+                  <span className="relative flex items-center">
+                    <Globe className="absolute left-3 text-slate-400" size={18} />
+                    <select
+                      value={language}
+                      onChange={(event) => setLanguage(event.target.value as SettingsLanguage)}
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-slate-900 outline-none transition-all focus:border-[#a8e1fc] focus:ring-2 focus:ring-[#2082B1]/10"
+                    >
+                      {languageOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </span>
+                </label>
+
+                <label className="flex w-full flex-col gap-1.5">
+                  <span className="text-sm font-medium text-slate-700">Fuso Horario</span>
+                  <span className="relative flex items-center">
+                    <Clock className="absolute left-3 text-slate-400" size={18} />
+                    <select
+                      value={timezone}
+                      onChange={(event) => setTimezone(event.target.value as SettingsTimezone)}
+                      className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-slate-900 outline-none transition-all focus:border-[#a8e1fc] focus:ring-2 focus:ring-[#2082B1]/10"
+                    >
+                      {timezoneOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </span>
+                </label>
               </div>
 
               {formError && (

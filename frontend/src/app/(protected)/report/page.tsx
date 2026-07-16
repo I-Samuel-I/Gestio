@@ -10,9 +10,25 @@ import {
   GetReportSales,
   GetReportStock,
 } from "@/services/report";
-import { DollarSign, File, Package, TrendingUp, Users } from "lucide-react";
+import { Clock, DollarSign, File, Package, TrendingUp, Users } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+
+type ReportHistoryItem = {
+  id: string;
+  title: string;
+  fileName: string;
+  generatedAt: string;
+};
+
+const REPORT_HISTORY_STORAGE_KEY = "gestio_report_history";
+
+function formatGeneratedAt(date: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(date));
+}
 
 export default function Report() {
   const [navMobile, setNavMobile] = useState(false);
@@ -21,6 +37,7 @@ export default function Report() {
   const [stockDescription, setStockDescription] = useState("");
   const [financialDescription, setFinancialDescription] = useState("");
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [reportHistory, setReportHistory] = useState<ReportHistoryItem[]>([]);
 
   useEffect(() => {
     async function LoadReports() {
@@ -58,9 +75,39 @@ export default function Report() {
       }
     }
 
+    const storedHistory = localStorage.getItem(REPORT_HISTORY_STORAGE_KEY);
+
+    if (storedHistory) {
+      try {
+        const parsedHistory = JSON.parse(storedHistory) as ReportHistoryItem[];
+
+        if (Array.isArray(parsedHistory)) {
+          setReportHistory(parsedHistory.slice(0, 4));
+        }
+      } catch {
+        localStorage.removeItem(REPORT_HISTORY_STORAGE_KEY);
+      }
+    }
+
     LoadReports();
   }, []);
+  const saveReportHistory = (title: string, fileName: string) => {
+    const nextItem: ReportHistoryItem = {
+      id: String(Date.now()),
+      title,
+      fileName,
+      generatedAt: new Date().toISOString(),
+    };
 
+    setReportHistory((currentHistory) => {
+      const nextHistory = [nextItem, ...currentHistory].slice(0, 4);
+      localStorage.setItem(
+        REPORT_HISTORY_STORAGE_KEY,
+        JSON.stringify(nextHistory),
+      );
+      return nextHistory;
+    });
+  };
   const handleGenerateFinancialPdf = async () => {
     const currentDate = new Date();
     const month = currentDate.getMonth() + 1;
@@ -69,6 +116,7 @@ export default function Report() {
     try {
       setGeneratingPdf(true);
       await DownloadReportFinancialPdf(month, year);
+      saveReportHistory("Relatorio Financeiro", "relatorio-financeiro.pdf");
     } catch (error) {
       console.error("Error generating financial PDF:", error);
     } finally {
@@ -183,6 +231,46 @@ export default function Report() {
                   </motion.div>
                 );
               })}
+            </div>
+
+            <div className="mt-6">
+              <StatCard>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl bg-[#E6F1F6] p-3">
+                    <Clock className="text-[#2082B1]" size={22} />
+                  </div>
+                  <span>
+                    <h2 className="text-xl font-bold text-slate-800">Relatorios gerados</h2>
+                    <p className="text-sm text-slate-500">Ultimos 4 arquivos gerados nesta pagina</p>
+                  </span>
+                </div>
+
+                {reportHistory.length === 0 ? (
+                  <p className="mt-6 text-sm text-slate-500">Nenhum relatorio gerado recentemente.</p>
+                ) : (
+                  <div className="mt-6 flex flex-col gap-5">
+                    {reportHistory.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"
+                      >
+                        <div className="flex items-center gap-5">
+                          <div className="rounded-lg bg-[#E6F1F6] p-2.5">
+                            <File size={20} color="#0A76A9" />
+                          </div>
+                          <div className="flex flex-col">
+                            <p className="font-medium text-slate-800">{item.title}</p>
+                            <p className="text-sm text-slate-500">{item.fileName}</p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          {formatGeneratedAt(item.generatedAt)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </StatCard>
             </div>
           </motion.section>
         </div>
