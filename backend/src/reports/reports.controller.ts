@@ -61,16 +61,55 @@ export class ReportsController {
         return this.reportsService.customersReport(user);
     }
 
+    @Get('customers/pdf')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER, UserRole.FINANCIAL)
+    async getCustomersPdf(
+        @CurrentUser() user: User,
+        @Res() res: Response
+    ) {
+        const pdf = await this.reportsService.customersReportPdf(user);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="relatorio-clientes.pdf"');
+        res.send(pdf);
+    }
+
     @Get('stock')
     @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
     getStock(@CurrentUser() user: User) {
         return this.reportsService.stockReport(user);
     }
 
+    @Get('stock/pdf')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER)
+    async getStockPdf(
+        @CurrentUser() user: User,
+        @Res() res: Response
+    ) {
+        const pdf = await this.reportsService.stockReportPdf(user);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="relatorio-estoque.pdf"');
+        res.send(pdf);
+    }
+
     @Get('sales')
     @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER, UserRole.FINANCIAL)
     getSales(@CurrentUser() user: User) {
         return this.reportsService.salesReport(user);
+    }
+
+    @Get('sales/pdf')
+    @Roles(UserRole.MANAGER, UserRole.SUPERVISOR, UserRole.SELLER, UserRole.FINANCIAL)
+    async getSalesPdf(
+        @CurrentUser() user: User,
+        @Res() res: Response
+    ) {
+        const pdf = await this.reportsService.salesReportPdf(user);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="relatorio-vendas.pdf"');
+        res.send(pdf);
     }
 
 }
